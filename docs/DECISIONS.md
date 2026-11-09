@@ -1,0 +1,27 @@
+# Decision log
+
+Newest at the bottom. Each entry: what was decided, what else was considered, and why.
+
+| Date | Decision | Options considered | Why |
+| --- | --- | --- | --- |
+| 2026-11-09 | **Name:** Shac SB Index, always with the subtitle "a college basketball forecasting model." | Other names | Owen's pick. The subtitle says what it is. |
+| 2026-11-09 | **Scope:** D-I men's, spreads only. | Adding totals and futures | One market keeps the evaluation clean and the workload at 10 hours a week. |
+| 2026-11-09 | **No money.** Owen doesn't bet on this. It's a portfolio project judged on honest evaluation. | Paper trading with stakes | The goal is to show data and AI work, not to find an edge. |
+| 2026-11-09 | **Picks:** each game gets a Pick, a Lean or no call from its calibrated cover probability. Free, with no units, "locks," paid tiers or affiliate links. | Showing numbers only, with no calls | Calls make the record easy to read and check. Keeping them free and plain keeps it research. |
+| 2026-11-09 | **Kalshi is data only:** no account, no trades, no promotion. | Trading on it | Arizona's legal dispute with Kalshi is unsettled. |
+| 2026-11-09 | **Hosting:** public repo with scheduled GitHub Actions, a static board on Cloudflare Pages, raw data in a private repo. | A laptop cron job; a private repo | Actions is free on public repos, a laptop misses snapshots, and public commits make the record checkable. |
+| 2026-11-09 | **AI accuracy bars:** reading accuracy 95%+, precision 95% on rotation players, recall reported with no bar. | One overall accuracy number | A false "out" moves the number the wrong way; a miss only leaves the baseline in place. Precision gets the strict bar. |
+| 2026-11-09 | **Gates, not dates.** | A calendar schedule | Work ships when its exit check passes. The season's end is the only deadline. |
+| 2026-11-09 | **Stack:** Python, pandas, scikit-learn, DuckDB, pytest, uv, ruff. Scorecard queries in SQL files. | Notebooks; a hosted database | Simple to run and maintain, and Owen wants SQL practice. |
+| 2026-11-09 | **Python 3.13, not 3.12.** | 3.12, as first planned | All the libraries support 3.13, it's what's on Owen's machine, and it gets security fixes a year longer. Pinned in `pyproject.toml` so the laptop and Actions match. |
+| 2026-11-09 | **Kalshi collection is on hold** until Kalshi gives written permission. The tables and the Pick check are designed but switched off. | Collecting from the no-key public endpoints anyway; dropping Kalshi | Kalshi's Developer Agreement limits API use to a member's own trading and forbids storing or sharing data without written authorization (sections 3, 3.1, 3.5, 4.1.1). The project's rule is to respect terms. History stays downloadable, so waiting costs nothing if they agree. |
+| 2026-11-09 | **The Odds API free tier:** 12 snapshots a day, US region, spreads only. | The $30 a month tier; adding Pinnacle through the EU region | Free covers about 16 calls a day. Pinnacle would double the cost per call. The trade-off is that our "closing line" can be up to an hour before tip. Revisit if that gap proves to matter. |
+| 2026-11-09 | **Scheduled jobs commit data straight to `main`.** Code still goes through branches and PRs. | PRs for everything | The ledger's commit time is the public proof a call was made before tip. |
+| 2026-11-09 | **Raw source data and the tables built from it live in the private repo.** The public repo has our team map, the ledger, consensus closing lines and scorecard outputs. | Everything public | The Odds API and CBBD both forbid republishing their data as a dataset. Derived numbers are allowed. |
+| 2026-11-09 | **Canonical team and game IDs are CBBD's numeric IDs.** | Our own ID scheme; Torvik names | CBBD has stable numeric IDs. Torvik and the odds feed have only name strings, which change. |
+| 2026-11-09 | **The closing line is our last snapshot before tip** (median across books). CBBD's line is a cross-check, and the backtest yardstick only after its meaning is tested. | Trusting CBBD's `spread` as the close | CBBD lines have no timestamp, and nothing documents whether `spread` is the true close. |
+| 2026-11-09 | **Torvik's published game predictions are not used as point-in-time.** The baseline margin is computed from the prior day's ratings. | Using the `prediction` column in his schedule file | It isn't documented whether that column is frozen before tip. Our daily snapshots will test it. |
+| 2026-11-09 | **Ratings for a game on date D come from the file dated D−1.** | Using the same-day file | It isn't known whether a date's file includes that day's games. The safe choice costs one day of freshness. Relax it only after a test. |
+| 2026-11-09 | **Season 2020-21 is excluded** from training and headline results, and reported in its own row. | Modeling it with a separate home-court term | Home-court advantage collapsed with no fans. Excluding it is the simplest honest choice; a separate term can be tried later as its own change. |
+| 2026-11-09 | **"Matches or beats Torvik" is judged on distance to the closing line,** not on error against final scores. | Error vs. results | The close is the best public predictor, and results are noisy enough that real differences between models get lost in one season. |
+| 2026-11-09 | **Calibration is a logistic curve on the size of the edge,** with isotonic regression reported as a check. | Isotonic as the default; raw Φ(edge / σ) | Logistic is stable on small samples and easy to explain. The raw formula overstates confidence. |

@@ -1,0 +1,102 @@
+# What this does, in plain language:
+# Once a day, in the morning US time (before games), it downloads two Bart Torvik files
+# (team ratings and the full schedule) and saves a raw, time-stamped copy of each.
+# Past versions of these files cannot be recreated later, so they are captured daily.
+#
+# The raw files go to the PRIVATE data repo (ohektner/shac-sb-index-data), because they
+# are third-party data we should not republish. This public repo only gets a status row
+# per file (line count, file hash), never the data itself.
+name: torvik-snapshot
+
+on:
+  schedule:
+    - cron: "43 11 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: torvik-snapshot
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out this repo
+        uses: actions/checkout@v4
+
+      - name: Check out the private data repo
+        uses: actions/checkout@v4
+        with:
+          repository: ohektner/shac-sb-index-data
+          token: ${{ secrets.DATA_REPO_TOKEN }}
+          path: data-repo
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync --frozen --no-dev
+
+      - name: Take Torvik snapshot
+        id: snapshot
+        continue-on-error: true
+        run: >
+          uv run --no-sync python -m shac.snapshots.torvik
+          --data-dir data-repo
+          --log data/status/torvik_snapshot_log.csv
+          --season 2027
+
+      - name: Commit raw snapshot to the private data repo
+        if: always()
+        working-directory: data-repo
+        run: |
+          STAMP=$(date -u +%Y%m%dT%H%M%SZ)
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add torvik
+          if git diff --cached --quiet; then
+            echo "Nothing new to commit in the data repo."
+            exit 0
+          fi
+          git commit -m "torvik snapshot $STAMP"
+          for attempt in 1 2 3; do
+            if git push; then
+              exit 0
+            fi
+            git pull --rebase
+          done
+          echo "Push to the data repo failed after 3 tries."
+          exit 1
+
+      - name: Commit status log to this repo (main)
+        if: always()
+        run: |
+          STAMP=$(date -u +%Y%m%dT%H%M%SZ)
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/status/torvik_snapshot_log.csv
+          if git diff --cached --quiet; then
+            echo "Nothing new to commit in the status log."
+            exit 0
+          fi
+          git commit -m "status: torvik snapshot $STAMP"
+          for attempt in 1 2 3; do
+            if git push; then
+              exit 0
+            fi
+            git pull --rebase
+          done
+          echo "Push of the status log failed after 3 tries."
+          exit 1
+
+      - name: Fail the run if the snapshot step failed
+        if: always() && steps.snapshot.outcome == 'failure'
+        run: |
+          echo "The snapshot step failed; see its log above."
+          exit 1
