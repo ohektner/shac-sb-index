@@ -1,0 +1,26 @@
+# Secrets and local settings
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+
+# Local data that must never be committed here (raw third-party data lives in the private repo)
+data-repo/
+data/raw/
+*.duckdb
+*.duckdb.wal
+
+# Editors and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
