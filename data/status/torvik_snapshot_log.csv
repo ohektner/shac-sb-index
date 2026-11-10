@@ -1,3 +1,5 @@
 fetched_at_utc,status,http_status,source_file,n_lines,file,sha256,bytes
 2026-11-10T14:55:37Z,blocked,403,2027_team_results.csv,,,,
 2026-11-10T14:55:47Z,blocked,403,2027_super_sked.csv,,,,
+2026-11-10T14:56:42Z,ok,200,2027_team_results.csv,366,torvik/raw/2026/11/10/2027_team_results_20261110T145642Z.csv.gz,4f8607e95f585632b10a3474739834c9bfad2c83dbdaf1e46180cccd3c9b2674,85050
+2026-11-10T14:56:53Z,ok,200,2027_super_sked.csv,6009,torvik/raw/2026/11/10/2027_super_sked_20261110T145653Z.csv.gz,0e33e45e268bfb81639d01d2ac79ce19cacbdabd2e36edafa89f1c1738f8d6e9,1285081
