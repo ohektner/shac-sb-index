@@ -17,6 +17,8 @@ name: polymarket-snapshot
 
 on:
   schedule:
+    # Times are UTC. Arizona (UTC-7, no daylight saving): 7:41a, 10:41a, 12:41p, 2:41p,
+    # 4:41p, 7:41p. Odd minutes avoid the top-of-hour rush on GitHub.
     - cron: "41 2,14,17,19,21,23 * * *"
   workflow_dispatch:
 
