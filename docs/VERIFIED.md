@@ -10,7 +10,7 @@ Status key: **Confirmed** = matches what the plan assumed. **Changed** = differs
 | --- | --- | --- |
 | Free tier | 500 credits a month | Confirmed |
 | Cost per call | markets × regions. Spreads + `us` = 1 credit. Empty responses cost 0. `/sports` and `/events` are free. | Confirmed |
-| One call returns all games | Docs don't mention paging | Unknown (check on first real call) |
+| One call returns all games | First real call, 2026-11-10: one call cost 1 credit and returned 56 games, each with a spread from at least one book. The feed lists games once books post lines, about a day ahead. Books seen: betonlineag, lowvig, betrivers, draftkings, fanduel, bovada, betmgm, betus. No sign of paging. | Confirmed by test |
 | Paid tiers | $30/mo = 20,000 credits; $59 = 100,000 | Confirmed |
 | US books | betonlineag, betmgm, betrivers, betus, bovada, williamhill_us, draftkings, fanatics, fanduel, lowvig, mybookieag. ESPN BET, Hard Rock and others are in a separate `us2` region. | Confirmed |
 | Pinnacle | `eu` region only, so adding it doubles the cost per call | Confirmed |
@@ -63,7 +63,7 @@ Sources: https://collegefootballdata.com/api-tiers · https://api.collegebasketb
 | cbbdata API | Domain did not resolve | Unknown (likely dead) |
 | robots.txt | Disallows all `.json` files and several pages, `Crawl-delay: 10`, blocks named AI bots. | Changed |
 | Owner's stance | For bulk, "please get in touch with me." Pulling a file "occasionally--even like once an hour--is certainly fine." | Confirmed |
-| Cloudflare | Data files fetched fine; `schedule.php` hit a browser check. GitHub Actions IPs untested. | Unknown |
+| Cloudflare | Tested 2026-11-10: GitHub Actions gets HTTP 403 with a browser check on both CSV files. The same request from Owen's home connection works (366 and 6,009 lines). | Changed: can't fetch from Actions |
 | Team names | Free-text names, no numeric id | Confirmed |
 
 Sources: https://adamcwisports.blogspot.com/p/data.html · https://barttorvik.com/robots.txt · https://github.com/andreweatherman/cbbdata · https://github.com/andreweatherman/toRvik
@@ -116,4 +116,5 @@ Sources: https://theacc.com/sports/2025/12/29/availability-reporting-mbb.aspx ·
 4. **CBBD lines:** no timestamp, so "closing line" must be tested before it's used as the G1 yardstick.
 5. **CBBD paging:** 3,000-row caps mean date-window paging with a cap check.
 6. **Odds budget:** the free tier allows about 16 calls a day. Pinnacle would halve that.
-7. **Availability:** official reports cover conference games in a handful of leagues, through one vendor app with no public feed. ESPN and RotoWire are out.
+7. **Torvik from Actions:** blocked by a browser check (tested 2026-11-10). The daily snapshot runs from Owen's machine, and the Actions workflow is switched off.
+8. **Availability:** official reports cover conference games in a handful of leagues, through one vendor app with no public feed. ESPN and RotoWire are out.
