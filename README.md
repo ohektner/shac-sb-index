@@ -17,6 +17,7 @@ Shac SB Index prices every D-I men's basketball game against the point spread an
 ## Docs
 
 - [Architecture](docs/ARCHITECTURE.md): the data flow diagram, table schemas and the no-leakage rule
+- [Status](docs/STATUS.md): where things stand right now
 - [Plan](docs/PLAN.md): gates and tasks
 - [Pre-registration](docs/PREREGISTRATION.md): how the model is judged, fixed before any results
 - [Decision log](docs/DECISIONS.md): what was decided and why
