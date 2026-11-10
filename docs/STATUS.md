@@ -29,13 +29,13 @@ Where the project stands right now. Update this at the end of every working sess
 
 ## In progress
 
-Nothing running by hand. Everything above runs on its own schedule.
+- **Task 1.3, Torvik Time Machine backfill:** Bart Torvik OK'd it on 2026-11-10 (do it slowly; the CDN may block). Runs from Owen's PC, one season at a time, about 1,235 files at 20+ seconds apart. See DECISIONS.md.
+- **Scheduled jobs not firing:** no scheduled run had happened by 3:15 p.m. Arizona on 2026-11-10. PR #13 edited the four scheduled workflows so GitHub re-reads them. If they still don't fire, switch each workflow off and on in the Actions tab (ask Owen first).
 
 ## Waiting on
 
 | What | Waiting for | Blocks | Fallback |
 | --- | --- | --- | --- |
-| Torvik Time Machine backfill (task 1.3) | Bart Torvik's reply (DM on X, sent 2026-11-10) | Tasks 1.4, 1.6, 1.7 and everything after | After about a week, check whether Torvik's per-season `YYYY_results.csv` files hold pregame ratings |
 | Task 1.2: are CBBD's lines true closes? | About a week of finished games in our own snapshots | The $30 historical-odds decision | n/a |
 | Availability report access | Nothing sent yet; held until task 1.11 | G2 news collection | Google News RSS, team sites |
 
@@ -43,7 +43,7 @@ Nothing running by hand. Everything above runs on its own schedule.
 
 1. **About 2026-11-13:** check the G0 gate and run the auditor.
 2. **About 2026-11-17:** task 1.2, comparing CBBD's lines with our pre-tip snapshots. Then recommend to Owen whether to buy one month of historical odds. It looks likely, because CBBD has no opening spreads before 2024-25.
-3. **Once Torvik ratings are in hand:** decode the columns (1.4), join history and write the leakage tests (1.6), then the baseline scorecard (1.7).
+3. **Once the Torvik backfill is done:** decode the columns (1.4), join history and write the leakage tests (1.6), then the baseline scorecard (1.7).
 
 ## Notes for the next session
 
