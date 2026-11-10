@@ -58,12 +58,12 @@ Sources: https://collegefootballdata.com/api-tiers · https://api.collegebasketb
 | --- | --- | --- |
 | Bulk files | `https://barttorvik.com/YYYY_team_results.csv` (and `.json`), `YYYY_super_sked.csv` (55 columns, no header), `YYYY_results.csv`. Year = season's ending year. | Confirmed |
 | Time Machine | `https://barttorvik.com/timemachine/team_results/YYYYMMDD_team_results.json.gz`. Data seen for 2015-01-15, 2018-12-01, 2026-01-01. 45 fields, no headers. | Confirmed |
-| Time Machine timing | Whether a date's file includes that date's games | Unknown (use the prior day until tested) |
-| Game predictions | `super_sked` has a `prediction` text column. Not documented whether it is frozen before tip. | Unknown (treat as not point-in-time) |
+| Time Machine timing | Bart Torvik (2026-11-10): the files are "frozen in the morning," so a date's file most likely excludes that date's games. Not yet tested on our data (task 1.4). | Owner says; untested (use the prior day until tested) |
+| Game predictions | `super_sked` has a `prediction` text column. Bart Torvik (2026-11-10): the prediction is kept as of when the game went into his system, "so technically not at tip, but pretty close." How long before tip that is hasn't been measured; our daily `super_sked` snapshots can show it. | Owner says; lead time unmeasured (still not used, see DECISIONS.md) |
 | Player stats | `getadvstats.php?year=YYYY&csv=1`, `YYYY_all_advgames.json.gz` (per game). No point-in-time snapshot, but per-game data can rebuild one. | Confirmed |
 | cbbdata API | Domain did not resolve | Unknown (likely dead) |
 | robots.txt | Disallows all `.json` files and several pages, `Crawl-delay: 10`, blocks named AI bots. | Changed |
-| Owner's stance | For bulk, "please get in touch with me." Pulling a file "occasionally--even like once an hour--is certainly fine." | Confirmed |
+| Owner's stance | For bulk, "please get in touch with me." Pulling a file "occasionally--even like once an hour--is certainly fine." Asked on X 2026-11-10 about the Time Machine backfill; he replied that doing it slowly "should be fine," with a warning that it might get blocked by the CDN. | Confirmed (reply on file with Owen) |
 | Cloudflare | Tested 2026-11-10: GitHub Actions gets HTTP 403 with a browser check on both CSV files. The same request from Owen's home connection works (366 and 6,009 lines). | Changed: can't fetch from Actions |
 | Team names | Free-text names, no numeric id | Confirmed |
 
@@ -116,8 +116,8 @@ Sources: https://theacc.com/sports/2025/12/29/availability-reporting-mbb.aspx ·
 ## What changes the plan
 
 1. **Kalshi:** the Developer Agreement restricts API use to a member's own trading and forbids storing or sharing the data without written permission. Hold all Kalshi collection until Kalshi answers a permission request.
-2. **Torvik:** the Time Machine files fall under a robots.txt disallow. Ask Bart Torvik before the backfill. Daily pulls of the current CSV files are within what he says is fine.
-3. **Torvik predictions:** not known to be frozen before tip. Compute the baseline margin from prior-day ratings.
+2. **Torvik:** the Time Machine files fall under a robots.txt disallow. Bart Torvik OK'd a slow backfill on 2026-11-10. Daily pulls of the current CSV files are within what he says is fine.
+3. **Torvik predictions:** per Bart Torvik, kept as of when the game went into his system, close to but not at tip. The baseline margin is still computed from prior-day ratings; using his predictions is a separate decision for Owen after task 1.4.
 4. **CBBD lines:** no timestamp, so "closing line" must be tested before it's used as the G1 yardstick.
 5. **CBBD paging:** 3,000-row caps mean date-window paging with a cap check.
 6. **Odds budget:** the free tier allows about 16 calls a day. Pinnacle would halve that.
