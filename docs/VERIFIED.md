@@ -89,6 +89,10 @@ Sources: https://adamcwisports.blogspot.com/p/data.html · https://barttorvik.co
 
 Sources: https://docs.kalshi.com/getting_started/quick_start_market_data · https://docs.kalshi.com/getting_started/historical_data · https://docs.kalshi.com/getting_started/rate_limits · https://docs.kalshi.com/api-reference/market/get-market-candlesticks · https://kalshi-public-docs.s3.amazonaws.com/Kalshi-Developer-Agreement.pdf
 
+## Polymarket
+
+Written permission received by Owen on 2026-11-10 for reading the public API, storing prices privately and publishing derived numbers; Owen keeps the reply. Endpoints, paging and response shapes are in `docs/POLYMARKET.md`. Polymarket answers GitHub Actions' servers (tested 2026-11-10).
+
 ## Availability sources
 
 | Item | Finding | Status |
