@@ -1,0 +1,3 @@
+fetched_at_utc,status,http_status,source_file,n_lines,file,sha256,bytes
+2026-11-10T14:55:37Z,blocked,403,2027_team_results.csv,,,,
+2026-11-10T14:55:47Z,blocked,403,2027_super_sked.csv,,,,
