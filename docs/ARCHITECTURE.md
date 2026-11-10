@@ -110,15 +110,16 @@ Tests enforce this. `tests/test_no_leakage.py` (G1) fails if any feature row has
 
 Test: every team name in every source for every season resolves to exactly one `team_id`, and no two teams share an alias in the same season.
 
-**`closing_lines`** (`data/closing_lines.parquet`). Writer: `build_closing_lines`, nightly.
+**`closing_lines`** (private repo, `tables/closing_lines.parquet`; moved from the public list on 2026-11-10 because the `cbbd` rows are CBBD data). Writer: `shac.tables.build`. Only derived numbers built from it (CLV, distance to the close) are published.
 
 | Column | Type | Notes |
 | --- | --- | --- |
 | `game_id` **PK** | int | |
 | `source` **PK** | text | `own_snapshots` (median of US books), `pinnacle`, or `cbbd` |
 | `close_home_spread` | float | Median across books in the last snapshot before tip |
-| `close_snapshot_at` | timestamp | Fetch time of that snapshot |
-| `minutes_before_tip` | int | How stale our "close" is |
+| `close_snapshot_at` | timestamp, nullable | Fetch time of that snapshot; null for `cbbd`, which has no timestamps |
+| `minutes_before_tip` | int, nullable | How stale our "close" is; null for `cbbd` |
+| `basis` | text | How the close was formed: `median_us_books`, `pinnacle`, `draftkings` or `median_cbbd_providers` |
 | `n_books` | int | Books in the median |
 | `open_home_spread` | float, nullable | Median in the first snapshot that had the game |
 | `open_snapshot_at` | timestamp, nullable | |
