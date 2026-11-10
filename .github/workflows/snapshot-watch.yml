@@ -6,6 +6,7 @@ name: snapshot-watch
 
 on:
   schedule:
+    # Times are UTC. Arizona (UTC-7, no daylight saving): 4:47 p.m. and 10:47 p.m.
     - cron: "47 23 * * *"
     - cron: "47 5 * * *"
   workflow_dispatch:

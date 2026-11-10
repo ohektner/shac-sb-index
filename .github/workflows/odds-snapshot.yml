@@ -16,6 +16,9 @@ name: odds-snapshot
 on:
   schedule:
     # 7 runs a day (2 credits each: US books + Pinnacle), about 434 of the free 500 a month.
+    # Times are UTC. Arizona (UTC-7, no daylight saving): 6:17a, 9:17a, 12:17p, 2:17p,
+    # 4:17p, 6:17p, 8:17p. Odd minutes avoid the top-of-hour rush when GitHub delays
+    # or drops scheduled runs.
     - cron: "17 13,16,19,21,23 * * *"
     - cron: "17 1,3 * * *"
   workflow_dispatch:
