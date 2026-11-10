@@ -1,0 +1,158 @@
+# What this does, in plain language:
+# Six times a day (weighted to US afternoons and evenings, when the spread markets are live)
+# it asks Polymarket's public Gamma API for every active college basketball event and saves
+# one raw, time-stamped copy. Spread markets only exist for about a day before tip-off, so
+# the price history has to be captured as it happens.
+#
+# Polymarket gave written permission to read its public API for this non-commercial project.
+# The raw data goes to the PRIVATE data repo (ohektner/shac-sb-index-data). This public repo
+# only gets a status row per run (counts and a file hash), never team names or prices.
+# No API key is needed.
+#
+# Safety notes:
+# - Tokens are not left on disk (persist-credentials: false). Only the two push steps
+#   get a token, and only for the moment they need it.
+# - Actions are pinned to exact commits so a changed tag can't swap the code we run.
+name: polymarket-snapshot
+
+on:
+  schedule:
+    - cron: "41 2,14,17,19,21,23 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: polymarket-snapshot
+  cancel-in-progress: false
+
+env:
+  LOG: data/status/polymarket_snapshot_log.csv
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      # Always the latest main, even when an old run is re-run, so the status log is current.
+      - name: Check out this repo
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: main
+          persist-credentials: false
+
+      - name: Check out the private data repo
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: ohektner/shac-sb-index-data
+          token: ${{ secrets.DATA_REPO_TOKEN }}
+          path: data-repo
+          persist-credentials: false
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync --frozen --no-dev
+
+      - name: Take Polymarket snapshot
+        id: snapshot
+        continue-on-error: true
+        run: >
+          uv run --no-sync python -m shac.snapshots.polymarket
+          --data-dir data-repo
+          --log "$LOG"
+
+      - name: Push raw snapshot to the private data repo
+        id: push_data
+        if: always()
+        continue-on-error: true
+        working-directory: data-repo
+        env:
+          TOKEN: ${{ secrets.DATA_REPO_TOKEN }}
+        run: |
+          if [ ! -d polymarket ]; then
+            echo "No snapshot files to push."
+            exit 0
+          fi
+          AUTH=$(printf 'x-access-token:%s' "$TOKEN" | base64 -w0)
+          echo "::add-mask::$AUTH"
+          auth_git() { git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic $AUTH" "$@"; }
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add polymarket
+          if git diff --cached --quiet; then
+            echo "Nothing new to push to the data repo."
+            exit 0
+          fi
+          git commit -q -m "polymarket snapshot $(date -u +%Y%m%dT%H%M%SZ)"
+          for attempt in 1 2 3 4 5; do
+            if auth_git push -q origin HEAD:main; then
+              exit 0
+            fi
+            sleep $((attempt * 5))
+            auth_git pull -q --rebase origin main || true
+          done
+          echo "Push to the data repo failed after 5 tries."
+          exit 1
+
+      # If the file never reached the data repo, the public record must say so.
+      - name: Record a failed push in the status log
+        if: always() && steps.push_data.outcome == 'failure'
+        run: echo "$(date -u +%Y-%m-%dT%H:%M:%SZ),push_failed,,,,,,," >> "$LOG"
+
+      - name: Commit status log to this repo (main)
+        id: push_status
+        if: always()
+        continue-on-error: true
+        env:
+          TOKEN: ${{ github.token }}
+        run: |
+          if [ ! -f "$LOG" ]; then
+            echo "No status log to commit."
+            exit 0
+          fi
+          AUTH=$(printf 'x-access-token:%s' "$TOKEN" | base64 -w0)
+          echo "::add-mask::$AUTH"
+          auth_git() { git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic $AUTH" "$@"; }
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # Pull out just the rows this run added, so they can be re-applied on top of
+          # whatever main looks like now (no merge conflicts, no lost rows).
+          git add -N "$LOG"
+          NEW_ROWS=$(git diff --unified=0 -- "$LOG" | grep '^+' | grep -v '^+++' | cut -c2- || true)
+          if [ -z "$NEW_ROWS" ]; then
+            echo "No new status rows."
+            exit 0
+          fi
+          STAMP=$(date -u +%Y%m%dT%H%M%SZ)
+          for attempt in 1 2 3 4 5; do
+            auth_git fetch -q origin main
+            git reset -q --hard FETCH_HEAD
+            mkdir -p "$(dirname "$LOG")"
+            if [ -s "$LOG" ]; then
+              printf '%s\n' "$NEW_ROWS" | grep -v '^fetched_at_utc,' >> "$LOG" || true
+            else
+              printf '%s\n' "$NEW_ROWS" > "$LOG"
+            fi
+            git add "$LOG"
+            git commit -q -m "status: polymarket snapshot $STAMP"
+            if auth_git push -q origin HEAD:main; then
+              exit 0
+            fi
+            sleep $((attempt * 5))
+          done
+          echo "Push of the status log failed after 5 tries."
+          exit 1
+
+      - name: Fail the run if any step above failed
+        if: >
+          always() && (steps.snapshot.outcome == 'failure'
+          || steps.push_data.outcome == 'failure'
+          || steps.push_status.outcome == 'failure')
+        run: |
+          echo "snapshot: ${{ steps.snapshot.outcome }}, data push: ${{ steps.push_data.outcome }}, status push: ${{ steps.push_status.outcome }}"
+          exit 1
