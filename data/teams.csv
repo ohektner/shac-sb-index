@@ -1,0 +1,370 @@
+team_id,name,conference,first_season,last_season
+1,Abilene Christian,UAC,2019,2027
+2,Air Force,Mountain West,2019,2027
+3,Akron,MAC,2019,2027
+4,Alabama A&M,SWAC,2019,2027
+5,Alabama,SEC,2019,2027
+6,Alabama State,SWAC,2019,2027
+7,Alcorn State,SWAC,2019,2027
+8,American University,Patriot,2019,2027
+9,App State,Sun Belt,2019,2027
+10,Arizona State,Big 12,2019,2027
+11,Arizona,Big 12,2019,2027
+12,Arkansas,SEC,2019,2027
+13,Arkansas State,Sun Belt,2019,2027
+14,Arkansas-Pine Bluff,SWAC,2019,2027
+15,Army,Patriot,2019,2027
+16,Auburn,SEC,2019,2027
+17,Austin Peay,ASUN,2019,2027
+18,BYU,Big 12,2019,2027
+19,Ball State,MAC,2019,2027
+20,Baylor,Big 12,2019,2027
+21,Bellarmine,ASUN,2021,2027
+22,Belmont,MVC,2019,2027
+23,Bethune-Cookman,SWAC,2019,2027
+24,Binghamton,Am. East,2019,2027
+25,Boise State,Mountain West,2019,2027
+26,Boston College,ACC,2019,2027
+27,Boston University,Patriot,2019,2027
+28,Bowling Green,MAC,2019,2027
+29,Bradley,MVC,2019,2027
+30,Brown,Ivy,2019,2027
+31,Bryant,Am. East,2019,2027
+32,Bucknell,Patriot,2019,2027
+33,Buffalo,MAC,2019,2027
+34,Butler,Big East,2019,2027
+35,Cal Poly,Big West,2019,2027
+36,Cal State Bakersfield,Big West,2019,2027
+37,Cal State Fullerton,Big West,2019,2027
+38,Cal State Northridge,Big West,2019,2027
+39,California Baptist,UAC,2019,2027
+40,California,ACC,2019,2027
+41,Campbell,CAA,2019,2027
+42,Canisius,Metro,2019,2027
+43,Central Arkansas,ASUN,2019,2027
+44,Central Connecticut,NEC,2019,2027
+45,Central Michigan,MAC,2019,2027
+46,Charleston,CAA,2019,2027
+47,Charleston Southern,Big South,2019,2027
+48,Charlotte,American,2019,2027
+49,Chattanooga,SoCon,2019,2027
+50,Chicago State,NEC,2019,2027
+51,Cincinnati,Big 12,2019,2027
+52,Clemson,ACC,2019,2027
+53,Cleveland State,Horizon,2019,2027
+54,Coastal Carolina,Sun Belt,2019,2027
+55,Colgate,Patriot,2019,2027
+56,Colorado,Big 12,2019,2027
+57,Colorado State,Mountain West,2019,2027
+58,Columbia,Ivy,2019,2027
+59,Coppin State,MEAC,2019,2027
+60,Cornell,Ivy,2019,2027
+61,Creighton,Big East,2019,2027
+62,Dartmouth,Ivy,2019,2027
+63,Davidson,A-10,2019,2027
+64,Dayton,A-10,2019,2027
+65,DePaul,Big East,2019,2027
+66,Delaware,CUSA,2019,2027
+67,Delaware State,MEAC,2019,2027
+68,Denver,Summit,2019,2027
+69,Detroit Mercy,Horizon,2019,2027
+70,Drake,MVC,2019,2027
+71,Drexel,CAA,2019,2027
+72,Duke,ACC,2019,2027
+73,Duquesne,A-10,2019,2027
+74,East Carolina,American,2019,2027
+75,East Tennessee State,SoCon,2019,2027
+76,East Texas A&M,Southland,2023,2027
+77,Eastern Illinois,OVC,2019,2027
+78,Eastern Kentucky,ASUN,2019,2027
+79,Eastern Michigan,MAC,2019,2027
+80,Eastern Washington,Big Sky,2019,2027
+81,Elon,CAA,2019,2027
+82,Evansville,MVC,2019,2027
+83,Fairfield,Metro,2019,2027
+84,Fairleigh Dickinson,NEC,2019,2027
+85,Florida A&M,SWAC,2019,2027
+86,Florida Atlantic,American,2019,2027
+87,Florida,SEC,2019,2027
+88,Florida Gulf Coast,ASUN,2019,2027
+89,Florida International,CUSA,2019,2027
+90,Florida State,ACC,2019,2027
+91,Fordham,A-10,2019,2027
+92,Fresno State,Mountain West,2019,2027
+93,Furman,SoCon,2019,2027
+94,Gardner-Webb,Big South,2019,2027
+95,George Mason,A-10,2019,2027
+96,George Washington,A-10,2019,2027
+97,Georgetown,Big East,2019,2027
+98,Georgia,SEC,2019,2027
+99,Georgia Southern,Sun Belt,2019,2027
+100,Georgia State,Sun Belt,2019,2027
+101,Georgia Tech,ACC,2019,2027
+102,Gonzaga,WCC,2019,2027
+103,Grambling,SWAC,2019,2027
+104,Grand Canyon,Mountain West,2019,2027
+105,Green Bay,Horizon,2019,2027
+106,Hampton,CAA,2019,2027
+107,Harvard,Ivy,2019,2027
+108,Hawai'i,Big West,2019,2027
+109,High Point,Big South,2019,2027
+110,Hofstra,CAA,2019,2027
+111,Holy Cross,Patriot,2019,2027
+112,Houston Christian,Southland,2019,2027
+113,Houston,Big 12,2019,2027
+114,Howard,MEAC,2019,2027
+115,IU Indianapolis,Horizon,2019,2027
+116,Idaho State,Big Sky,2019,2027
+117,Idaho,Big Sky,2019,2027
+118,Illinois,Big Ten,2019,2027
+119,Illinois State,MVC,2019,2027
+120,Incarnate Word,Southland,2019,2027
+121,Indiana,Big Ten,2019,2027
+122,Indiana State,MVC,2019,2027
+123,Iona,Metro,2019,2027
+124,Iowa,Big Ten,2019,2027
+125,Iowa State,Big 12,2019,2027
+126,Jackson State,SWAC,2019,2027
+127,Jacksonville,ASUN,2019,2027
+128,Jacksonville State,CUSA,2019,2027
+129,James Madison,Sun Belt,2019,2027
+130,Kansas City,Summit,2019,2027
+131,Kansas,Big 12,2019,2027
+132,Kansas State,Big 12,2019,2027
+133,Kennesaw State,CUSA,2019,2027
+134,Kent State,MAC,2019,2027
+135,Kentucky,SEC,2019,2027
+136,LSU,SEC,2019,2027
+137,La Salle,A-10,2019,2027
+138,Lafayette,Patriot,2019,2027
+139,Lamar,Southland,2019,2027
+140,Le Moyne,NEC,2024,2027
+141,Lehigh,Patriot,2019,2027
+142,Liberty,CUSA,2019,2027
+143,Lipscomb,ASUN,2019,2027
+144,Little Rock,OVC,2019,2027
+145,Long Beach State,Big West,2019,2027
+146,Long Island University,NEC,2019,2027
+147,Longwood,Big South,2019,2027
+148,Louisiana,Sun Belt,2019,2027
+149,Louisiana Tech,CUSA,2019,2027
+150,Louisville,ACC,2019,2027
+151,Loyola Chicago,A-10,2019,2027
+152,Loyola Maryland,Patriot,2019,2027
+153,Loyola Marymount,WCC,2019,2027
+154,Maine,Am. East,2019,2027
+155,Manhattan,Metro,2019,2027
+156,Marist,Metro,2019,2027
+157,Marquette,Big East,2019,2027
+158,Marshall,Sun Belt,2019,2027
+159,Maryland Eastern Shore,MEAC,2019,2027
+160,Maryland,Big Ten,2019,2027
+161,Massachusetts,MAC,2019,2027
+162,McNeese,Southland,2019,2027
+163,Memphis,American,2019,2027
+164,Mercer,SoCon,2019,2027
+165,Mercyhurst,NEC,2025,2027
+166,Merrimack,Metro,2020,2027
+167,Miami (OH),MAC,2019,2027
+168,Miami,ACC,2019,2027
+169,Michigan State,Big Ten,2019,2027
+170,Michigan,Big Ten,2019,2027
+171,Middle Tennessee,CUSA,2019,2027
+172,Milwaukee,Horizon,2019,2027
+173,Minnesota,Big Ten,2019,2027
+174,Mississippi State,SEC,2019,2027
+175,Mississippi Valley State,SWAC,2019,2027
+176,Missouri State,CUSA,2019,2027
+177,Missouri,SEC,2019,2027
+178,Monmouth,CAA,2019,2027
+179,Montana,Big Sky,2019,2027
+180,Montana State,Big Sky,2019,2027
+181,Morehead State,OVC,2019,2027
+182,Morgan State,MEAC,2019,2027
+183,Mount St. Mary's,Metro,2019,2027
+184,Murray State,MVC,2019,2027
+185,NC State,ACC,2019,2027
+186,NJIT,Am. East,2019,2027
+187,Navy,Patriot,2019,2027
+188,Nebraska,Big Ten,2019,2027
+189,Nevada,Mountain West,2019,2027
+190,New Hampshire,Am. East,2019,2027
+191,New Mexico,Mountain West,2019,2027
+192,New Mexico State,CUSA,2019,2027
+193,New Orleans,Southland,2019,2027
+194,Niagara,Metro,2019,2027
+195,Nicholls,Southland,2019,2027
+196,Norfolk State,MEAC,2019,2027
+197,North Alabama,ASUN,2019,2027
+198,North Carolina A&T,CAA,2019,2027
+199,North Carolina Central,MEAC,2019,2027
+200,North Carolina,ACC,2019,2027
+201,North Dakota,Summit,2019,2027
+202,North Dakota State,Summit,2019,2027
+203,North Florida,ASUN,2019,2027
+204,North Texas,American,2019,2027
+205,Northeastern,CAA,2019,2027
+206,Northern Arizona,Big Sky,2019,2027
+207,Northern Colorado,Big Sky,2019,2027
+208,Northern Illinois,MAC,2019,2027
+209,Northern Iowa,MVC,2019,2027
+210,Northern Kentucky,Horizon,2019,2027
+211,Northwestern State,Southland,2019,2027
+212,Northwestern,Big Ten,2019,2027
+213,Notre Dame,ACC,2019,2027
+214,Oakland,Horizon,2019,2027
+215,Ohio,MAC,2019,2027
+216,Ohio State,Big Ten,2019,2027
+217,Oklahoma,SEC,2019,2027
+218,Oklahoma State,Big 12,2019,2027
+219,Old Dominion,Sun Belt,2019,2027
+220,Ole Miss,SEC,2019,2027
+221,Omaha,Summit,2019,2027
+222,Oral Roberts,Summit,2019,2027
+223,Oregon,Big Ten,2019,2027
+224,Oregon State,WCC,2019,2027
+225,Pacific,WCC,2019,2027
+226,Penn State,Big Ten,2019,2027
+227,Pennsylvania,Ivy,2019,2027
+228,Pepperdine,WCC,2019,2027
+229,Pittsburgh,ACC,2019,2027
+230,Portland,WCC,2019,2027
+231,Portland State,Big Sky,2019,2027
+232,Prairie View A&M,SWAC,2019,2027
+233,Presbyterian,Big South,2019,2027
+234,Princeton,Ivy,2019,2027
+235,Providence,Big East,2019,2027
+236,Purdue,Big Ten,2019,2027
+237,Purdue Fort Wayne,Horizon,2019,2027
+238,Quinnipiac,Metro,2019,2027
+239,Radford,Big South,2019,2027
+240,Rhode Island,A-10,2019,2027
+241,Rice,American,2019,2027
+242,Richmond,A-10,2019,2027
+243,Rider,Metro,2019,2027
+244,Robert Morris,Horizon,2019,2027
+245,Rutgers,Big Ten,2019,2027
+246,SE Louisiana,Southland,2019,2027
+247,SIU Edwardsville,OVC,2019,2027
+248,SMU,ACC,2019,2027
+249,Sacramento State,Big Sky,2019,2027
+250,Sacred Heart,Metro,2019,2027
+251,Saint Joseph's,A-10,2019,2027
+252,Saint Louis,A-10,2019,2027
+253,Saint Mary's,WCC,2019,2027
+254,Saint Peter's,Metro,2019,2027
+255,Sam Houston,CUSA,2019,2027
+256,Samford,SoCon,2019,2027
+257,San Diego State,Mountain West,2019,2027
+258,San Diego,WCC,2019,2027
+259,San Francisco,WCC,2019,2027
+260,San José State,Mountain West,2019,2027
+261,Santa Clara,WCC,2019,2027
+262,Seattle U,WCC,2019,2027
+263,Seton Hall,Big East,2019,2027
+264,Siena,Metro,2019,2027
+265,South Alabama,Sun Belt,2019,2027
+266,South Carolina,SEC,2019,2027
+267,South Carolina State,MEAC,2019,2027
+268,South Carolina Upstate,Big South,2019,2027
+269,South Dakota,Summit,2019,2027
+270,South Dakota State,Summit,2019,2027
+271,South Florida,American,2019,2027
+272,Southeast Missouri State,OVC,2019,2027
+273,Southern Illinois,MVC,2019,2027
+274,Southern,SWAC,2019,2027
+275,Southern Miss,Sun Belt,2019,2027
+276,Southern Utah,UAC,2019,2027
+277,St. Bonaventure,A-10,2019,2027
+278,St. Francis (PA),NEC,2019,2026
+279,St. John's,Big East,2019,2027
+280,St. Thomas-Minnesota,Summit,2022,2027
+281,Stanford,ACC,2019,2027
+282,Stephen F. Austin,Southland,2019,2027
+283,Stetson,ASUN,2019,2027
+284,Stonehill,NEC,2023,2027
+285,Stony Brook,CAA,2019,2027
+286,Syracuse,ACC,2019,2027
+287,TCU,Big 12,2019,2027
+288,Tarleton State,UAC,2021,2027
+289,Temple,American,2019,2027
+290,Tennessee State,OVC,2019,2027
+291,Tennessee Tech,OVC,2019,2027
+292,Tennessee,SEC,2019,2027
+293,Texas A&M,SEC,2019,2027
+294,Texas A&M-Corpus Christi,Southland,2019,2027
+295,Texas,SEC,2019,2027
+296,Texas Southern,SWAC,2019,2027
+297,Texas State,Sun Belt,2019,2027
+298,Texas Tech,Big 12,2019,2027
+299,The Citadel,SoCon,2019,2027
+300,Toledo,MAC,2019,2027
+301,Towson,CAA,2019,2027
+302,Troy,Sun Belt,2019,2027
+303,Tulane,American,2019,2027
+304,Tulsa,American,2019,2027
+305,UAB,American,2019,2027
+306,UAlbany,Am. East,2019,2027
+307,UC Davis,Big West,2019,2027
+308,UC Irvine,Big West,2019,2027
+309,UC Riverside,Big West,2019,2027
+310,UC San Diego,Big West,2021,2027
+311,UC Santa Barbara,Big West,2019,2027
+312,UCF,Big 12,2019,2027
+313,UCLA,Big Ten,2019,2027
+314,UConn,Big East,2019,2027
+315,UIC,MVC,2019,2027
+316,UL Monroe,Sun Belt,2019,2027
+317,UMBC,Am. East,2019,2027
+318,UMass Lowell,Am. East,2019,2027
+319,UNC Asheville,Big South,2019,2027
+320,UNC Greensboro,SoCon,2019,2027
+321,UNC Wilmington,CAA,2019,2027
+322,UNLV,Mountain West,2019,2027
+323,USC,Big Ten,2019,2027
+324,UT Arlington,UAC,2019,2027
+325,UT Martin,OVC,2019,2027
+326,UT Rio Grande Valley,Southland,2019,2027
+327,UTEP,CUSA,2019,2027
+328,UTSA,American,2019,2027
+329,Utah State,Mountain West,2019,2027
+330,Utah Tech,UAC,2021,2027
+331,Utah,Big 12,2019,2027
+332,Utah Valley,UAC,2019,2027
+333,VCU,A-10,2019,2027
+334,VMI,SoCon,2019,2027
+335,Valparaiso,MVC,2019,2027
+336,Vanderbilt,SEC,2019,2027
+337,Vermont,Am. East,2019,2027
+338,Villanova,Big East,2019,2027
+339,Virginia,ACC,2019,2027
+340,Virginia Tech,ACC,2019,2027
+341,Wagner,NEC,2019,2027
+342,Wake Forest,ACC,2019,2027
+343,Washington,Big Ten,2019,2027
+344,Washington State,WCC,2019,2027
+345,Weber State,Big Sky,2019,2027
+346,West Georgia,ASUN,2025,2027
+347,West Virginia,Big 12,2019,2027
+348,Western Carolina,SoCon,2019,2027
+349,Western Illinois,OVC,2019,2027
+350,Western Kentucky,CUSA,2019,2027
+351,Western Michigan,MAC,2019,2027
+352,Wichita State,American,2019,2027
+353,William & Mary,CAA,2019,2027
+354,Winthrop,Big South,2019,2027
+355,Wisconsin,Big Ten,2019,2027
+356,Wofford,SoCon,2019,2027
+357,Wright State,Horizon,2019,2027
+358,Wyoming,Mountain West,2019,2027
+359,Xavier,Big East,2019,2027
+360,Yale,Ivy,2019,2027
+361,Youngstown State,Horizon,2019,2027
+362,Queens University,ASUN,2023,2027
+363,Hartford,Indep.,2019,2023
+364,St. Francis Brooklyn,NEC,2019,2023
+365,Southern Indiana,OVC,2023,2027
+366,Lindenwood,OVC,2023,2027
+380,Savannah State,MEAC,2019,2019
+1073,West Florida,ASUN,2027,2027
+1507,New Haven,NEC,2026,2027
