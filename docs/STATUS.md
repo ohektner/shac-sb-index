@@ -30,7 +30,7 @@ Where the project stands right now. Update this at the end of every working sess
 ## In progress
 
 - **Task 1.3, Torvik Time Machine backfill:** Bart Torvik OK'd it on 2026-11-10 (do it slowly; the CDN may block). Runs from Owen's PC, one season at a time, about 1,235 files at 20+ seconds apart. See DECISIONS.md.
-- **Scheduled jobs not firing:** no scheduled run had happened by 3:15 p.m. Arizona on 2026-11-10. PR #13 edited the four scheduled workflows so GitHub re-reads them. If they still don't fire, switch each workflow off and on in the Actions tab (ask Owen first).
+- **Scheduled jobs not firing yet:** on 2026-11-10 the 9:17 a.m. and 12:17 p.m. odds slots and the 10:41 a.m. and 12:41 p.m. Polymarket slots (Arizona) passed with no run. PR #13 (comments only, so GitHub re-reads the schedules) was merged at about 1:28 p.m., earlier than planned: it was meant to wait until the 2:17 p.m. slot had also been missed. Check the Actions tab for runs marked "Scheduled." If none appear, switch each workflow off and on there (ask Owen first).
 
 ## Waiting on
 
