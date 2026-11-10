@@ -11,8 +11,9 @@ from shac.snapshots import torvik
 
 FIXED_TIME = datetime(2026, 11, 9, 11, 43, 0, tzinfo=UTC)
 # Made-up headerless CSV rows, including a non-ASCII character to prove bytes are untouched.
-TEAM_CSV = b"1,Test State,0.5,12.3\n2,Sample Tech,0.4,10.1\n3,Caf\xc3\xa9 U,0.3,9.9\n"
-SKED_CSV = b"11/10/26,Test State,Sample Tech,70,65\n"
+# Repeated so the files are longer than the job's minimum size (60 lines each).
+TEAM_CSV = b"1,Test State,0.5,12.3\n2,Sample Tech,0.4,10.1\n3,Caf\xc3\xa9 U,0.3,9.9\n" * 20
+SKED_CSV = b"11/10/26,Test State,Sample Tech,70,65\n" * 60
 
 
 def make_client(handler):
@@ -63,7 +64,7 @@ def test_happy_path(tmp_path):
     rows = read_log(tmp_path / "log.csv")
     assert [r["status"] for r in rows] == ["ok", "ok"]
     assert rows[0]["source_file"] == "2027_team_results.csv"
-    assert rows[0]["n_lines"] == "3"
+    assert rows[0]["n_lines"] == "60"
     assert rows[0]["sha256"] == hashlib.sha256(team_file.read_bytes()).hexdigest()
     assert rows[0]["file"] == "torvik/raw/2026/11/09/2027_team_results_20261109T114300Z.csv.gz"
 
@@ -81,6 +82,40 @@ def test_cloudflare_page_is_blocked_and_nothing_saved(tmp_path):
     assert [r["status"] for r in rows] == ["blocked", "blocked"]
     assert rows[0]["file"] == ""
     assert not (tmp_path / "data").exists()
+
+
+def test_empty_or_cut_off_file_is_an_error_and_not_saved(tmp_path):
+    def handler(request):
+        return httpx.Response(200, content=b"1,Test State,0.5,12.3\n")
+
+    assert run_job(make_client(handler), tmp_path, []) is False
+    rows = read_log(tmp_path / "log.csv")
+    assert [r["status"] for r in rows] == ["error", "error"]
+    assert rows[0]["n_lines"] == "1"
+    assert not (tmp_path / "data").exists()
+
+
+def test_stamp_is_taken_after_the_response_arrives(tmp_path):
+    # The clock moves forward one minute each time it is read.
+    ticks = iter(datetime(2026, 11, 9, 11, m, 0, tzinfo=UTC) for m in range(43, 60))
+    torvik.run(
+        make_client(good_handler),
+        tmp_path / "data",
+        tmp_path / "log.csv",
+        season=2027,
+        now=lambda: next(ticks),
+        sleep=lambda seconds: None,
+    )
+    rows = read_log(tmp_path / "log.csv")
+    # First file: clock read at :43 before the request and :44 after it.
+    assert rows[0]["fetched_at_utc"] == "2026-11-09T11:44:00Z"
+    assert "20261109T114400Z" in rows[0]["file"]
+
+
+def test_current_season_rolls_over_in_july():
+    assert torvik.current_season(datetime(2026, 11, 9, tzinfo=UTC)) == 2027
+    assert torvik.current_season(datetime(2027, 3, 20, tzinfo=UTC)) == 2027
+    assert torvik.current_season(datetime(2027, 7, 1, tzinfo=UTC)) == 2028
 
 
 def test_blocked_is_detected_from_the_body():

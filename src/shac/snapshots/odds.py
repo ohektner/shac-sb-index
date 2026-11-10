@@ -76,8 +76,25 @@ class FetchError(Exception):
 def _int_header(response: httpx.Response, name: str) -> int | None:
     """Read a credit-count header as an int, or None if missing or not a number."""
     try:
-        return int(response.headers[name])
+        # float() first, so a value like "480.0" still counts.
+        return int(float(response.headers[name]))
     except (KeyError, ValueError):
+        return None
+
+
+def _credit_count(row: dict[str, str]) -> int | None:
+    """Read credits_remaining from a log row, or None if the row has no count."""
+    try:
+        return int(float(row.get("credits_remaining", "")))
+    except ValueError:
+        return None
+
+
+def count_books(games: list) -> int | None:
+    """Count distinct bookmaker keys across all games. None if the data has an odd shape."""
+    try:
+        return len({book["key"] for game in games for book in game.get("bookmakers", [])})
+    except (AttributeError, KeyError, TypeError):
         return None
 
 
@@ -120,21 +137,25 @@ def fetch_odds(
 def should_skip_for_credits(rows: list[dict[str, str]], now: datetime) -> bool:
     """Decide whether to skip this run because the monthly credits are nearly gone.
 
-    Looks at the last run that actually called the API (skipped rows are ignored).
-    If that run left 5 or fewer credits, or the API said the quota was used up
-    (HTTP 429), skip. But only for 24 hours: after that, try one real call again,
-    so the job picks back up by itself when the monthly credits reset.
+    Looks at the last run that told us something about credits: a row with a credit
+    count, or one where the API said the quota was used up (HTTP 429). Skipped rows
+    and other errors carry no credit information, so they are ignored.
+    If that run left 5 or fewer credits, or was a 429, skip. But only for 24 hours:
+    after that, try one real call again, so the job picks back up by itself when
+    the monthly credits reset.
     """
-    real_runs = [r for r in rows if r.get("status") != "skipped_low_credits"]
-    if not real_runs:
+    informative = [
+        r
+        for r in rows
+        if r.get("status") != "skipped_low_credits"
+        and (_credit_count(r) is not None or r.get("http_status") == "429")
+    ]
+    if not informative:
         return False
-    last = real_runs[-1]
-    try:
-        low = int(last.get("credits_remaining", "")) <= LOW_CREDIT_LIMIT
-    except ValueError:
-        low = False
-    out_of_quota = last.get("http_status") == "429"
-    if not (low or out_of_quota):
+    last = informative[-1]
+    count = _credit_count(last)
+    low = count is not None and count <= LOW_CREDIT_LIMIT
+    if not (low or last.get("http_status") == "429"):
         return False
     try:
         age = now - parse_iso_z(last.get("fetched_at_utc", ""))
@@ -189,12 +210,11 @@ def run(
         append_log_row(log_path, LOG_COLUMNS, row)
         return "error", f"error: {message}"
 
-    books = {book["key"] for game in games for book in game.get("bookmakers", [])}
     row.update(
         status="ok",
         http_status=200,
         n_games=len(games),
-        n_books=len(books),
+        n_books=count_books(games),
         credits_used=credits["used"],
         credits_remaining=credits["remaining"],
         file=relative,

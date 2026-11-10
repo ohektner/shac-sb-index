@@ -13,6 +13,7 @@ import argparse
 import sys
 import time
 from collections.abc import Callable
+from datetime import datetime
 from pathlib import Path
 
 import httpx
@@ -43,6 +44,15 @@ LOG_COLUMNS = [
 ]
 CRAWL_DELAY_SECONDS = 10
 RETRY_DELAY_SECONDS = 30
+# Both files have a row per team or per game, so a real one is far longer than this.
+MIN_LINES = 50
+
+
+def current_season(today: datetime) -> int:
+    """Return the season's ending year: July 2026 through June 2027 is season 2027."""
+    return today.year + 1 if today.month >= 7 else today.year
+
+
 BLOCK_MARKERS = [b"verifying your browser", b"just a moment"]
 
 
@@ -98,6 +108,9 @@ def run(
             "source_file": source_name,
         }
         response = fetch_with_one_retry(client, url, sleep)
+        # Re-read the clock so the stamp reflects when the data actually arrived.
+        fetched_at = now()
+        row["fetched_at_utc"] = iso_z(fetched_at)
         if response is None:
             row["status"] = "error"
         else:
@@ -108,6 +121,10 @@ def run(
                 row["status"] = "blocked"
             elif response.status_code != 200:
                 row["status"] = "error"
+            elif len(body.splitlines()) < MIN_LINES:
+                # An empty or cut-off file is not a real snapshot.
+                row["status"] = "error"
+                row["n_lines"] = len(body.splitlines())
             else:
                 relative = (
                     f"torvik/raw/{dated_folder(fetched_at)}/"
@@ -138,10 +155,11 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Save raw Torvik snapshots.")
     parser.add_argument("--data-dir", required=True, type=Path)
     parser.add_argument("--log", required=True, type=Path)
-    parser.add_argument("--season", type=int, default=2027)
+    parser.add_argument("--season", type=int, default=None, help="Ending year; default: current")
     args = parser.parse_args(argv)
+    season = args.season if args.season is not None else current_season(utc_now())
     with httpx.Client(timeout=60, follow_redirects=True) as client:
-        ok = run(client, args.data_dir, args.log, args.season)
+        ok = run(client, args.data_dir, args.log, season)
     return 0 if ok else 1
 
 

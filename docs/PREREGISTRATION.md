@@ -12,11 +12,25 @@ Changes are allowed only through a dated entry in DECISIONS.md, made before the 
 - **2020-21 (season 2021) is excluded** from training and from the headline numbers, because home-court advantage collapsed with no fans. Its results are reported in their own row.
 - Live results from 2026-27 are reported separately from backtest results and never mixed with them.
 
+## The Torvik baseline
+
+The baseline is fixed here so it can't be weakened later. For a game on date D between a home team h and an away team a:
+
+```
+baseline_margin = (EM_h − EM_a) × T / 100 + H
+```
+
+- `EM` is a team's adjusted offense minus its adjusted defense (points per 100 possessions), from the Torvik ratings file dated D−1.
+- `T` is the expected possessions: `tempo_h × tempo_a / average_tempo`, where `average_tempo` is the mean adjusted tempo of all D-I teams in that same file.
+- `H` is home-court advantage in points: 0 at a neutral site. Otherwise one constant, set to the value that makes the baseline's average error zero on non-neutral games in the training seasons. It is re-fit for each test season from the seasons before it.
+
+Nothing else about the baseline is tuned. If a team has no rating in the D−1 file, the game is left out of both the baseline's and the model's numbers, and the count of such games is reported.
+
 ## Scorecard metrics
 
 Every metric is reported for the model and for the Torvik baseline, per season and pooled.
 
-1. **CLV in points.** For each priced game, take the side the model implied at pricing. CLV is how far the line moved toward that side between pricing and the close: `side × (close_implied_margin − priced_implied_margin)`, where side is +1 for home and −1 for away, and an implied margin is `−home_spread`. Positive is good. Reported as the mean with a 95% confidence interval and the share of games with positive CLV. Backtest seasons use open-to-close where an opening line exists.
+1. **CLV in points.** For each priced game, take the side the model implied at pricing. CLV is how far the line moved toward that side between pricing and the close: `side × (close_implied_margin − priced_implied_margin)`, where side is +1 for home and −1 for away, and an implied margin is `−home_spread`. Positive is good. Reported as the mean with a 95% confidence interval and the share of games with positive CLV. Backtest seasons use open-to-close. A backtest game with no opening line is left out of CLV only, and the number left out is reported.
 2. **Distance to the close.** Mean absolute difference between the predicted margin and the closing line's implied margin. This is the primary accuracy measure, and the one used for "matches or beats Torvik" at G1: the model passes if its pooled distance on the held-out seasons is no larger than the baseline's.
 3. **Error vs. results.** Mean absolute error of the predicted margin against the final margin, shown next to the closing line's own error. Reported, but game results are noisy enough that small differences mean little.
 4. **ATS at −110.** Record and win % of the model's side against the line at pricing. Pushes are counted separately and left out of the win %. Reported, not trusted.
@@ -28,7 +42,7 @@ If no tier beats 52.4% in the backtest, the scorecard says so plainly. Picks are
 ## Confidence method
 
 - **Cover probability is calibrated,** not the raw Φ(edge / σ), which overstates confidence.
-- **Method:** logistic regression of "the model's side covered" on the size of the edge in points, with no intercept shift by season. It is fit on out-of-sample predictions from the training seasons only: each training season's edges come from a model that did not see that season.
+- **Method:** logistic regression of "the model's side covered" on the size of the edge in points, with no intercept shift by season. It is fit on out-of-sample predictions from the training seasons only. For test season S, the training seasons are the eligible seasons before S. Each training season's edges come from a margin model fit on the other training seasons (leave one season out), so no game's edge comes from a model that saw that game, and nothing from season S or later is used. The margin model that prices season S itself is fit on all the training seasons.
 - Isotonic regression is reported next to it as a check. The logistic curve is the one used for tiers unless a DECISIONS.md entry changes that before the per-tier results are seen.
 - Pushes are left out of the fit.
 - **σ:** starts at 10.3 points (the spread of final margins around the closing line in a published 83,000-game study). It is re-fit on training seasons only. σ is used for the Kalshi conversion and for reporting, not for tiers.

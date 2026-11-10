@@ -187,6 +187,71 @@ def test_credit_guard_rules():
     # ...and after 24 hours the job tries again, so it recovers when credits reset.
     assert not skip([_log_row(old, "ok", remaining="3")], FIXED_TIME)
     assert not skip([_log_row(old, "error", http_status="429")], FIXED_TIME)
+    # A later error with no credit count (a network failure, a failed push) doesn't
+    # reset the guard: the last row that knew the credit count still decides.
+    rows = [
+        _log_row(recent, "ok", remaining="3"),
+        _log_row(recent, "error", http_status="500"),
+        _log_row(recent, "push_failed", http_status=""),
+    ]
+    assert skip(rows, FIXED_TIME)
+    # Counts written like "3.0" are still read.
+    assert skip([_log_row(recent, "ok", remaining="3.0")], FIXED_TIME)
+
+
+def test_credit_headers_written_as_floats_are_read(tmp_path):
+    def handler(request):
+        return httpx.Response(
+            200, json=[], headers={"x-requests-remaining": "480.0", "x-requests-used": "20.0"}
+        )
+
+    run_job(make_client(handler), tmp_path)
+    (row,) = read_log(tmp_path / "log.csv")
+    assert row["credits_remaining"] == "480"
+    assert row["credits_used"] == "20"
+
+
+def test_odd_shaped_games_are_still_saved_and_logged(tmp_path):
+    # A bookmaker with no "key" and a game that is not a dict: save the raw data anyway.
+    body = [{"id": "g1", "bookmakers": [{"title": "No Key"}]}, "not-a-game"]
+    status, _ = run_job(make_client(ok_handler(body)), tmp_path)
+    assert status == "ok"
+    (row,) = read_log(tmp_path / "log.csv")
+    assert row["n_games"] == "2"
+    assert row["n_books"] == ""
+    path = tmp_path / "data" / row["file"]
+    assert json.loads(gzip.decompress(path.read_bytes()))["data"] == body
+
+
+def test_stamp_is_taken_after_the_response_arrives(tmp_path):
+    ticks = iter(datetime(2026, 11, 9, 13, m, 0, tzinfo=UTC) for m in (17, 18))
+    odds.run(
+        make_client(ok_handler()),
+        KEY,
+        tmp_path / "data",
+        tmp_path / "log.csv",
+        now=lambda: next(ticks),
+    )
+    (row,) = read_log(tmp_path / "log.csv")
+    assert row["fetched_at_utc"] == "2026-11-09T13:18:00Z"
+    assert "20261109T131800Z" in row["file"]
+
+
+@pytest.mark.parametrize(
+    ("handler_status", "expected_exit"),
+    [(200, 0), (401, 1)],
+)
+def test_main_exit_codes(tmp_path, monkeypatch, handler_status, expected_exit):
+    def handler(request):
+        return httpx.Response(handler_status, json=[], headers=CREDIT_HEADERS)
+
+    real_client = httpx.Client
+    monkeypatch.setenv("ODDS_API_KEY", KEY)
+    monkeypatch.setattr(
+        odds.httpx, "Client", lambda **kwargs: real_client(transport=httpx.MockTransport(handler))
+    )
+    args = ["--data-dir", str(tmp_path / "data"), "--log", str(tmp_path / "log.csv")]
+    assert odds.main(args) == expected_exit
 
 
 def test_retries_5xx_then_succeeds(tmp_path):

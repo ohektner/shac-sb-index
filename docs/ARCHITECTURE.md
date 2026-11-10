@@ -176,7 +176,7 @@ Player names and statuses are short facts, not source text, so this table is pub
 
 ### Private repo
 
-**`odds_snapshots`** (`odds/raw/YYYY/MM/DD/odds_<stamp>.json.gz`). Writer: `shac.snapshots.odds`, 12 times a day. One file per fetch: the API response unchanged, wrapped with `fetched_at`, the request parameters and the credit counts. Files are never overwritten. A flattened view is built on read:
+**`odds_snapshots`** (`odds/raw/YYYY/MM/DD/odds_<stamp>.json.gz`). Writer: `shac.snapshots.odds`, 12 times a day. One file per fetch: the full response data as JSON, wrapped with `fetched_at`, the request parameters and the credit counts. Files are never overwritten. A flattened view is built on read:
 
 | Column | Type | Notes |
 | --- | --- | --- |
@@ -190,7 +190,7 @@ Player names and statuses are short facts, not source text, so this table is pub
 | `market_last_update_at` | timestamp | When the book's spread last changed, per the feed |
 | `game_id` | int, nullable | Filled after matching to `games` |
 
-Each run also appends one row to `data/status/odds_snapshot_log.csv` in the public repo: fetch time, game count, book count, credits left and the file's SHA-256. That log is the public proof the snapshot existed at that time, without exposing the data.
+Each run also appends one row to `data/status/odds_snapshot_log.csv` in the public repo: fetch time, game count, book count, credits left and the file's SHA-256. That log is the public proof the snapshot existed at that time, without exposing the data. If the file could not be pushed to the private repo, the log gets a `push_failed` row, so the public record never claims a snapshot that was lost.
 
 **`games`**. Writer: `ingest_cbbd`.
 
@@ -279,7 +279,7 @@ Treat the margin as normal with mean μ and spread σ. For a market on team T at
 μ is the Kalshi-implied home margin.
 
 - **Probability used:** the mid price, `(yes_bid + yes_ask) / 2`, from markets with quotes on both sides and a spread no wider than 10¢.
-- **Several strikes:** when a game has three or more usable strikes with p between 0.10 and 0.90, fit μ and σ together with a straight-line fit of `Φ⁻¹(p)` against k. That also gives the market's own σ for the game. With fewer, use the single strike nearest p = 0.50 and the pre-registered σ.
+- **Several strikes:** first put every strike on the same footing, as "the home margin is above t" with probability q. A home-team strike gives `t = k, q = p`. An away-team strike gives `t = -k, q = 1 - p`. Then `Φ⁻¹(q) = (μ - t) / σ`. When a game has three or more usable strikes with q between 0.10 and 0.90, fit a straight line of `Φ⁻¹(q)` against t: the slope is `-1/σ` and the intercept is `μ/σ`. That gives μ and the market's own σ for the game. With fewer, use the single strike nearest q = 0.50 and the pre-registered σ.
 - **Fee-adjusted price for the Pick check:** the cost to take a side is `ask + fee`, with `fee = 0.07 × ask × (1 − ask)` per contract. A Pick must have `cover_prob` above that cost for the matching side and strike. The 0.07 constant is unverified against Kalshi's official fee schedule; confirm it before this check goes live.
 - **Home/away:** Kalshi has no home/away field. `is_home` comes from matching the market's team to our `games` table through `team_aliases`.
 
@@ -302,6 +302,7 @@ Workflows never print secrets or raw data, and never run with shell tracing on. 
 | --- | --- | --- | --- |
 | Odds snapshot | 12 a day at :17 (13, 16, 18, 20-23, 0-4) | The Odds API | `odds_snapshots`, public status log |
 | Torvik daily snapshot | 11:43 | Barttorvik CSV files | Raw Torvik files, public status log |
+| Snapshot watch | 23:47 and 05:47 | Public status log | Nothing. Fails, and GitHub emails Owen, if the last good odds snapshot is over 3 hours old |
 | CBBD ingestion (G1) | Nightly | CBBD | `games`, `results`, `player_box` |
 | Pricing, morning and late (G1) | Morning, and about 2 hours before the day's tips | Ratings, latest snapshot | `predictions_ledger` |
 | Results and scorecard (G1) | Nightly | Ledger, results, closing lines | `closing_lines`, scorecard outputs, site data |
