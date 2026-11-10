@@ -29,7 +29,9 @@ CAP_ROWS: dict[str, int] = {
 
 # How wide the first-try windows are for each endpoint that is paged by date.
 MONTHLY_ENDPOINTS = ("games", "lines", "games/teams")
-PLAYER_BLOCK_DAYS = 10
+# Player box scores come back as one row per team per game (2 rows a game). A busy
+# 4-day stretch is about 300 games, or 600 rows, safely under the 1,000 cap.
+PLAYER_BLOCK_DAYS = 4
 
 ONE_DAY = timedelta(days=1)
 
