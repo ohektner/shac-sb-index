@@ -20,7 +20,7 @@ Each task lists who owns it, which model that agent runs on, what it depends on 
 | --- | --- | --- | --- | --- |
 | 0.1 | Scaffold the repo, CLAUDE.md, docs, agent definitions | Fable | Owen's approval | `uv run ruff check . && uv run pytest -q` pass |
 | 0.2 | Odds API client and snapshot script | data-engineer (sonnet) | 0.1 | Tests pass with a fake response; missing key fails cleanly |
-| 0.3 | Odds snapshot workflow: 12 runs a day, raw file to the private repo, status row to the public repo | data-engineer (sonnet) | 0.2, secrets | A manual run is green and the file lands in the private repo |
+| 0.3 | Odds snapshot workflow: 7 runs a day (US books plus Pinnacle), raw file to the private repo, status row to the public repo | data-engineer (sonnet) | 0.2, secrets | A manual run is green and the file lands in the private repo |
 | 0.4 | Daily Torvik CSV snapshot (2 files, once a day). Actions is blocked by the site (tested 2026-11-10), so this runs from Owen's machine. | data-engineer (sonnet) | 0.1, secrets | A local run saves both files and pushes them |
 | 0.5 | Review: timestamps, no key or raw odds in the public repo or logs | auditor (opus) | 0.2 to 0.4 | Written findings, no open blockers |
 | 0.6 | First real call: confirm one call returns every game, record books seen | data-quality (opus) | 0.3 | VERIFIED.md updated |
