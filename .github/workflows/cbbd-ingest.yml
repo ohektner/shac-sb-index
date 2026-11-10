@@ -1,0 +1,123 @@
+# What this does, in plain language:
+# Run by hand only. Calls the CollegeBasketballData (CBBD) API and saves every raw response
+# (gzipped JSON, plus a manifest of what was fetched) into the PRIVATE data repo
+# (ohektner/shac-sb-index-data), because CBBD's terms do not allow republishing its data.
+# Nothing from CBBD is committed to this public repo. The free quota is 1,000 calls a month,
+# so the script stops early on its own budget limits and never repeats a saved call.
+#
+# Safety notes:
+# - Tokens are not left on disk (persist-credentials: false). Only the push step gets a token.
+# - Actions are pinned to exact commits so a changed tag can't swap the code we run.
+# - Inputs reach the script through env variables, never pasted into the shell command.
+name: cbbd-ingest
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "discover = 8 calls to learn response shapes; backfill = fetch whole seasons"
+        type: choice
+        options:
+          - discover
+          - backfill
+        default: discover
+      seasons:
+        description: "Seasons by ending year, like 2019-2026 (backfill only)"
+        type: string
+        default: "2019-2026"
+      max_calls:
+        description: "Most API calls this run may make"
+        type: string
+        default: "8"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cbbd-ingest
+  cancel-in-progress: false
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out this repo
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: main
+          persist-credentials: false
+
+      - name: Check out the private data repo
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: ohektner/shac-sb-index-data
+          token: ${{ secrets.DATA_REPO_TOKEN }}
+          path: data-repo
+          persist-credentials: false
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync --frozen --no-dev
+
+      - name: Fetch from CBBD
+        id: ingest
+        continue-on-error: true
+        env:
+          CBBD_API_KEY: ${{ secrets.CBBD_API_KEY }}
+          MODE: ${{ inputs.mode }}
+          SEASONS: ${{ inputs.seasons }}
+          MAX_CALLS: ${{ inputs.max_calls }}
+        run: >
+          uv run --no-sync python -m shac.ingest.cbbd
+          --data-dir data-repo
+          --mode "$MODE"
+          --seasons "$SEASONS"
+          --max-calls "$MAX_CALLS"
+
+      # Always runs, so files fetched before a failure are still saved (the manifest
+      # is what stops us paying for the same call twice).
+      - name: Push raw files to the private data repo
+        id: push_data
+        if: always()
+        continue-on-error: true
+        working-directory: data-repo
+        env:
+          TOKEN: ${{ secrets.DATA_REPO_TOKEN }}
+        run: |
+          if [ ! -d cbbd ]; then
+            echo "No CBBD files to push."
+            exit 0
+          fi
+          AUTH=$(printf 'x-access-token:%s' "$TOKEN" | base64 -w0)
+          echo "::add-mask::$AUTH"
+          auth_git() { git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic $AUTH" "$@"; }
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add cbbd
+          if git diff --cached --quiet; then
+            echo "Nothing new to push to the data repo."
+            exit 0
+          fi
+          git commit -q -m "cbbd ingest $(date -u +%Y%m%dT%H%M%SZ)"
+          for attempt in 1 2 3 4 5; do
+            if auth_git push -q origin HEAD:main; then
+              exit 0
+            fi
+            sleep $((attempt * 5))
+            auth_git pull -q --rebase origin main || true
+          done
+          echo "Push to the data repo failed after 5 tries."
+          exit 1
+
+      - name: Fail the run if any step above failed
+        if: >
+          always() && (steps.ingest.outcome == 'failure'
+          || steps.push_data.outcome == 'failure')
+        run: |
+          echo "ingest: ${{ steps.ingest.outcome }}, data push: ${{ steps.push_data.outcome }}"
+          exit 1
