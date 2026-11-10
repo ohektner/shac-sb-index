@@ -115,7 +115,7 @@ Test: every team name in every source for every season resolves to exactly one `
 | Column | Type | Notes |
 | --- | --- | --- |
 | `game_id` **PK** | int | |
-| `source` **PK** | text | `own_snapshots` or `cbbd` |
+| `source` **PK** | text | `own_snapshots` (median of US books), `pinnacle`, or `cbbd` |
 | `close_home_spread` | float | Median across books in the last snapshot before tip |
 | `close_snapshot_at` | timestamp | Fetch time of that snapshot |
 | `minutes_before_tip` | int | How stale our "close" is |
@@ -300,7 +300,7 @@ Workflows never print secrets or raw data, and never run with shell tracing on. 
 
 | Job | Schedule (UTC) | Reads | Writes |
 | --- | --- | --- | --- |
-| Odds snapshot | 12 a day at :17 (13, 16, 18, 20-23, 0-4) | The Odds API | `odds_snapshots`, public status log |
+| Odds snapshot | 7 a day at :17 (13, 16, 19, 21, 23, 1, 3), US books plus Pinnacle | The Odds API | `odds_snapshots`, public status log |
 | Torvik daily snapshot | 11:43 | Barttorvik CSV files | Raw Torvik files, public status log |
 | Snapshot watch | 23:47 and 05:47 | Public status log | Nothing. Fails, and GitHub emails Owen, if the last good odds snapshot is over 3 hours old |
 | CBBD ingestion (G1) | Nightly | CBBD | `games`, `results`, `player_box` |
