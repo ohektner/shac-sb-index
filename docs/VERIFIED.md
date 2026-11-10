@@ -39,15 +39,16 @@ Sources: https://docs.github.com/en/billing/managing-billing-for-your-products/m
 | Free quota | 1,000 calls a month, shared with the football API. Paid: $1 = 5,000, $5 = 30,000, $10 = 75,000. | Confirmed |
 | Python client | `cbbd` 1.30.3 (2026-11-03), bearer token | Confirmed |
 | Lines fields | Per provider: `spread`, `over_under`, moneylines, `spread_open`, `over_under_open` | Confirmed |
-| Open vs. close, sign, books | No timestamp on a line. Not documented whether `spread` is the close. Sign convention and provider list not documented. | Unknown (test with a key) |
+| Open vs. close, sign, books | Discovery run 2026-11-10 (Jan 10, 2026, 142 games): every game had lines, from Draft Kings (142) and Bovada (128); 6 providers are listed in total. Fields: `spread`, `spreadOpen`, `overUnder`, `overUnderOpen`, moneylines. Sign is the home team's spread: games with a negative spread were won by the home team 177 of 270 times (66%), as expected for favorites. No timestamp on a line, so whether `spread` is the close is still untested. | Partly confirmed |
 | Line coverage | 2013 to present; "A returned game can have an empty lines list." | Confirmed (completeness unknown) |
-| Row caps | Games, lines, team box: 3,000 per call. Player box: 1,000 games per call. A season needs date-window paging. | Changed |
+| Row caps | Games, lines, team box: 3,000 per call. Player box: 1,000 per call, and it returns one row per team per game. A month of games (1,552 in Jan 2026) fits in one call. Player box is fetched in 4-day blocks. | Changed |
 | Backfill size | About 130–300 calls for 8 seasons; about 100 a month for daily updates | Estimate |
-| Player box | `minutes`, `starter`, `athlete_id` present | Confirmed |
+| Player box | Per player: `athleteId`, `name`, `minutes`, `starter`, `position`, box stats and ratings | Confirmed by test |
 | Team ids | Numeric `id` plus `source_id` (not confirmed to be the ESPN id). No D-I flag. | Partly confirmed |
 | Ratings | No date parameter, so not point-in-time. Games carry Elo at start and end. | Changed |
 | Terms | No publishing API data "as a standalone dataset or bulk download". Attribution appreciated, not required. | Confirmed |
 | Freshness | Not documented | Unknown |
+| Usage header | No remaining-calls header or endpoint is documented. We count calls ourselves in the manifest. | Changed |
 
 Sources: https://collegefootballdata.com/api-tiers · https://api.collegebasketballdata.com/usage-and-access.md · https://api.collegebasketballdata.com/data-availability.md · https://pypi.org/project/cbbd/ · https://github.com/CFBD/cbbd-python (docs/GameLineInfo.md, GameInfo.md, GamesApi.md, TeamInfo.md, RatingsApi.md) · https://collegefootballdata.com/terms
 
