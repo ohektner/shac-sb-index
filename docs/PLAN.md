@@ -33,7 +33,7 @@ Tasks 1.1, 1.3 and 1.11 can run in parallel. So can 1.9 and 1.10 once the ledger
 | # | Task | Owner (model) | Depends on | Exit check |
 | --- | --- | --- | --- | --- |
 | 1.1 | CBBD client and backfill for 8 seasons (games, results, lines, team box, player box), paging by date window | data-engineer (sonnet) | `CBBD_API_KEY` | No window returns the row cap; calls used are logged and under 400 |
-| 1.2 | Test what CBBD lines mean: sign, open vs. close, which books, coverage by conference | data-quality (opus) | 1.1 | VERIFIED.md updated with tested answers |
+| 1.2 | Test what CBBD lines mean: sign, open vs. close, which books, coverage by conference. Then recommend to Owen whether to buy one month of the $30 Odds API tier for timestamped historical odds (10 credits per call; estimate 15,000 to 22,500 credits for 2021-22 through 2025-26). Owen decides. | data-quality (opus) | 1.1 | VERIFIED.md updated with tested answers, and a written recommendation on the paid month |
 | 1.3 | Torvik Time Machine backfill, 10+ seconds apart, cached for good | data-engineer (sonnet) | Bart Torvik's OK | One file per in-season day, 2018-19 through 2025-26; a re-run makes zero requests |
 | 1.4 | Decode Time Machine columns; test whether a date's file includes that date's games | data-quality (opus) | 1.3 | Columns documented; no-leakage rule 3 confirmed or relaxed in DECISIONS.md |
 | 1.5 | Team-name map across CBBD, Torvik and The Odds API | data-quality (opus) | 1.1, 1.3, G0 data | `sql/checks/team_map.sql` returns 0 unmatched and 0 duplicate rows |
