@@ -7,6 +7,10 @@
 # are third-party data we should not republish. This public repo only gets a status row
 # per file (line count, file hash), never the data itself.
 #
+# SWITCHED OFF (2026-11-10): barttorvik.com answers GitHub's servers with a browser check,
+# so this job can't fetch from here. The same job runs from Owen's machine instead. The
+# workflow is disabled in the repo settings and kept in case the site's behavior changes.
+#
 # Safety notes:
 # - Tokens are not left on disk (persist-credentials: false). Only the two push steps
 #   get a token, and only for the moment they need it.
