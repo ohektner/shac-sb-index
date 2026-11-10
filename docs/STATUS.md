@@ -25,10 +25,11 @@ Where the project stands right now. Update this at the end of every working sess
 - **Task 1.5:** team-name map, 369 teams, 0 unmatched (PR #6).
 - **Clean tables** in the private repo: games, results, player_box, cbbd_lines, odds_snapshots, closing_lines (PR #10). Rebuild with `uv run python -m shac.tables.build --data-dir <private repo>`.
 - **Polymarket collection** (PR #8), the G3 second market, with written permission.
+- **Polymarket 2025-26 history backfill:** finished 2026-11-10. 21,983 calls over 10 runs, 0 errors, 21,906 price-history files. New games are picked up by the daily `polymarket-history` job.
 
 ## In progress
 
-- **Polymarket 2025-26 history backfill:** about 23,000 calls in runs of 1,500 to 2,500. Run 1 done (1,499 files). If remaining runs stop, restart with: `gh workflow run polymarket-history.yml -f mode=backfill -f max_calls=2500`. The manifest skips anything already saved.
+Nothing running by hand. Everything above runs on its own schedule.
 
 ## Waiting on
 
