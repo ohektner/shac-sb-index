@@ -1,0 +1,850 @@
+source,alias,valid_from_season,valid_to_season,team_id
+cbbd,Abilene Christian,2019,,1
+cbbd,Air Force,2019,,2
+cbbd,Akron,2019,,3
+cbbd,Alabama,2019,,5
+cbbd,Alabama A&M,2019,,4
+cbbd,Alabama State,2019,,6
+cbbd,Alcorn State,2019,,7
+cbbd,American University,2019,,8
+cbbd,App State,2019,,9
+cbbd,Arizona,2019,,11
+cbbd,Arizona State,2019,,10
+cbbd,Arkansas,2019,,12
+cbbd,Arkansas State,2019,,13
+cbbd,Arkansas-Pine Bluff,2019,,14
+cbbd,Army,2019,,15
+cbbd,Auburn,2019,,16
+cbbd,Austin Peay,2019,,17
+cbbd,BYU,2019,,18
+cbbd,Ball State,2019,,19
+cbbd,Baylor,2019,,20
+cbbd,Bellarmine,2021,,21
+cbbd,Belmont,2019,,22
+cbbd,Bethune-Cookman,2019,,23
+cbbd,Binghamton,2019,,24
+cbbd,Boise State,2019,,25
+cbbd,Boston College,2019,,26
+cbbd,Boston University,2019,,27
+cbbd,Bowling Green,2019,,28
+cbbd,Bradley,2019,,29
+cbbd,Brown,2019,,30
+cbbd,Bryant,2019,,31
+cbbd,Bucknell,2019,,32
+cbbd,Buffalo,2019,,33
+cbbd,Butler,2019,,34
+cbbd,Cal Poly,2019,,35
+cbbd,Cal State Bakersfield,2019,,36
+cbbd,Cal State Fullerton,2019,,37
+cbbd,Cal State Northridge,2019,,38
+cbbd,California,2019,,40
+cbbd,California Baptist,2019,,39
+cbbd,Campbell,2019,,41
+cbbd,Canisius,2019,,42
+cbbd,Central Arkansas,2019,,43
+cbbd,Central Connecticut,2019,,44
+cbbd,Central Michigan,2019,,45
+cbbd,Charleston,2019,,46
+cbbd,Charleston Southern,2019,,47
+cbbd,Charlotte,2019,,48
+cbbd,Chattanooga,2019,,49
+cbbd,Chicago State,2019,,50
+cbbd,Cincinnati,2019,,51
+cbbd,Clemson,2019,,52
+cbbd,Cleveland State,2019,,53
+cbbd,Coastal Carolina,2019,,54
+cbbd,Colgate,2019,,55
+cbbd,Colorado,2019,,56
+cbbd,Colorado State,2019,,57
+cbbd,Columbia,2019,,58
+cbbd,Coppin State,2019,,59
+cbbd,Cornell,2019,,60
+cbbd,Creighton,2019,,61
+cbbd,Dartmouth,2019,,62
+cbbd,Davidson,2019,,63
+cbbd,Dayton,2019,,64
+cbbd,DePaul,2019,,65
+cbbd,Delaware,2019,,66
+cbbd,Delaware State,2019,,67
+cbbd,Denver,2019,,68
+cbbd,Detroit Mercy,2019,,69
+cbbd,Drake,2019,,70
+cbbd,Drexel,2019,,71
+cbbd,Duke,2019,,72
+cbbd,Duquesne,2019,,73
+cbbd,East Carolina,2019,,74
+cbbd,East Tennessee State,2019,,75
+cbbd,East Texas A&M,2023,,76
+cbbd,Eastern Illinois,2019,,77
+cbbd,Eastern Kentucky,2019,,78
+cbbd,Eastern Michigan,2019,,79
+cbbd,Eastern Washington,2019,,80
+cbbd,Elon,2019,,81
+cbbd,Evansville,2019,,82
+cbbd,Fairfield,2019,,83
+cbbd,Fairleigh Dickinson,2019,,84
+cbbd,Florida,2019,,87
+cbbd,Florida A&M,2019,,85
+cbbd,Florida Atlantic,2019,,86
+cbbd,Florida Gulf Coast,2019,,88
+cbbd,Florida International,2019,,89
+cbbd,Florida State,2019,,90
+cbbd,Fordham,2019,,91
+cbbd,Fresno State,2019,,92
+cbbd,Furman,2019,,93
+cbbd,Gardner-Webb,2019,,94
+cbbd,George Mason,2019,,95
+cbbd,George Washington,2019,,96
+cbbd,Georgetown,2019,,97
+cbbd,Georgia,2019,,98
+cbbd,Georgia Southern,2019,,99
+cbbd,Georgia State,2019,,100
+cbbd,Georgia Tech,2019,,101
+cbbd,Gonzaga,2019,,102
+cbbd,Grambling,2019,,103
+cbbd,Grand Canyon,2019,,104
+cbbd,Green Bay,2019,,105
+cbbd,Hampton,2019,,106
+cbbd,Hartford,2019,2023,363
+cbbd,Harvard,2019,,107
+cbbd,Hawai'i,2019,,108
+cbbd,High Point,2019,,109
+cbbd,Hofstra,2019,,110
+cbbd,Holy Cross,2019,,111
+cbbd,Houston,2019,,113
+cbbd,Houston Christian,2019,,112
+cbbd,Howard,2019,,114
+cbbd,IU Indianapolis,2019,,115
+cbbd,Idaho,2019,,117
+cbbd,Idaho State,2019,,116
+cbbd,Illinois,2019,,118
+cbbd,Illinois State,2019,,119
+cbbd,Incarnate Word,2019,,120
+cbbd,Indiana,2019,,121
+cbbd,Indiana State,2019,,122
+cbbd,Iona,2019,,123
+cbbd,Iowa,2019,,124
+cbbd,Iowa State,2019,,125
+cbbd,Jackson State,2019,,126
+cbbd,Jacksonville,2019,,127
+cbbd,Jacksonville State,2019,,128
+cbbd,James Madison,2019,,129
+cbbd,Kansas,2019,,131
+cbbd,Kansas City,2019,,130
+cbbd,Kansas State,2019,,132
+cbbd,Kennesaw State,2019,,133
+cbbd,Kent State,2019,,134
+cbbd,Kentucky,2019,,135
+cbbd,LSU,2019,,136
+cbbd,La Salle,2019,,137
+cbbd,Lafayette,2019,,138
+cbbd,Lamar,2019,,139
+cbbd,Le Moyne,2024,,140
+cbbd,Lehigh,2019,,141
+cbbd,Liberty,2019,,142
+cbbd,Lindenwood,2023,,366
+cbbd,Lipscomb,2019,,143
+cbbd,Little Rock,2019,,144
+cbbd,Long Beach State,2019,,145
+cbbd,Long Island University,2019,,146
+cbbd,Longwood,2019,,147
+cbbd,Louisiana,2019,,148
+cbbd,Louisiana Tech,2019,,149
+cbbd,Louisville,2019,,150
+cbbd,Loyola Chicago,2019,,151
+cbbd,Loyola Maryland,2019,,152
+cbbd,Loyola Marymount,2019,,153
+cbbd,Maine,2019,,154
+cbbd,Manhattan,2019,,155
+cbbd,Marist,2019,,156
+cbbd,Marquette,2019,,157
+cbbd,Marshall,2019,,158
+cbbd,Maryland,2019,,160
+cbbd,Maryland Eastern Shore,2019,,159
+cbbd,Massachusetts,2019,,161
+cbbd,McNeese,2019,,162
+cbbd,Memphis,2019,,163
+cbbd,Mercer,2019,,164
+cbbd,Mercyhurst,2025,,165
+cbbd,Merrimack,2020,,166
+cbbd,Miami,2019,,168
+cbbd,Miami (OH),2019,,167
+cbbd,Michigan,2019,,170
+cbbd,Michigan State,2019,,169
+cbbd,Middle Tennessee,2019,,171
+cbbd,Milwaukee,2019,,172
+cbbd,Minnesota,2019,,173
+cbbd,Mississippi State,2019,,174
+cbbd,Mississippi Valley State,2019,,175
+cbbd,Missouri,2019,,177
+cbbd,Missouri State,2019,,176
+cbbd,Monmouth,2019,,178
+cbbd,Montana,2019,,179
+cbbd,Montana State,2019,,180
+cbbd,Morehead State,2019,,181
+cbbd,Morgan State,2019,,182
+cbbd,Mount St. Mary's,2019,,183
+cbbd,Murray State,2019,,184
+cbbd,NC State,2019,,185
+cbbd,NJIT,2019,,186
+cbbd,Navy,2019,,187
+cbbd,Nebraska,2019,,188
+cbbd,Nevada,2019,,189
+cbbd,New Hampshire,2019,,190
+cbbd,New Haven,2026,,1507
+cbbd,New Mexico,2019,,191
+cbbd,New Mexico State,2019,,192
+cbbd,New Orleans,2019,,193
+cbbd,Niagara,2019,,194
+cbbd,Nicholls,2019,,195
+cbbd,Norfolk State,2019,,196
+cbbd,North Alabama,2019,,197
+cbbd,North Carolina,2019,,200
+cbbd,North Carolina A&T,2019,,198
+cbbd,North Carolina Central,2019,,199
+cbbd,North Dakota,2019,,201
+cbbd,North Dakota State,2019,,202
+cbbd,North Florida,2019,,203
+cbbd,North Texas,2019,,204
+cbbd,Northeastern,2019,,205
+cbbd,Northern Arizona,2019,,206
+cbbd,Northern Colorado,2019,,207
+cbbd,Northern Illinois,2019,,208
+cbbd,Northern Iowa,2019,,209
+cbbd,Northern Kentucky,2019,,210
+cbbd,Northwestern,2019,,212
+cbbd,Northwestern State,2019,,211
+cbbd,Notre Dame,2019,,213
+cbbd,Oakland,2019,,214
+cbbd,Ohio,2019,,215
+cbbd,Ohio State,2019,,216
+cbbd,Oklahoma,2019,,217
+cbbd,Oklahoma State,2019,,218
+cbbd,Old Dominion,2019,,219
+cbbd,Ole Miss,2019,,220
+cbbd,Omaha,2019,,221
+cbbd,Oral Roberts,2019,,222
+cbbd,Oregon,2019,,223
+cbbd,Oregon State,2019,,224
+cbbd,Pacific,2019,,225
+cbbd,Penn State,2019,,226
+cbbd,Pennsylvania,2019,,227
+cbbd,Pepperdine,2019,,228
+cbbd,Pittsburgh,2019,,229
+cbbd,Portland,2019,,230
+cbbd,Portland State,2019,,231
+cbbd,Prairie View A&M,2019,,232
+cbbd,Presbyterian,2019,,233
+cbbd,Princeton,2019,,234
+cbbd,Providence,2019,,235
+cbbd,Purdue,2019,,236
+cbbd,Purdue Fort Wayne,2019,,237
+cbbd,Queens University,2023,,362
+cbbd,Quinnipiac,2019,,238
+cbbd,Radford,2019,,239
+cbbd,Rhode Island,2019,,240
+cbbd,Rice,2019,,241
+cbbd,Richmond,2019,,242
+cbbd,Rider,2019,,243
+cbbd,Robert Morris,2019,,244
+cbbd,Rutgers,2019,,245
+cbbd,SE Louisiana,2019,,246
+cbbd,SIU Edwardsville,2019,,247
+cbbd,SMU,2019,,248
+cbbd,Sacramento State,2019,,249
+cbbd,Sacred Heart,2019,,250
+cbbd,Saint Joseph's,2019,,251
+cbbd,Saint Louis,2019,,252
+cbbd,Saint Mary's,2019,,253
+cbbd,Saint Peter's,2019,,254
+cbbd,Sam Houston,2019,,255
+cbbd,Samford,2019,,256
+cbbd,San Diego,2019,,258
+cbbd,San Diego State,2019,,257
+cbbd,San Francisco,2019,,259
+cbbd,San José State,2019,,260
+cbbd,Santa Clara,2019,,261
+cbbd,Savannah State,2019,2019,380
+cbbd,Seattle U,2019,,262
+cbbd,Seton Hall,2019,,263
+cbbd,Siena,2019,,264
+cbbd,South Alabama,2019,,265
+cbbd,South Carolina,2019,,266
+cbbd,South Carolina State,2019,,267
+cbbd,South Carolina Upstate,2019,,268
+cbbd,South Dakota,2019,,269
+cbbd,South Dakota State,2019,,270
+cbbd,South Florida,2019,,271
+cbbd,Southeast Missouri State,2019,,272
+cbbd,Southern,2019,,274
+cbbd,Southern Illinois,2019,,273
+cbbd,Southern Indiana,2023,,365
+cbbd,Southern Miss,2019,,275
+cbbd,Southern Utah,2019,,276
+cbbd,St. Bonaventure,2019,,277
+cbbd,St. Francis (PA),2019,2026,278
+cbbd,St. Francis Brooklyn,2019,2023,364
+cbbd,St. John's,2019,,279
+cbbd,St. Thomas-Minnesota,2022,,280
+cbbd,Stanford,2019,,281
+cbbd,Stephen F. Austin,2019,,282
+cbbd,Stetson,2019,,283
+cbbd,Stonehill,2023,,284
+cbbd,Stony Brook,2019,,285
+cbbd,Syracuse,2019,,286
+cbbd,TCU,2019,,287
+cbbd,Tarleton State,2021,,288
+cbbd,Temple,2019,,289
+cbbd,Tennessee,2019,,292
+cbbd,Tennessee State,2019,,290
+cbbd,Tennessee Tech,2019,,291
+cbbd,Texas,2019,,295
+cbbd,Texas A&M,2019,,293
+cbbd,Texas A&M-Corpus Christi,2019,,294
+cbbd,Texas Southern,2019,,296
+cbbd,Texas State,2019,,297
+cbbd,Texas Tech,2019,,298
+cbbd,The Citadel,2019,,299
+cbbd,Toledo,2019,,300
+cbbd,Towson,2019,,301
+cbbd,Troy,2019,,302
+cbbd,Tulane,2019,,303
+cbbd,Tulsa,2019,,304
+cbbd,UAB,2019,,305
+cbbd,UAlbany,2019,,306
+cbbd,UC Davis,2019,,307
+cbbd,UC Irvine,2019,,308
+cbbd,UC Riverside,2019,,309
+cbbd,UC San Diego,2021,,310
+cbbd,UC Santa Barbara,2019,,311
+cbbd,UCF,2019,,312
+cbbd,UCLA,2019,,313
+cbbd,UConn,2019,,314
+cbbd,UIC,2019,,315
+cbbd,UL Monroe,2019,,316
+cbbd,UMBC,2019,,317
+cbbd,UMass Lowell,2019,,318
+cbbd,UNC Asheville,2019,,319
+cbbd,UNC Greensboro,2019,,320
+cbbd,UNC Wilmington,2019,,321
+cbbd,UNLV,2019,,322
+cbbd,USC,2019,,323
+cbbd,UT Arlington,2019,,324
+cbbd,UT Martin,2019,,325
+cbbd,UT Rio Grande Valley,2019,,326
+cbbd,UTEP,2019,,327
+cbbd,UTSA,2019,,328
+cbbd,Utah,2019,,331
+cbbd,Utah State,2019,,329
+cbbd,Utah Tech,2021,,330
+cbbd,Utah Valley,2019,,332
+cbbd,VCU,2019,,333
+cbbd,VMI,2019,,334
+cbbd,Valparaiso,2019,,335
+cbbd,Vanderbilt,2019,,336
+cbbd,Vermont,2019,,337
+cbbd,Villanova,2019,,338
+cbbd,Virginia,2019,,339
+cbbd,Virginia Tech,2019,,340
+cbbd,Wagner,2019,,341
+cbbd,Wake Forest,2019,,342
+cbbd,Washington,2019,,343
+cbbd,Washington State,2019,,344
+cbbd,Weber State,2019,,345
+cbbd,West Georgia,2025,,346
+cbbd,West Virginia,2019,,347
+cbbd,Western Carolina,2019,,348
+cbbd,Western Illinois,2019,,349
+cbbd,Western Kentucky,2019,,350
+cbbd,Western Michigan,2019,,351
+cbbd,Wichita State,2019,,352
+cbbd,William & Mary,2019,,353
+cbbd,Winthrop,2019,,354
+cbbd,Wisconsin,2019,,355
+cbbd,Wofford,2019,,356
+cbbd,Wright State,2019,,357
+cbbd,Wyoming,2019,,358
+cbbd,Xavier,2019,,359
+cbbd,Yale,2019,,360
+cbbd,Youngstown State,2019,,361
+odds_api,Alcorn St Braves,2027,,7
+odds_api,Arizona St Sun Devils,2027,,10
+odds_api,Arizona Wildcats,2027,,11
+odds_api,Arkansas St Red Wolves,2027,,13
+odds_api,Arkansas-Little Rock Trojans,2027,,144
+odds_api,Army Knights,2027,,15
+odds_api,BYU Cougars,2027,,18
+odds_api,Baylor Bears,2027,,20
+odds_api,Belmont Bruins,2027,,22
+odds_api,Boston College Eagles,2027,,26
+odds_api,Bradley Braves,2027,,29
+odds_api,Bryant Bulldogs,2027,,31
+odds_api,Bucknell Bison,2027,,32
+odds_api,Central Michigan Chippewas,2027,,45
+odds_api,Charleston Southern Buccaneers,2027,,47
+odds_api,Colorado Buffaloes,2027,,56
+odds_api,Creighton Bluejays,2027,,61
+odds_api,Davidson Wildcats,2027,,63
+odds_api,Dayton Flyers,2027,,64
+odds_api,Delaware St Hornets,2027,,67
+odds_api,Detroit Mercy Titans,2027,,69
+odds_api,Duke Blue Devils,2027,,72
+odds_api,Duquesne Dukes,2027,,73
+odds_api,Eastern Kentucky Colonels,2027,,78
+odds_api,Elon Phoenix,2027,,81
+odds_api,Evansville Purple Aces,2027,,82
+odds_api,Fairfield Stags,2027,,83
+odds_api,Florida Gators,2027,,87
+odds_api,Florida St Seminoles,2027,,90
+odds_api,Fordham Rams,2027,,91
+odds_api,Fresno St Bulldogs,2027,,92
+odds_api,GW Revolutionaries,2027,,96
+odds_api,Georgetown Hoyas,2027,,97
+odds_api,Georgia Southern Eagles,2027,,99
+odds_api,Georgia St Panthers,2027,,100
+odds_api,Georgia Tech Yellow Jackets,2027,,101
+odds_api,Green Bay Phoenix,2027,,105
+odds_api,Harvard Crimson,2027,,107
+odds_api,Hofstra Pride,2027,,110
+odds_api,Houston Christian Huskies,2027,,112
+odds_api,Illinois Fighting Illini,2027,,118
+odds_api,Iona Gaels,2027,,123
+odds_api,Iowa Hawkeyes,2027,,124
+odds_api,Iowa State Cyclones,2027,,125
+odds_api,Kansas Jayhawks,2027,,131
+odds_api,Kansas St Wildcats,2027,,132
+odds_api,Kennesaw St Owls,2027,,133
+odds_api,Kentucky Wildcats,2027,,135
+odds_api,La Salle Explorers,2027,,137
+odds_api,Lipscomb Bisons,2027,,143
+odds_api,Loyola Marymount Lions,2027,,153
+odds_api,Maine Black Bears,2027,,154
+odds_api,Maryland-Eastern Shore Hawks,2027,,159
+odds_api,Memphis Tigers,2027,,163
+odds_api,Mercer Bears,2027,,164
+odds_api,Michigan St Spartans,2027,,169
+odds_api,Middle Tennessee Blue Raiders,2027,,171
+odds_api,Montana Grizzlies,2027,,179
+odds_api,Murray St Racers,2027,,184
+odds_api,NC State Wolfpack,2027,,185
+odds_api,NJIT Highlanders,2027,,186
+odds_api,New Haven Chargers,2027,,1507
+odds_api,New Mexico Lobos,2027,,191
+odds_api,Nicholls St Colonels,2027,,195
+odds_api,North Carolina Tar Heels,2027,,200
+odds_api,Northeastern Huskies,2027,,205
+odds_api,Northern Arizona Lumberjacks,2027,,206
+odds_api,Northern Iowa Panthers,2027,,209
+odds_api,Northern Kentucky Norse,2027,,210
+odds_api,Ole Miss Rebels,2027,,220
+odds_api,Prairie View Panthers,2027,,232
+odds_api,Presbyterian Blue Hose,2027,,233
+odds_api,Providence Friars,2027,,235
+odds_api,Queens University Royals,2027,,362
+odds_api,Rhode Island Rams,2027,,240
+odds_api,Rutgers Scarlet Knights,2027,,245
+odds_api,SE Louisiana Lions,2027,,246
+odds_api,SMU Mustangs,2027,,248
+odds_api,Saint Louis Billikens,2027,,252
+odds_api,San Diego Toreros,2027,,258
+odds_api,San Francisco Dons,2027,,259
+odds_api,Siena Saints,2027,,264
+odds_api,South Alabama Jaguars,2027,,265
+odds_api,South Dakota Coyotes,2027,,269
+odds_api,Southern Jaguars,2027,,274
+odds_api,TCU Horned Frogs,2027,,287
+odds_api,Tenn-Martin Skyhawks,2027,,325
+odds_api,Texas State Bobcats,2027,,297
+odds_api,Texas Tech Red Raiders,2027,,298
+odds_api,Toledo Rockets,2027,,300
+odds_api,Troy Trojans,2027,,302
+odds_api,Tulane Green Wave,2027,,303
+odds_api,UCF Knights,2027,,312
+odds_api,UL Monroe Warhawks,2027,,316
+odds_api,UT Rio Grande Valley Vaqueros,2027,,326
+odds_api,Utah State Aggies,2027,,329
+odds_api,Utah Tech Trailblazers,2027,,330
+odds_api,Utah Utes,2027,,331
+odds_api,Vanderbilt Commodores,2027,,336
+odds_api,Villanova Wildcats,2027,,338
+odds_api,Virginia Cavaliers,2027,,339
+odds_api,Virginia Tech Hokies,2027,,340
+odds_api,Wake Forest Demon Deacons,2027,,342
+odds_api,Washington St Cougars,2027,,344
+odds_api,Weber State Wildcats,2027,,345
+odds_api,Winthrop Eagles,2027,,354
+odds_api,Wisconsin Badgers,2027,,355
+odds_api,Wright St Raiders,2027,,357
+odds_api,Wyoming Cowboys,2027,,358
+odds_api,Xavier Musketeers,2027,,359
+odds_api,Yale Bulldogs,2027,,360
+odds_api,Youngstown St Penguins,2027,,361
+torvik,Abilene Christian,2019,,1
+torvik,Air Force,2019,,2
+torvik,Akron,2019,,3
+torvik,Alabama,2019,,5
+torvik,Alabama A&M,2019,,4
+torvik,Alabama St.,2019,,6
+torvik,Albany,2019,,306
+torvik,Alcorn St.,2019,,7
+torvik,American,2019,,8
+torvik,Appalachian St.,2019,,9
+torvik,Arizona,2019,,11
+torvik,Arizona St.,2019,,10
+torvik,Arkansas,2019,,12
+torvik,Arkansas Pine Bluff,2019,,14
+torvik,Arkansas St.,2019,,13
+torvik,Army,2019,,15
+torvik,Auburn,2019,,16
+torvik,Austin Peay,2019,,17
+torvik,BYU,2019,,18
+torvik,Ball St.,2019,,19
+torvik,Baylor,2019,,20
+torvik,Bellarmine,2021,,21
+torvik,Belmont,2019,,22
+torvik,Bethune Cookman,2019,,23
+torvik,Binghamton,2019,,24
+torvik,Boise St.,2019,,25
+torvik,Boston College,2019,,26
+torvik,Boston University,2019,,27
+torvik,Bowling Green,2019,,28
+torvik,Bradley,2019,,29
+torvik,Brown,2019,,30
+torvik,Bryant,2019,,31
+torvik,Bucknell,2019,,32
+torvik,Buffalo,2019,,33
+torvik,Butler,2019,,34
+torvik,Cal Baptist,2019,,39
+torvik,Cal Poly,2019,,35
+torvik,Cal St. Bakersfield,2019,,36
+torvik,Cal St. Fullerton,2019,,37
+torvik,Cal St. Northridge,2019,,38
+torvik,California,2019,,40
+torvik,Campbell,2019,,41
+torvik,Canisius,2019,,42
+torvik,Central Arkansas,2019,,43
+torvik,Central Connecticut,2019,,44
+torvik,Central Michigan,2019,,45
+torvik,Charleston,2019,,46
+torvik,Charleston Southern,2019,,47
+torvik,Charlotte,2019,,48
+torvik,Chattanooga,2019,,49
+torvik,Chicago St.,2019,,50
+torvik,Cincinnati,2019,,51
+torvik,Clemson,2019,,52
+torvik,Cleveland St.,2019,,53
+torvik,Coastal Carolina,2019,,54
+torvik,Colgate,2019,,55
+torvik,Colorado,2019,,56
+torvik,Colorado St.,2019,,57
+torvik,Columbia,2019,,58
+torvik,Connecticut,2019,,314
+torvik,Coppin St.,2019,,59
+torvik,Cornell,2019,,60
+torvik,Creighton,2019,,61
+torvik,Dartmouth,2019,,62
+torvik,Davidson,2019,,63
+torvik,Dayton,2019,,64
+torvik,DePaul,2019,,65
+torvik,Delaware,2019,,66
+torvik,Delaware St.,2019,,67
+torvik,Denver,2019,,68
+torvik,Detroit Mercy,2019,,69
+torvik,Drake,2019,,70
+torvik,Drexel,2019,,71
+torvik,Duke,2019,,72
+torvik,Duquesne,2019,,73
+torvik,East Carolina,2019,,74
+torvik,East Tennessee St.,2019,,75
+torvik,East Texas A&M,2023,,76
+torvik,Eastern Illinois,2019,,77
+torvik,Eastern Kentucky,2019,,78
+torvik,Eastern Michigan,2019,,79
+torvik,Eastern Washington,2019,,80
+torvik,Elon,2019,,81
+torvik,Evansville,2019,,82
+torvik,FIU,2019,,89
+torvik,Fairfield,2019,,83
+torvik,Fairleigh Dickinson,2019,,84
+torvik,Florida,2019,,87
+torvik,Florida A&M,2019,,85
+torvik,Florida Atlantic,2019,,86
+torvik,Florida Gulf Coast,2019,,88
+torvik,Florida St.,2019,,90
+torvik,Fordham,2019,,91
+torvik,Fresno St.,2019,,92
+torvik,Furman,2019,,93
+torvik,Gardner Webb,2019,,94
+torvik,George Mason,2019,,95
+torvik,George Washington,2019,,96
+torvik,Georgetown,2019,,97
+torvik,Georgia,2019,,98
+torvik,Georgia Southern,2019,,99
+torvik,Georgia St.,2019,,100
+torvik,Georgia Tech,2019,,101
+torvik,Gonzaga,2019,,102
+torvik,Grambling St.,2019,,103
+torvik,Grand Canyon,2019,,104
+torvik,Green Bay,2019,,105
+torvik,Hampton,2019,,106
+torvik,Hartford,2019,2023,363
+torvik,Harvard,2019,,107
+torvik,Hawaii,2019,,108
+torvik,High Point,2019,,109
+torvik,Hofstra,2019,,110
+torvik,Holy Cross,2019,,111
+torvik,Houston,2019,,113
+torvik,Houston Christian,2019,,112
+torvik,Howard,2019,,114
+torvik,IU Indy,2019,,115
+torvik,Idaho,2019,,117
+torvik,Idaho St.,2019,,116
+torvik,Illinois,2019,,118
+torvik,Illinois Chicago,2019,,315
+torvik,Illinois St.,2019,,119
+torvik,Incarnate Word,2019,,120
+torvik,Indiana,2019,,121
+torvik,Indiana St.,2019,,122
+torvik,Iona,2019,,123
+torvik,Iowa,2019,,124
+torvik,Iowa St.,2019,,125
+torvik,Jackson St.,2019,,126
+torvik,Jacksonville,2019,,127
+torvik,Jacksonville St.,2019,,128
+torvik,James Madison,2019,,129
+torvik,Kansas,2019,,131
+torvik,Kansas St.,2019,,132
+torvik,Kennesaw St.,2019,,133
+torvik,Kent St.,2019,,134
+torvik,Kentucky,2019,,135
+torvik,LIU,2019,,146
+torvik,LSU,2019,,136
+torvik,La Salle,2019,,137
+torvik,Lafayette,2019,,138
+torvik,Lamar,2019,,139
+torvik,Le Moyne,2024,,140
+torvik,Lehigh,2019,,141
+torvik,Liberty,2019,,142
+torvik,Lindenwood,2023,,366
+torvik,Lipscomb,2019,,143
+torvik,Little Rock,2019,,144
+torvik,Long Beach St.,2019,,145
+torvik,Longwood,2019,,147
+torvik,Louisiana,2019,,148
+torvik,Louisiana Monroe,2019,,316
+torvik,Louisiana Tech,2019,,149
+torvik,Louisville,2019,,150
+torvik,Loyola Chicago,2019,,151
+torvik,Loyola MD,2019,,152
+torvik,Loyola Marymount,2019,,153
+torvik,Maine,2019,,154
+torvik,Manhattan,2019,,155
+torvik,Marist,2019,,156
+torvik,Marquette,2019,,157
+torvik,Marshall,2019,,158
+torvik,Maryland,2019,,160
+torvik,Maryland Eastern Shore,2019,,159
+torvik,Massachusetts,2019,,161
+torvik,McNeese St.,2019,,162
+torvik,Memphis,2019,,163
+torvik,Mercer,2019,,164
+torvik,Mercyhurst,2025,,165
+torvik,Merrimack,2020,,166
+torvik,Miami FL,2019,,168
+torvik,Miami OH,2019,,167
+torvik,Michigan,2019,,170
+torvik,Michigan St.,2019,,169
+torvik,Middle Tennessee,2019,,171
+torvik,Milwaukee,2019,,172
+torvik,Minnesota,2019,,173
+torvik,Mississippi,2019,,220
+torvik,Mississippi St.,2019,,174
+torvik,Mississippi Valley St.,2019,,175
+torvik,Missouri,2019,,177
+torvik,Missouri St.,2019,,176
+torvik,Monmouth,2019,,178
+torvik,Montana,2019,,179
+torvik,Montana St.,2019,,180
+torvik,Morehead St.,2019,,181
+torvik,Morgan St.,2019,,182
+torvik,Mount St. Mary's,2019,,183
+torvik,Murray St.,2019,,184
+torvik,N.C. State,2019,,185
+torvik,NJIT,2019,,186
+torvik,Navy,2019,,187
+torvik,Nebraska,2019,,188
+torvik,Nebraska Omaha,2019,,221
+torvik,Nevada,2019,,189
+torvik,New Hampshire,2019,,190
+torvik,New Haven,2026,,1507
+torvik,New Mexico,2019,,191
+torvik,New Mexico St.,2019,,192
+torvik,New Orleans,2019,,193
+torvik,Niagara,2019,,194
+torvik,Nicholls St.,2019,,195
+torvik,Norfolk St.,2019,,196
+torvik,North Alabama,2019,,197
+torvik,North Carolina,2019,,200
+torvik,North Carolina A&T,2019,,198
+torvik,North Carolina Central,2019,,199
+torvik,North Dakota,2019,,201
+torvik,North Dakota St.,2019,,202
+torvik,North Florida,2019,,203
+torvik,North Texas,2019,,204
+torvik,Northeastern,2019,,205
+torvik,Northern Arizona,2019,,206
+torvik,Northern Colorado,2019,,207
+torvik,Northern Illinois,2019,,208
+torvik,Northern Iowa,2019,,209
+torvik,Northern Kentucky,2019,,210
+torvik,Northwestern,2019,,212
+torvik,Northwestern St.,2019,,211
+torvik,Notre Dame,2019,,213
+torvik,Oakland,2019,,214
+torvik,Ohio,2019,,215
+torvik,Ohio St.,2019,,216
+torvik,Oklahoma,2019,,217
+torvik,Oklahoma St.,2019,,218
+torvik,Old Dominion,2019,,219
+torvik,Oral Roberts,2019,,222
+torvik,Oregon,2019,,223
+torvik,Oregon St.,2019,,224
+torvik,Pacific,2019,,225
+torvik,Penn,2019,,227
+torvik,Penn St.,2019,,226
+torvik,Pepperdine,2019,,228
+torvik,Pittsburgh,2019,,229
+torvik,Portland,2019,,230
+torvik,Portland St.,2019,,231
+torvik,Prairie View A&M,2019,,232
+torvik,Presbyterian,2019,,233
+torvik,Princeton,2019,,234
+torvik,Providence,2019,,235
+torvik,Purdue,2019,,236
+torvik,Purdue Fort Wayne,2019,,237
+torvik,Queens,2023,,362
+torvik,Quinnipiac,2019,,238
+torvik,Radford,2019,,239
+torvik,Rhode Island,2019,,240
+torvik,Rice,2019,,241
+torvik,Richmond,2019,,242
+torvik,Rider,2019,,243
+torvik,Robert Morris,2019,,244
+torvik,Rutgers,2019,,245
+torvik,SIU Edwardsville,2019,,247
+torvik,SMU,2019,,248
+torvik,Sacramento St.,2019,,249
+torvik,Sacred Heart,2019,,250
+torvik,Saint Francis,2019,2026,278
+torvik,Saint Joseph's,2019,,251
+torvik,Saint Louis,2019,,252
+torvik,Saint Mary's,2019,,253
+torvik,Saint Peter's,2019,,254
+torvik,Sam Houston St.,2019,,255
+torvik,Samford,2019,,256
+torvik,San Diego,2019,,258
+torvik,San Diego St.,2019,,257
+torvik,San Francisco,2019,,259
+torvik,San Jose St.,2019,,260
+torvik,Santa Clara,2019,,261
+torvik,Savannah St.,2019,2019,380
+torvik,Seattle,2019,,262
+torvik,Seton Hall,2019,,263
+torvik,Siena,2019,,264
+torvik,South Alabama,2019,,265
+torvik,South Carolina,2019,,266
+torvik,South Carolina St.,2019,,267
+torvik,South Dakota,2019,,269
+torvik,South Dakota St.,2019,,270
+torvik,South Florida,2019,,271
+torvik,Southeast Missouri St.,2019,,272
+torvik,Southeastern Louisiana,2019,,246
+torvik,Southern,2019,,274
+torvik,Southern Illinois,2019,,273
+torvik,Southern Indiana,2023,,365
+torvik,Southern Miss,2019,,275
+torvik,Southern Utah,2019,,276
+torvik,St. Bonaventure,2019,,277
+torvik,St. Francis NY,2019,2023,364
+torvik,St. John's,2019,,279
+torvik,St. Thomas,2022,,280
+torvik,Stanford,2019,,281
+torvik,Stephen F. Austin,2019,,282
+torvik,Stetson,2019,,283
+torvik,Stonehill,2023,,284
+torvik,Stony Brook,2019,,285
+torvik,Syracuse,2019,,286
+torvik,TCU,2019,,287
+torvik,Tarleton St.,2021,,288
+torvik,Temple,2019,,289
+torvik,Tennessee,2019,,292
+torvik,Tennessee Martin,2019,,325
+torvik,Tennessee St.,2019,,290
+torvik,Tennessee Tech,2019,,291
+torvik,Texas,2019,,295
+torvik,Texas A&M,2019,,293
+torvik,Texas A&M Corpus Chris,2019,,294
+torvik,Texas Southern,2019,,296
+torvik,Texas St.,2019,,297
+torvik,Texas Tech,2019,,298
+torvik,The Citadel,2019,,299
+torvik,Toledo,2019,,300
+torvik,Towson,2019,,301
+torvik,Troy,2019,,302
+torvik,Tulane,2019,,303
+torvik,Tulsa,2019,,304
+torvik,UAB,2019,,305
+torvik,UC Davis,2019,,307
+torvik,UC Irvine,2019,,308
+torvik,UC Riverside,2019,,309
+torvik,UC San Diego,2021,,310
+torvik,UC Santa Barbara,2019,,311
+torvik,UCF,2019,,312
+torvik,UCLA,2019,,313
+torvik,UMBC,2019,,317
+torvik,UMKC,2019,,130
+torvik,UMass Lowell,2019,,318
+torvik,UNC Asheville,2019,,319
+torvik,UNC Greensboro,2019,,320
+torvik,UNC Wilmington,2019,,321
+torvik,UNLV,2019,,322
+torvik,USC,2019,,323
+torvik,USC Upstate,2019,,268
+torvik,UT Arlington,2019,,324
+torvik,UT Rio Grande Valley,2019,,326
+torvik,UTEP,2019,,327
+torvik,UTSA,2019,,328
+torvik,Utah,2019,,331
+torvik,Utah St.,2019,,329
+torvik,Utah Tech,2021,,330
+torvik,Utah Valley,2019,,332
+torvik,VCU,2019,,333
+torvik,VMI,2019,,334
+torvik,Valparaiso,2019,,335
+torvik,Vanderbilt,2019,,336
+torvik,Vermont,2019,,337
+torvik,Villanova,2019,,338
+torvik,Virginia,2019,,339
+torvik,Virginia Tech,2019,,340
+torvik,Wagner,2019,,341
+torvik,Wake Forest,2019,,342
+torvik,Washington,2019,,343
+torvik,Washington St.,2019,,344
+torvik,Weber St.,2019,,345
+torvik,West Florida,2027,,1073
+torvik,West Georgia,2025,,346
+torvik,West Virginia,2019,,347
+torvik,Western Carolina,2019,,348
+torvik,Western Illinois,2019,,349
+torvik,Western Kentucky,2019,,350
+torvik,Western Michigan,2019,,351
+torvik,Wichita St.,2019,,352
+torvik,William & Mary,2019,,353
+torvik,Winthrop,2019,,354
+torvik,Wisconsin,2019,,355
+torvik,Wofford,2019,,356
+torvik,Wright St.,2019,,357
+torvik,Wyoming,2019,,358
+torvik,Xavier,2019,,359
+torvik,Yale,2019,,360
+torvik,Youngstown St.,2019,,361

@@ -1,0 +1,33 @@
+# Hand-checked names that the exact-match rules can't link on their own.
+# source: torvik or odds_api (cbbd names are CBBD's own, so they never need this table).
+# alias: the exact string the source uses (case and punctuation matter).
+# valid_from_season / valid_to_season: inclusive; leave empty for "any season".
+# team_id: CBBD team id (see data/teams.csv). note: why, in plain words.
+source,alias,valid_from_season,valid_to_season,team_id,note
+torvik,Miami FL,,,168,CBBD 'Miami' is Miami (FL) Hurricanes; Miami (OH) is 167
+torvik,Connecticut,,,314,CBBD calls it UConn
+torvik,Mississippi,,,220,CBBD calls it Ole Miss
+torvik,Nebraska Omaha,,,221,CBBD calls it Omaha
+torvik,Tennessee Martin,,,325,UT Martin
+torvik,Texas A&M Corpus Chris,,,294,Torvik truncates 'Christi'
+torvik,Illinois Chicago,,,315,CBBD calls it UIC
+torvik,UMKC,,,130,CBBD calls it Kansas City
+torvik,Louisiana Monroe,,,316,CBBD calls it UL Monroe
+torvik,Cal Baptist,,,39,California Baptist
+torvik,Albany,,,306,CBBD calls it UAlbany
+torvik,LIU,,,146,CBBD calls it Long Island University
+torvik,Seattle,,,262,CBBD calls it Seattle U
+torvik,Grambling St.,,,103,CBBD calls it Grambling
+torvik,McNeese St.,,,162,CBBD calls it McNeese
+torvik,Nicholls St.,,,195,CBBD calls it Nicholls
+torvik,Sam Houston St.,,,255,CBBD calls it Sam Houston
+torvik,St. Thomas,,,280,St. Thomas-Minnesota
+torvik,Southeastern Louisiana,,,246,CBBD calls it SE Louisiana
+torvik,USC Upstate,,,268,South Carolina Upstate (not USC = Southern California)
+torvik,Appalachian St.,,,9,CBBD calls it App State
+torvik,Saint Francis,,,278,St. Francis (PA) Red Flash; NOT St. Francis Brooklyn (364) or San Francisco
+torvik,St. Francis NY,,,364,St. Francis Brooklyn (left D-I after 2022-23)
+odds_api,Arkansas-Little Rock Trojans,,,144,Little Rock
+odds_api,Tenn-Martin Skyhawks,,,325,UT Martin
+odds_api,Nicholls St Colonels,,,195,Nicholls
+odds_api,Army Knights,,,15,Army; CBBD mascot is 'Black Knights'

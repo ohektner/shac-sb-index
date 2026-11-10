@@ -1,0 +1,5 @@
+# D-I teams that CBBD's saved per-season /teams lists don't cover yet (newest season only).
+# team_id = the CBBD id the team already has in CBBD games (as a non-D-I opponent).
+# Remove a row once a CBBD /teams list for that season is saved and includes the team.
+team_id,school,mascot,conference,first_season,note
+1073,West Florida,Argonauts,ASUN,2027,"New to D-I in 2026-27; in Torvik 2027 team_results; CBBD id 1073 from CBBD games ('West Florida')"
