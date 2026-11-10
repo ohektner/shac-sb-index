@@ -1,0 +1,124 @@
+# What this does, in plain language:
+# Once a day it looks at the Polymarket snapshots already saved in the PRIVATE data repo
+# (ohektner/shac-sb-index-data), finds spread markets whose games finished more than 6 hours
+# ago, and downloads the 5-minute price history of both sides from Polymarket's public CLOB
+# API. A manifest file in the data repo means nothing is ever downloaded twice.
+#
+# By hand you can also run mode "backfill": it lists the 2025-26 season's closed events and
+# downloads their history. Raise max_calls and run it a few times until it reports 0 calls.
+#
+# Polymarket gave written permission to read its public API for this non-commercial project.
+# Raw data goes to the private data repo only. Nothing is committed to this public repo.
+#
+# Safety notes:
+# - Tokens are not left on disk (persist-credentials: false). Only the push step gets a token.
+# - Actions are pinned to exact commits so a changed tag can't swap the code we run.
+# - Inputs reach the script through env variables, never pasted into the shell command.
+name: polymarket-history
+
+on:
+  schedule:
+    - cron: "29 10 * * *"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "recent = markets from saved snapshots; backfill = list the 2025-26 closed events"
+        type: choice
+        options:
+          - recent
+          - backfill
+        default: recent
+      max_calls:
+        description: "Most API calls this run may make"
+        type: string
+        default: "1500"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: polymarket-history
+  cancel-in-progress: false
+
+jobs:
+  history:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Check out this repo
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: main
+          persist-credentials: false
+
+      - name: Check out the private data repo
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: ohektner/shac-sb-index-data
+          token: ${{ secrets.DATA_REPO_TOKEN }}
+          path: data-repo
+          persist-credentials: false
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync --frozen --no-dev
+
+      # On the daily schedule there are no inputs, so the defaults after || apply.
+      - name: Fetch price history from Polymarket
+        id: history
+        continue-on-error: true
+        env:
+          MODE: ${{ inputs.mode || 'recent' }}
+          MAX_CALLS: ${{ inputs.max_calls || '1500' }}
+        run: >
+          uv run --no-sync python -m shac.ingest.polymarket_history
+          --data-dir data-repo
+          --mode "$MODE"
+          --max-calls "$MAX_CALLS"
+
+      # Always runs, so files fetched before a failure are still saved (the manifest
+      # is what stops us fetching the same call twice).
+      - name: Push raw files to the private data repo
+        id: push_data
+        if: always()
+        continue-on-error: true
+        working-directory: data-repo
+        env:
+          TOKEN: ${{ secrets.DATA_REPO_TOKEN }}
+        run: |
+          if [ ! -d polymarket ]; then
+            echo "No Polymarket files to push."
+            exit 0
+          fi
+          AUTH=$(printf 'x-access-token:%s' "$TOKEN" | base64 -w0)
+          echo "::add-mask::$AUTH"
+          auth_git() { git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic $AUTH" "$@"; }
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add polymarket
+          if git diff --cached --quiet; then
+            echo "Nothing new to push to the data repo."
+            exit 0
+          fi
+          git commit -q -m "polymarket history $(date -u +%Y%m%dT%H%M%SZ)"
+          for attempt in 1 2 3 4 5; do
+            if auth_git push -q origin HEAD:main; then
+              exit 0
+            fi
+            sleep $((attempt * 5))
+            auth_git pull -q --rebase origin main || true
+          done
+          echo "Push to the data repo failed after 5 tries."
+          exit 1
+
+      - name: Fail the run if any step above failed
+        if: >
+          always() && (steps.history.outcome == 'failure'
+          || steps.push_data.outcome == 'failure')
+        run: |
+          echo "history: ${{ steps.history.outcome }}, data push: ${{ steps.push_data.outcome }}"
+          exit 1
