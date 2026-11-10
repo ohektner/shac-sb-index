@@ -42,7 +42,8 @@ from shac.snapshots.common import (
 URL = "https://api.the-odds-api.com/v4/sports/basketball_ncaab/odds"
 REQUEST_INFO = {
     "sport": "basketball_ncaab",
-    "regions": "us",
+    # "us" = US books; "eu" adds Pinnacle, the sharpest book. Each region costs 1 credit.
+    "regions": "us,eu",
     "markets": "spreads",
     "oddsFormat": "american",
     "dateFormat": "iso",

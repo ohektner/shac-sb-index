@@ -30,6 +30,8 @@ Nothing else about the baseline is tuned. If a team has no rating in the D−1 f
 
 Every metric is reported for the model and for the Torvik baseline, per season and pooled.
 
+**Which closing line.** The primary close is the median of the US books in our last snapshot before tip, because that's what the backtest seasons have. For live 2026-27 games, CLV and distance to the close are also reported against Pinnacle's close, as a second row. The primary close doesn't change. (Added 2026-11-10, before any live results existed.)
+
 1. **CLV in points.** For each priced game, take the side the model implied at pricing. CLV is how far the line moved toward that side between pricing and the close: `side × (close_implied_margin − priced_implied_margin)`, where side is +1 for home and −1 for away, and an implied margin is `−home_spread`. Positive is good. Reported as the mean with a 95% confidence interval and the share of games with positive CLV. Backtest seasons use open-to-close. A backtest game with no opening line is left out of CLV only, and the number left out is reported.
 2. **Distance to the close.** Mean absolute difference between the predicted margin and the closing line's implied margin. This is the primary accuracy measure, and the one used for "matches or beats Torvik" at G1: the model passes if its pooled distance on the held-out seasons is no larger than the baseline's.
 3. **Error vs. results.** Mean absolute error of the predicted margin against the final margin, shown next to the closing line's own error. Reported, but game results are noisy enough that small differences mean little.

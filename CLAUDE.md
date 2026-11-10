@@ -15,7 +15,8 @@ Read these before working:
 ## Rules
 
 - **Plan before multi-step work.** Show the plan and wait for Owen's approval before executing.
-- **Don't create GitHub repos, push, open PRs or touch secrets without Owen's go-ahead.** Owen adds secrets himself.
+- **Don't create GitHub repos or touch secrets without Owen's go-ahead.** Owen adds secrets himself.
+- **Merging (Owen approved 2026-11-10):** Claude may open PRs and merge docs, plumbing and data-collection PRs once checks pass and the lead has reviewed the diff. Anything touching the model, features, the ledger or the scorecard needs Owen's sign-off before merge. Stop for Owen's review at every gate.
 - **Code changes go on a branch and through a PR.** Never commit code to `main` directly. The one exception: scheduled jobs commit data files (status logs, the ledger, site data) straight to `main`. Owen approved this on 2026-11-09 so the public timestamps are real.
 - **Never delete files** unless Owen says to.
 - **No leakage.** Every feature is point-in-time and carries an `as_of` timestamp earlier than tip-off. Season-end ratings never touch earlier games. Walk-forward by season, never shuffled across time. The 2020-21 season is handled separately (see DECISIONS.md).
