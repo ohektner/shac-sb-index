@@ -6,8 +6,9 @@
 --
 -- THE NO-LEAKAGE RULE LIVES HERE. A game gets the latest ratings file whose `as_of` is
 -- strictly before its tip (ARCHITECTURE.md rules 2 and 3). Both teams come from that same
--- file. If a team isn't in it, its ratings stay empty: the game is not given an older
--- file for one side. Results and closing lines are LABELS and BENCHMARKS, never features;
+-- file (same source, date AND as_of, so two pulls on one date are never mixed). If a
+-- team isn't in it, its ratings stay empty: the game is not given an older file for one
+-- side. Results and closing lines are LABELS and BENCHMARKS, never features;
 -- the column lists in shac.tables.history say which is which.
 
 WITH files AS (
@@ -38,7 +39,7 @@ closes AS (
 )
 SELECT
     g.game_id, g.season, g.season_type, g.tip_at, g.tip_tbd, g.neutral_site,
-    g.conference_game, g.status, g.home_team_id, g.away_team_id,
+    g.conference_game, g.home_team_id, g.away_team_id,
     -- features (point-in-time; as_of = ratings_as_of)
     c.source AS ratings_source,
     c.rating_date,
@@ -49,17 +50,19 @@ SELECT
     h.barthag AS home_barthag, h.rank AS home_rank,
     a.adj_o AS away_adj_o, a.adj_d AS away_adj_d, a.adj_tempo AS away_adj_tempo,
     a.barthag AS away_barthag, a.rank AS away_rank,
-    -- labels (the result)
-    r.home_points, r.away_points, r.home_margin, r.overtimes,
+    -- labels (the result; status is only final after the game)
+    g.status, r.home_points, r.away_points, r.home_margin, r.overtimes,
     -- benchmarks (closing lines; never features)
     cl.cbbd_close_home_spread, cl.cbbd_open_home_spread, cl.cbbd_close_basis,
     cl.own_close_home_spread, cl.pinnacle_close_home_spread
 FROM games g
 LEFT JOIN chosen c USING (game_id)
 LEFT JOIN ratings_daily h
-  ON h.source = c.source AND h.rating_date = c.rating_date AND h.team_id = g.home_team_id
+  ON h.source = c.source AND h.rating_date = c.rating_date AND h.as_of = c.as_of
+ AND h.team_id = g.home_team_id
 LEFT JOIN ratings_daily a
-  ON a.source = c.source AND a.rating_date = c.rating_date AND a.team_id = g.away_team_id
+  ON a.source = c.source AND a.rating_date = c.rating_date AND a.as_of = c.as_of
+ AND a.team_id = g.away_team_id
 LEFT JOIN results r USING (game_id)
 LEFT JOIN closes cl USING (game_id)
 ORDER BY g.tip_at, g.game_id;

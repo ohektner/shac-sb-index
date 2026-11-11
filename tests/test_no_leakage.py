@@ -313,3 +313,118 @@ def test_real_removing_later_games_changes_nothing(real_tables):
             t["closing_lines"][t["closing_lines"]["game_id"].isin(g["game_id"])],
         ).set_index("game_id")
         assert_same_point_in_time_columns(full, cut)
+
+
+def test_results_and_closes_never_reach_features():
+    # Scramble every label and benchmark: the features must not move.
+    games = GAMES
+    results = make_results(games)
+    closes = make_closes(games)
+    base = build_game_history(games, results, RATINGS, closes).set_index("game_id")
+    scrambled_results = results.assign(
+        home_points=results["home_points"][::-1].to_numpy() + 40,
+        home_margin=-results["home_margin"],
+        status="cancelled",
+    )
+    scrambled_closes = closes.assign(close_home_spread=25.5, open_home_spread=-30.0)
+    other = build_game_history(games, scrambled_results, RATINGS, scrambled_closes).set_index(
+        "game_id"
+    )
+    pd.testing.assert_frame_equal(base[FEATURE_COLUMNS], other[FEATURE_COLUMNS])
+    assert (other["cbbd_close_home_spread"] == 25.5).all()  # the scramble did land
+
+
+def test_daily_pulls_on_one_date_are_never_mixed():
+    # Our own pulls: team 3 is missing from the 12:00 UTC pull and shows up in a 20:00 UTC
+    # pull the same Eastern date. A game tipping between the two must not get team 3's
+    # later row (fetched after tip); it gets no row for team 3 at all.
+    from shac.tables.torvik import TIMEMACHINE_COLUMNS, build_ratings_daily
+
+    def pull(stamp, teams):
+        rows = []
+        for t in teams:
+            row = dict.fromkeys(TIMEMACHINE_COLUMNS, 0)
+            row.update(rank=t, team=f"T{t}", record="1-0", adj_o=100.0 + t, adj_d=95.0)
+            row.update(barthag=0.5, adj_tempo=68.0)
+            rows.append(row)
+        df = pd.DataFrame(rows)
+        df["season"] = 2027
+        df["fetched_at"] = stamp
+        return df
+
+    daily = pd.concat(
+        [pull("2026-11-20T12:00:00+00:00", [1, 2]), pull("2026-11-20T20:00:00+00:00", [1, 2, 3])],
+        ignore_index=True,
+    )
+    aliases = pd.DataFrame(
+        {
+            "source": "torvik",
+            "alias": ["T1", "T2", "T3"],
+            "valid_from_season": 2019,
+            "valid_to_season": pd.array([None] * 3, dtype="Int64"),
+            "team_id": [1, 2, 3],
+        }
+    )
+    empty_tm = pd.DataFrame(columns=[*TIMEMACHINE_COLUMNS, "season", "rating_date", "fetched_at"])
+    ratings, _ = build_ratings_daily(empty_tm, daily, aliases)
+    assert set(ratings["team_id"]) == {1, 2}  # only the first pull is kept, whole
+
+    games = make_games([(9, 2027, "2026-11-20T17:00:00Z", 3, 1)])
+    games["season"] = 2027
+    h = build_game_history(games, make_results(games), ratings, make_closes(games))
+    row = h.iloc[0]
+    assert pd.isna(row["home_adj_o"]) and row["away_adj_o"] == 101.0
+
+
+# ---------- real data: the record clock ----------
+
+RECORD_CLOCK_SQL = """
+-- For each team in each game: how many games the chosen ratings file counts for the team
+-- (its W-L) versus how many the team had tipped before this game (any opponent). A file
+-- that counts more either already holds this game (a leak) or Torvik counts a game CBBD
+-- is missing (a steady offset over many games; docs/TORVIK.md). A leak shows up as a
+-- one-game blip: flagged, with neither neighbouring game flagged.
+WITH o AS (
+    SELECT *, row_number() OVER (PARTITION BY season, team_id ORDER BY tip_at, game_id) - 1
+                  AS n_before
+    FROM team_games
+),
+sides AS (
+    SELECT game_id, home_team_id AS team_id, ratings_source, rating_date
+    FROM game_history WHERE rating_date IS NOT NULL
+    UNION ALL
+    SELECT game_id, away_team_id, ratings_source, rating_date
+    FROM game_history WHERE rating_date IS NOT NULL
+),
+j AS (
+    SELECT o.season, o.team_id, o.tip_at, o.game_id, o.n_before,
+           r.wins + r.losses AS file_games
+    FROM sides s
+    JOIN o USING (game_id, team_id)
+    JOIN ratings_daily r
+      ON r.source = s.ratings_source AND r.rating_date = s.rating_date
+     AND r.team_id = s.team_id
+),
+f AS (
+    SELECT *, file_games > n_before AS flag,
+           lag(file_games > n_before) OVER w AS prev_flag,
+           lead(file_games > n_before) OVER w AS next_flag
+    FROM j
+    WINDOW w AS (PARTITION BY season, team_id ORDER BY tip_at, game_id)
+)
+SELECT game_id FROM f
+WHERE flag AND NOT coalesce(prev_flag, false) AND NOT coalesce(next_flag, false)
+"""
+
+
+@real
+def test_real_no_file_already_counts_the_game(real_tables):
+    from shac.tables.timemachine_check import team_games_any_opponent
+
+    teams = pd.read_csv(Path(__file__).resolve().parents[1] / "data" / "teams.csv")
+    con = duckdb.connect()
+    con.register("game_history", real_tables["game_history"])
+    con.register("ratings_daily", real_tables["ratings_daily"])
+    con.register("team_games", team_games_any_opponent(Path(DATA_DIR), teams))
+    blips = [r[0] for r in con.execute(RECORD_CLOCK_SQL).fetchall()]
+    assert blips == [], f"{len(blips)} games whose ratings file already counts them: {blips[:5]}"

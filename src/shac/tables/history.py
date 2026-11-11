@@ -7,7 +7,8 @@ Columns come in three groups, and only the first may ever feed a prediction:
 
 - FEATURE_COLUMNS: known before tip. Their `as_of` is `ratings_as_of`, and
   tests/test_no_leakage.py checks it is strictly before `tip_at` for every row.
-- LABEL_COLUMNS: the game's result. What the model is trained and scored against.
+- LABEL_COLUMNS: the game's result and final status. What the model is trained and
+  scored against.
 - BENCHMARK_COLUMNS: closing lines. Used to score against the market, never as inputs
   (no-leakage rule 5).
 
@@ -32,7 +33,6 @@ KEY_COLUMNS = [
     "tip_tbd",
     "neutral_site",
     "conference_game",
-    "status",
     "home_team_id",
     "away_team_id",
 ]
@@ -53,7 +53,8 @@ FEATURE_COLUMNS = [
     "away_barthag",
     "away_rank",
 ]
-LABEL_COLUMNS = ["home_points", "away_points", "home_margin", "overtimes"]
+# `status` (final, cancelled, postponed) is only known after the game, so it sits here.
+LABEL_COLUMNS = ["status", "home_points", "away_points", "home_margin", "overtimes"]
 BENCHMARK_COLUMNS = [
     "cbbd_close_home_spread",
     "cbbd_open_home_spread",
