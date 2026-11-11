@@ -82,6 +82,7 @@ def load_torvik_names(data_dir: Path) -> pd.DataFrame:
     whose name cell is literally "team"; that row is skipped.
     super_sked: names are `team1` (index 8) and `team2` (index 14). This file also lists
     non-D-I opponents.
+    timemachine: the daily Time Machine ratings files (a D-I list, like team_results).
     """
     seen: set[tuple[int, str, str]] = set()
     for path in sorted((data_dir / "torvik" / "raw").rglob("*.csv.gz")):
@@ -97,6 +98,14 @@ def load_torvik_names(data_dir: Path) -> pd.DataFrame:
                 for idx in (8, 14):
                     if len(row) > idx and row[idx]:
                         seen.add((season, kind, row[idx]))
+    # Time Machine backfill (task 1.3): one JSON list per day, team name at index 1.
+    # Torvik renamed some schools across its whole archive, so these files carry the
+    # older names for 2019-2024 (for example "North Carolina St."), file_kind "timemachine".
+    for path in sorted((data_dir / "torvik" / "timemachine").glob("*/*_team_results.json.gz")):
+        season = int(path.parent.name)
+        for row in json.loads(gzip.decompress(path.read_bytes())):
+            if len(row) > 1 and row[1]:
+                seen.add((season, "timemachine", row[1]))
     return pd.DataFrame(sorted(seen), columns=["season", "file_kind", "name"])
 
 

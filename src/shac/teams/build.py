@@ -96,8 +96,9 @@ def build(data_dir: Path, out_dir: Path) -> dict:
         key = (source, alias, res.suggested_team_id, res.suggested_name, res.reason)
         unresolved[key].add(season)
 
-    # Torvik team_results: the D-I list on Torvik's side.
-    results = torvik[torvik["file_kind"] == "team_results"]
+    # Torvik team_results and Time Machine files: the D-I list on Torvik's side.
+    results = torvik[torvik["file_kind"].isin(["team_results", "timemachine"])]
+    results = results.drop_duplicates(["season", "name"])
     for season in sorted(results["season"].unique()):
         resolved_ids = set()
         for name in sorted(results.loc[results["season"] == season, "name"]):

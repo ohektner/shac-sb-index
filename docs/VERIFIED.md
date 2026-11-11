@@ -57,8 +57,8 @@ Sources: https://collegefootballdata.com/api-tiers · https://api.collegebasketb
 | Item | Finding | Status |
 | --- | --- | --- |
 | Bulk files | `https://barttorvik.com/YYYY_team_results.csv` (and `.json`), `YYYY_super_sked.csv` (55 columns, no header), `YYYY_results.csv`. Year = season's ending year. | Confirmed |
-| Time Machine | `https://barttorvik.com/timemachine/team_results/YYYYMMDD_team_results.json.gz`. Data seen for 2015-01-15, 2018-12-01, 2026-01-01. 45 fields, no headers. | Confirmed |
-| Time Machine timing | Bart Torvik (2026-11-10): the files are "frozen in the morning," so a date's file most likely excludes that date's games. Not yet tested on our data (task 1.4). | Owner says; untested (use the prior day until tested) |
+| Time Machine | `https://barttorvik.com/timemachine/team_results/YYYYMMDD_team_results.json.gz`. Data seen for 2015-01-15, 2018-12-01, 2026-01-01. 45 fields, no headers, in the same order as `team_results.csv` (exact match on all 45 for 2023-24 and 2025-26; see `docs/TORVIK.md`). | Confirmed |
+| Time Machine timing | Bart Torvik (2026-11-10): the files are "frozen in the morning." Tested on all eight seasons (task 1.4, `docs/TORVIK.md`): the file dated D **includes** D's games, late-night West Coast and Hawaii games too, so "morning" means the morning of D+1. Known at 06:00 Eastern on D+1. One early count found in 90,423 team-games (an 11 a.m. game against a non-D-I team). | Confirmed (2026-11-11) |
 | Game predictions | `super_sked` has a `prediction` text column. Bart Torvik (2026-11-10): the prediction is kept as of when the game went into his system, "so technically not at tip, but pretty close." How long before tip that is hasn't been measured; our daily `super_sked` snapshots can show it. | Owner says; lead time unmeasured (still not used, see DECISIONS.md) |
 | Player stats | `getadvstats.php?year=YYYY&csv=1`, `YYYY_all_advgames.json.gz` (per game). No point-in-time snapshot, but per-game data can rebuild one. | Confirmed |
 | cbbdata API | Domain did not resolve | Unknown (likely dead) |
