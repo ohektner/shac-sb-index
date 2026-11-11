@@ -49,6 +49,7 @@ Where the project stands right now. Update this at the end of every working sess
 1. **About 2026-11-13:** check the G0 gate and run the auditor.
 2. **About 2026-11-17:** task 1.2, comparing CBBD's lines with our pre-tip snapshots. Then recommend to Owen whether to buy one month of historical odds. It looks likely, because CBBD has no opening spreads before 2024-25.
 3. **Task 1.7 and everything after it is model logic, for Fable.** The baseline scorecard reads `game_history`. Tell Owen; don't start it.
+4. **Before the first live pricing run (task 1.10):** top up the 2026-27 Time Machine files with `--seasons 2027` (from Owen's PC), then rebuild the tables. Also in PLAN.md, task 1.10.
 
 ## Notes for the next session
 
