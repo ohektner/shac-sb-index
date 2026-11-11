@@ -10,6 +10,12 @@ What it fetches, for each season (ending year):
   Game dates come from the CBBD games table (tables/games.parquet), in US Eastern time.
 - That season's schedule file, YYYY_super_sked.csv, which holds Torvik's game predictions.
 
+A season still in progress works too: days stop at the latest file that is surely final
+(`last_final_day`, yesterday's once it's past 06:00 Eastern), so no future day is ever
+asked for (a 404 is recorded as "missing" and never asked again). Its schedule file is
+skipped while the season runs; the daily Torvik job saves a fresh copy every day.
+Re-running later picks up the days that have passed since.
+
 Bart Torvik OK'd this on 2026-11-10 as long as it goes slowly (see docs/DECISIONS.md), so:
 - Requests are at least 20 seconds apart, plus a random 0 to 10 seconds.
 - The run STOPS at the first block page, 403, 429 or repeated error. Run it again later;
@@ -29,8 +35,9 @@ import random
 import sys
 import time
 from collections.abc import Callable
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 import duckdb
 import httpx
@@ -99,20 +106,35 @@ def season_game_ranges(games_path: Path) -> dict[int, tuple[date, date]]:
     return {int(season): (first, last) for season, first, last in rows}
 
 
+def last_final_day(now: datetime) -> date:
+    """The newest Time Machine file that is surely frozen: the file dated D is known at
+    06:00 US Eastern on D+1 (docs/TORVIK.md), so before 06:00 it's the day before that."""
+    eastern = now.astimezone(ZoneInfo("America/New_York"))
+    return (eastern - timedelta(hours=6)).date() - timedelta(days=1)
+
+
 def timemachine_source(day: date) -> str:
     """The site path of one day's Time Machine file."""
     return f"timemachine/team_results/{day:%Y%m%d}_team_results.json.gz"
 
 
-def plan_sources(ranges: dict[int, tuple[date, date]], seasons: list[int]) -> list[tuple[int, str]]:
-    """Every (season, source path) to fetch: the schedule file, then each day in order."""
+def plan_sources(
+    ranges: dict[int, tuple[date, date]], seasons: list[int], last_day: date
+) -> list[tuple[int, str]]:
+    """Every (season, source path) to fetch: the schedule file, then each day in order.
+
+    Days after `last_day` are left out. A season whose last game is after `last_day` is
+    still in progress, so its schedule file is left out too.
+    """
     sources = []
     for season in seasons:
         if season not in ranges:
             raise ValueError(f"Season {season} is not in the games table.")
-        sources.append((season, f"{season}_super_sked.csv"))
         first, last = ranges[season]
-        sources.extend((season, timemachine_source(day)) for day in season_dates(first, last))
+        if last <= last_day:
+            sources.append((season, f"{season}_super_sked.csv"))
+        days = [d for d in season_dates(first, last) if d <= last_day]
+        sources.extend((season, timemachine_source(day)) for day in days)
     return sources
 
 
@@ -214,7 +236,8 @@ def run(
     ranges = season_game_ranges(data_dir / GAMES_TABLE)
     manifest_path = data_dir / MANIFEST
     done = {r["source"] for r in read_log_rows(manifest_path) if r["status"] in DONE_STATUSES}
-    todo = [(s, src) for s, src in plan_sources(ranges, seasons) if src not in done]
+    planned = plan_sources(ranges, seasons, last_final_day(now()))
+    todo = [(s, src) for s, src in planned if src not in done]
     if max_files is not None:
         todo = todo[:max_files]
     print(f"{len(todo)} files to fetch ({len(done)} already in the manifest).")
