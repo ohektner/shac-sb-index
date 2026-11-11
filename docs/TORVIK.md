@@ -84,3 +84,14 @@ Positions 10 to 43 are named by the CSV header and match it in the two exact-mat
 ## Our own daily pulls
 
 `torvik_daily` rows come from our scheduled 5 a.m. Phoenix pull of the live season's `team_results.csv` (`torvik/raw/YYYY/MM/DD/`). Their `as_of` is the fetch time, and `rating_date` is the US Eastern date of the pull. If a date has more than one pull, the first is kept. Season-end files for past seasons in `torvik/raw/seasons/` are never used as point-in-time ratings.
+
+## Our daily pulls match the Time Machine (checked 2026-11-11)
+
+The 2026-27 Time Machine files from Oct 31 to Nov 10 were fetched on 2026-11-11 (11 files; `--seasons 2027` stops at the latest file known to be final, so it can be re-run as the season goes on). Each of our 5 a.m. Phoenix pulls on day D was compared with the Time Machine file dated D−1:
+
+| Our pull | Time Machine file | Teams | Largest `adj_o` / `adj_d` gap | Largest tempo gap | Records that differ |
+| --- | --- | ---: | --- | --- | ---: |
+| 2026-11-10, 9:56 a.m. ET | 2026-11-09 | 365 | 4e-14 / 3e-14 | 0.0003 | 0 |
+| 2026-11-11, 9:33 a.m. ET | 2026-11-10 | 365 | 2e-12 / 1e-12 | 0.0001 | 1 |
+
+The ratings are the same numbers, so the live ratings are the same data the backtest uses. The one record difference is one more win in our pull, with ratings unchanged and no D-I game that day: a game against a non-D-I team that Torvik added after the file was frozen (those games don't move ratings).
