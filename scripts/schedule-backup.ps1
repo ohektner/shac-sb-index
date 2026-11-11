@@ -1,7 +1,7 @@
 # Backup trigger for the scheduled GitHub Actions jobs, run from Owen's PC every 15 minutes
 # by a Windows scheduled task.
 #
-# Why: GitHub skips some scheduled runs (on 2026-11-10 it ran 2 of the first 10 slots).
+# Why: GitHub skips some scheduled runs (on 2026-11-10 it ran 5 of the first 11 slots).
 # This checks each job's latest slot and starts the job by hand if GitHub hasn't run it.
 # See src/shac/snapshots/backup_trigger.py for the rules, and docs/DECISIONS.md.
 #
