@@ -199,7 +199,10 @@ def compare_feature_sets(features: pd.DataFrame, seasons: list[int]) -> pd.DataF
       mae            mean absolute error against the final margin, all seasons together
       mae_<season>   the same, one season at a time
       gain_vs_core   core's error minus this one's (positive = better than core)
-      gain_se        the standard error of that gain (game-by-game differences)
+      gain_se        the standard error of that gain (game-by-game differences). It
+                     treats games as independent, but a season's predictions share one
+                     fit, so it runs a little small. That is why the rule below also
+                     asks for a win in every season.
       seasons_better how many of the seasons it beat core in
 
     The rule for keeping an added idea, fixed before the first run: its gain is at least

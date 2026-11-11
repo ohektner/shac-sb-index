@@ -158,15 +158,66 @@ def test_conference_home_input_is_zero_at_a_neutral_site():
     assert list(f["home_conf"]) == [1.0, 0.0, 0.0]
 
 
+def varied_history() -> pd.DataFrame:
+    """made_up_history with four teams, a game every other day and dated ratings files,
+    so the rest, early-season and conference inputs all take real, different values."""
+    hist = made_up_history(noise=8.0)
+    n = hist.groupby("season").cumcount()
+    start = pd.to_datetime((hist["season"] - 1).astype(str) + "-11-10T00:00:00Z", utc=True)
+    hist["tip_at"] = start + pd.to_timedelta(n * 2 + (n % 3 == 0) * 0.5, unit="D")
+    hist["home_team_id"] = 1 + n % 4
+    hist["away_team_id"] = 1 + (n + 1 + n % 3) % 4
+    hist["rating_date"] = (hist["tip_at"] - pd.Timedelta(days=1)).dt.date
+    hist["conference_game"] = n % 2 == 0
+    hist["home_adj_d"] = 98.0 + n % 5  # so the defense half varies too
+    return hist
+
+
+def test_varied_history_exercises_every_input():
+    f = build_features(varied_history())
+    for name in ALL_FEATURES:
+        assert f[name].nunique() > 2 or name in ("home", "home_conf"), name
+    assert f["home_conf"].nunique() == 2
+    assert (f["rm_nov"] != 0).any() and (f["rm_dec"] != 0).any() and (f["rest_diff"] != 0).any()
+
+
 def test_inputs_never_read_a_score_or_a_line():
-    """Blank every score and line: no input may move. Only earlier games' `status` is read."""
-    hist = made_up_history()
+    """Blank every score and line: no input may move."""
+    hist = varied_history()
     blanked = hist.copy()
     for col in ["home_points", "away_points", "home_margin", "overtimes", *BENCHMARK_COLUMNS]:
         blanked[col] = None
     before = build_features(hist)[ALL_FEATURES]
     after = build_features(blanked)[ALL_FEATURES]
     pd.testing.assert_frame_equal(before, after)
+
+
+def test_a_games_inputs_ignore_its_own_and_later_games_status():
+    """Rest days read `status`, but only of games that tipped earlier."""
+    hist = varied_history()
+    before = build_features(hist).set_index("game_id")[ALL_FEATURES]
+    cutoff = hist.loc[hist["season"] == 2023, "tip_at"].sort_values().iloc[20]
+    changed = hist.copy()
+    changed.loc[changed["tip_at"] >= cutoff, "status"] = "cancelled"
+    after = build_features(changed).set_index("game_id")[ALL_FEATURES]
+    # Games at or before the cutoff tip: nothing moves, the cutoff game's own status included.
+    unaffected = hist.loc[hist["tip_at"] <= cutoff, "game_id"]
+    pd.testing.assert_frame_equal(before.loc[unaffected], after.loc[unaffected])
+    # And status does matter going forward, so the test can't pass by status being ignored.
+    assert not before["rest_diff"].equals(after["rest_diff"])
+
+
+def test_two_games_at_the_same_tip_time_are_not_each_others_rest():
+    def at(game_id, when, home, away):
+        row = game(game_id, 2023, margin=1)
+        row.update(tip_at=pd.Timestamp(when), home_team_id=home, away_team_id=away)
+        return row
+
+    # Team 1 is listed in two games at the same minute (a data quirk). Neither is "before"
+    # the other: team 1 is on an opener (7) in both, as are teams 2 and 3.
+    rows = [at(1, "2022-12-01T00:00:00Z", 1, 2), at(2, "2022-12-01T00:00:00Z", 1, 3)]
+    f = build_features(history(rows)).set_index("game_id")
+    assert list(f["rest_diff"]) == pytest.approx([0.0, 0.0])
 
 
 def test_every_feature_set_uses_known_inputs_only():
@@ -289,12 +340,28 @@ def test_leave_one_season_out_never_sees_the_season_it_predicts():
     assert len(before) == 120  # every game of the three seasons, once
 
 
-def test_compare_feature_sets_reports_core_against_itself_as_zero():
-    table = compare_feature_sets(build_features(made_up_history(noise=8.0)), [2019, 2020, 2022])
-    core = table.set_index("feature_set").loc["core"]
-    assert core["gain_vs_core"] == 0.0
-    assert set(table["feature_set"]) == set(FEATURE_SETS)
-    assert {"mae_2019", "mae_2020", "mae_2022"} <= set(table.columns)
+def test_compare_feature_sets_matches_a_by_hand_calculation():
+    seasons = [2019, 2020, 2022]
+    features = build_features(varied_history())
+    table = compare_feature_sets(features, seasons).set_index("feature_set")
+    assert set(table.index) == set(FEATURE_SETS)
+    assert table.loc["core", "gain_vs_core"] == 0.0
+    assert table["n_games"].nunique() == 1  # every candidate scored on the same games
+    assert table["n_games"].iloc[0] == 120
+
+    # Redo "rest" against "core" by hand from the leave-one-season-out predictions.
+    def abs_error(name):
+        loso = leave_one_season_out(features, seasons, name).set_index("game_id")
+        return (loso["pred_margin"] - loso["home_margin"]).abs()
+
+    gain = abs_error("core") - abs_error("rest")
+    rest = table.loc["rest"]
+    assert rest["mae"] == pytest.approx(abs_error("rest").mean())
+    assert rest["gain_vs_core"] == pytest.approx(gain.mean())
+    assert rest["gain_se"] == pytest.approx(gain.std(ddof=1) / np.sqrt(120))
+    season_of = features.set_index("game_id")["season"].reindex(gain.index)
+    assert rest["seasons_better"] == int((gain.groupby(season_of).mean() > 0).sum())
+    assert rest["mae_2020"] == pytest.approx(abs_error("rest")[season_of == 2020].mean())
 
 
 # ---------- the scorecard takes the model's rows ----------
