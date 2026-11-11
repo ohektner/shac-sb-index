@@ -1,5 +1,5 @@
 # What this does, in plain language:
-# Run by hand only. Calls the CollegeBasketballData (CBBD) API and saves every raw response
+# Runs daily (mode "current": the season in progress) and by hand. Calls the CollegeBasketballData (CBBD) API and saves every raw response
 # (gzipped JSON, plus a manifest of what was fetched) into the PRIVATE data repo
 # (ohektner/shac-sb-index-data), because CBBD's terms do not allow republishing its data.
 # Nothing from CBBD is committed to this public repo. The free quota is 1,000 calls a month,
@@ -12,15 +12,20 @@
 name: cbbd-ingest
 
 on:
+  # 10:07 UTC = 3:07 a.m. Arizona, after the night's games. If GitHub skips it, the backup
+  # trigger on Owen's PC starts it with the default inputs below (mode "current").
+  schedule:
+    - cron: "7 10 * * *"
   workflow_dispatch:
     inputs:
       mode:
-        description: "discover = 8 calls to learn response shapes; backfill = fetch whole seasons"
+        description: "current = daily run for the season in progress; backfill = fetch whole past seasons; discover = 8 calls to learn response shapes"
         type: choice
         options:
-          - discover
+          - current
           - backfill
-        default: discover
+          - discover
+        default: current
       seasons:
         description: "Seasons by ending year, like 2019-2026 (backfill only)"
         type: string
@@ -28,7 +33,7 @@ on:
       max_calls:
         description: "Most API calls this run may make"
         type: string
-        default: "8"
+        default: "30"
 
 permissions:
   contents: read
@@ -69,9 +74,10 @@ jobs:
         continue-on-error: true
         env:
           CBBD_API_KEY: ${{ secrets.CBBD_API_KEY }}
-          MODE: ${{ inputs.mode }}
-          SEASONS: ${{ inputs.seasons }}
-          MAX_CALLS: ${{ inputs.max_calls }}
+          # Scheduled runs have no inputs, so each falls back to the daily defaults.
+          MODE: ${{ inputs.mode || 'current' }}
+          SEASONS: ${{ inputs.seasons || '2019-2026' }}
+          MAX_CALLS: ${{ inputs.max_calls || '30' }}
         run: >
           uv run --no-sync python -m shac.ingest.cbbd
           --data-dir data-repo
