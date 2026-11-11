@@ -42,7 +42,8 @@ Where the project stands right now. Update this at the end of every working sess
 | What | Waiting for | Blocks | Fallback |
 | --- | --- | --- | --- |
 | Task 1.2: are CBBD's lines true closes? | About a week of finished games in our own snapshots | The $30 historical-odds decision | n/a |
-| Availability report access | Nothing sent yet; held until task 1.11 | G2 news collection | Google News RSS, team sites |
+| Availability report access | HD Intelligence's reply (email drafted 2026-11-11 to andy@hdintelligence.com, Owen sends) | Official reports for conference games | News sources (below) |
+| Task 1.11 news source | Owen's decision: Google News RSS and team sites are ruled out by their terms (VERIFIED.md); Bluesky is allowed but needs an account + app password, coverage untested; X is pay-per-read | G2 labeling set (2.1) | Official reports only |
 
 ## Next up
 
