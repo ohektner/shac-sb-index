@@ -7,7 +7,7 @@ Reads (private repo):  cbbd/raw/{games,lines,games-players}/*.json.gz, odds/raw/
                        torvik/timemachine/**/*.json.gz, torvik/raw/**/*_team_results_*.csv.gz
 Reads (public repo):   data/teams.csv, data/team_aliases.csv
 Writes (private repo): tables/{games,results,player_box,cbbd_lines,odds_snapshots,
-                       odds_event_matches,closing_lines,ratings_daily}.parquet
+                       odds_event_matches,closing_lines,ratings_daily,game_history}.parquet
 
 Prints counts only (no team names, scores or lines), so the output is safe for public CI
 logs. No network calls.
@@ -54,6 +54,7 @@ TABLE_NAMES = [
     "odds_event_matches",
     "closing_lines",
     "ratings_daily",
+    "game_history",
 ]
 
 
@@ -139,6 +140,11 @@ def build_all(data_dir: Path, map_dir: Path) -> tuple[dict[str, pd.DataFrame], d
         "closing_lines": closing,
         "ratings_daily": ratings_daily,
     }
+    # Imported here: history.py imports helpers from this module.
+    from shac.tables.history import build_game_history, history_counts
+
+    tables["game_history"] = build_game_history(games, results, ratings_daily, closing)
+    report["history_counts"] = history_counts(tables["game_history"])
     return tables, report
 
 
@@ -171,6 +177,9 @@ def print_report(tables: dict[str, pd.DataFrame], report: dict) -> None:
 
     for name, n in report["ratings_counts"].items():
         print(f"ratings_daily {name}: {n}")
+
+    for name, n in report["history_counts"].items():
+        print(f"game_history {name}: {n}")
 
     for name in TABLE_NAMES:
         print(f"table {name}: {len(tables[name])} rows")

@@ -3,7 +3,7 @@
 --
 -- The runner makes one view per parquet file in <private repo>/tables/:
 --   games, results, player_box, cbbd_lines, odds_snapshots, odds_event_matches,
---   closing_lines, ratings_daily
+--   closing_lines, ratings_daily, game_history
 
 -- check: a_games_duplicate_pk
 SELECT game_id, count(*) AS n FROM games GROUP BY game_id HAVING count(*) > 1;
@@ -111,3 +111,16 @@ SELECT rating_date, team_id, source
 FROM ratings_daily
 WHERE adj_o IS NULL OR adj_d IS NULL OR adj_tempo IS NULL OR barthag IS NULL
    OR wins IS NULL OR losses IS NULL OR as_of IS NULL OR season IS NULL;
+
+-- check: p_game_history_duplicate_pk
+SELECT game_id, count(*) AS n FROM game_history GROUP BY game_id HAVING count(*) > 1;
+
+-- check: q_game_history_ratings_not_before_tip
+-- No-leakage rule 2: every game's ratings were known strictly before tip.
+SELECT game_id FROM game_history WHERE ratings_as_of >= tip_at;
+
+-- check: r_game_history_missing_games
+-- One row per game in `games`, no more and no fewer.
+SELECT game_id FROM games ANTI JOIN game_history USING (game_id)
+UNION ALL
+SELECT game_id FROM game_history ANTI JOIN games USING (game_id);

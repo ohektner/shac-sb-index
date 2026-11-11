@@ -20,11 +20,11 @@ The baseline is fixed here so it can't be weakened later. For a game on date D b
 baseline_margin = (EM_h − EM_a) × T / 100 + H
 ```
 
-- `EM` is a team's adjusted offense minus its adjusted defense (points per 100 possessions), from the Torvik ratings file dated D−1.
+- `EM` is a team's adjusted offense minus its adjusted defense (points per 100 possessions), from the Torvik ratings file dated D−1. Precisely (clarified 2026-11-11, before any backtest, see DECISIONS.md): the latest Time Machine file known before tip, where the file dated D is known at 06:00 US Eastern on D+1. For almost every game that is the file dated the day before; games tipping between midnight and 6 a.m. Eastern and games with no set tip time get the file a day earlier. These are the `game_history` ratings.
 - `T` is the expected possessions: `tempo_h × tempo_a / average_tempo`, where `average_tempo` is the mean adjusted tempo of all D-I teams in that same file.
 - `H` is home-court advantage in points: 0 at a neutral site. Otherwise one constant, set to the value that makes the baseline's average error zero on non-neutral games in the training seasons. It is re-fit for each test season from the seasons before it.
 
-Nothing else about the baseline is tuned. If a team has no rating in the D−1 file, the game is left out of both the baseline's and the model's numbers, and the count of such games is reported.
+Nothing else about the baseline is tuned. If a team has no rating in that file, the game is left out of both the baseline's and the model's numbers, and the count of such games is reported.
 
 ## Scorecard metrics
 

@@ -11,6 +11,7 @@ import pytest
 from shac.tables import cbbd, odds, raw
 from shac.tables.build import build_closing_lines, write_parquet
 from shac.tables.check import SQL_PATH, open_tables, run_checks
+from shac.tables.history import build_game_history
 from shac.tables.torvik import time_machine_as_of
 
 TEAMS = pd.DataFrame(
@@ -432,6 +433,9 @@ def _write_tables(
         "closing_lines": closing,
         "ratings_daily": ratings if ratings is not None else ratings_fixture(),
     }
+    tables["game_history"] = build_game_history(
+        tables["games"], tables["results"], tables["ratings_daily"], closing
+    )
     for name, df in tables.items():
         write_parquet(df, tmp_path / "tables" / f"{name}.parquet")
     return tmp_path / "tables"
