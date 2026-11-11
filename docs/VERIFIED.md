@@ -102,12 +102,13 @@ Written permission received by Owen on 2026-11-10 for reading the public API, st
 | SEC | Conference games. Initial report 8pm ET the day before, plus a game-day update. Official URL not found. | Confirmed from press only |
 | Big Ten | A report exists; no official basketball policy or URL found | Unknown |
 | Others | Missouri Valley confirmed (questionable or out). Big East and A-10 appear in the vendor app only. | Partly confirmed |
-| Host | All reports sit in one vendor's JavaScript app (HD Intelligence, `par.hdintelligence-app.com`). No public API or per-date URL found. Vendor terms not found. | Changed |
+| Host | All reports sit in one vendor's JavaScript app (HD Intelligence, `par.hdintelligence-app.com`). No public API or per-date URL found. No terms of use on hdintelligence.com or in the app (checked 2026-11-11); its privacy policy says report pages can be viewed without signing in. Permission email to HDI's men's basketball contact drafted 2026-11-11 for Owen to send. | Asked; waiting |
 | NCAA.com | Tournament only; nothing for the regular season | Confirmed |
 | ESPN | Its JSON has no college basketball injuries, and Disney's terms forbid automated access | Changed (ruled out) |
 | RotoWire | Terms forbid scraping | Ruled out |
-| Conference/team sites | robots.txt allows crawling with `Crawl-delay: 5`. Terms: "Copying or storing of any Content for other than personal use is expressly prohibited." | Unclear |
-| Google News RSS | Works; terms for automated use are unclear | Unclear |
+| Conference/team sites | robots.txt allows crawling with `Crawl-delay: 5`. SIDEARM terms (2023-04-11): content is "for your personal, noncommercial use"; "Copying or storing of any Content for other than personal use is expressly prohibited." Storing items for this project isn't personal use. | Ruled out (2026-11-11) without permission |
+| Google News RSS | The feed's own copyright element: "made available solely for the purpose of rendering Google News results within a personal feed reader … Any other use of the feed is expressly prohibited." Google News terms also bar using a robot "to monitor or copy any content." | Ruled out (2026-11-11) |
+| Bluesky | Developer guidelines allow apps on the AT Protocol (no spam; honor deletions; keep a public contact email). Unauthenticated search now returns HTTP 403, so a Bluesky account and app password (a secret Owen adds) would be needed. Coverage of college basketball injury news not tested. | Possible; needs Owen's decision |
 | X API | Pay per read, no free tier (third-party sources) | Unknown |
 | Injury APIs | DunkAPI, BALLDONTLIE, SportsDataIO: college coverage not verified | Unknown |
 
