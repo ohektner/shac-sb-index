@@ -16,6 +16,7 @@ Where the project stands right now. Update this at the end of every working sess
 | Polymarket snapshot | GitHub Actions | 6 a day | `data/status/polymarket_snapshot_log.csv` |
 | Polymarket history (recent games) | GitHub Actions | Daily, 10:29 UTC | Actions tab, `polymarket-history` |
 | News collection (Google News) | GitHub Actions | Twice a day, 14:53 and 21:53 UTC | `data/status/news_log.csv` |
+| News collection (team sites) | GitHub Actions | Daily, 20:13 UTC | `data/status/news_sidearm_log.csv` |
 | Snapshot watch (alarm) | GitHub Actions | Twice a day | Fails and emails Owen if odds snapshots stop |
 | Schedule backup (starts skipped jobs) | Owen's PC, Windows task | Every 15 minutes | `%LOCALAPPDATA%\shac-sb-index\schedule-backup.log` |
 | Torvik daily snapshot | Owen's PC, Windows task | 5:00 AM Phoenix | `data/status/torvik_snapshot_log.csv`, and `%LOCALAPPDATA%\shac-sb-index\torvik-task.log` |
@@ -38,7 +39,7 @@ Where the project stands right now. Update this at the end of every working sess
 
 ## In progress
 
-- **Task 1.11, news collection** (PR #33, merged 2026-11-11). Google News is the primary source by Owen's decision (DECISIONS.md): twice a day, one search per team playing in the next 36 hours, headlines only, private repo. A 3-team test run on GitHub Actions worked (18 items), so it runs there; the first full run is the 14:53 UTC slot. Watch `data/status/news_log.csv` for `blocked` rows. Next: SIDEARM team sites as the slow secondary source (needs a team-site list first).
+- **Task 1.11, news collection** (PR #33, merged 2026-11-11). Google News is the primary source by Owen's decision (DECISIONS.md): twice a day, one search per team playing in the next 36 hours, headlines only, private repo. A 3-team test run on GitHub Actions worked (18 items), so it runs there; the first full run is the 14:53 UTC slot. Watch `data/status/news_log.csv` for `blocked` rows. Secondary source added (PR for task 1.11 step 4): team-site feeds for 312 of 365 teams (`data/team_sites.csv`, found 2026-11-11 via Wikidata + robots.txt checks), read daily at 20:13 UTC. 53 teams to review in `data/team_sites_review.csv` (46 with no Wikidata site; 7 with no usable feed, including Little Rock, whose robots.txt blocks feeds). Re-run `shac.news.team_sites` about monthly.
 
 - **Scheduled jobs skip slots:** GitHub still skips some (on 2026-11-11 it missed the 13:17 UTC odds slot). The backup trigger started it at 13:53 UTC, once the PC woke. The backup only works while the PC is awake.
 
