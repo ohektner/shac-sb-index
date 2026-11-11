@@ -16,6 +16,7 @@ Where the project stands right now. Update this at the end of every working sess
 | Polymarket snapshot | GitHub Actions | 6 a day | `data/status/polymarket_snapshot_log.csv` |
 | Polymarket history (recent games) | GitHub Actions | Daily, 10:29 UTC | Actions tab, `polymarket-history` |
 | Snapshot watch (alarm) | GitHub Actions | Twice a day | Fails and emails Owen if odds snapshots stop |
+| Schedule backup (starts skipped jobs) | Owen's PC, Windows task | Every 15 minutes | `%LOCALAPPDATA%\shac-sb-index\schedule-backup.log` |
 | Torvik daily snapshot | Owen's PC, Windows task | 5:00 AM Phoenix | `data/status/torvik_snapshot_log.csv`, and `%LOCALAPPDATA%\shac-sb-index\torvik-task.log` |
 
 ## Done
@@ -30,7 +31,7 @@ Where the project stands right now. Update this at the end of every working sess
 ## In progress
 
 - **Task 1.3, Torvik Time Machine backfill:** Bart Torvik OK'd it on 2026-11-10 (do it slowly; the CDN may block). Runs from Owen's PC, one season at a time, about 1,235 files at 20+ seconds apart. See DECISIONS.md.
-- **Scheduled jobs not firing yet:** on 2026-11-10 the 9:17 a.m. and 12:17 p.m. odds slots and the 10:41 a.m. and 12:41 p.m. Polymarket slots (Arizona) passed with no run. PR #13 (comments only, so GitHub re-reads the schedules) was merged at about 1:28 p.m., earlier than planned: it was meant to wait until the 2:17 p.m. slot had also been missed. Check the Actions tab for runs marked "Scheduled." If none appear, switch each workflow off and on there (ask Owen first).
+- **Scheduled jobs skip slots:** on 2026-11-10 GitHub ran 5 of the first 11 slots, 17 minutes to 3 hours late. PR #13 (comment-only edit, merged early at about 1:28 p.m. Arizona, before the agreed 2:17 p.m. check) didn't help; switching the workflows off and on (8:36 p.m.) is too new to judge. Fix: the backup trigger (`scripts/schedule-backup.ps1`, Windows task every 15 minutes, log in `%LOCALAPPDATA%\shac-sb-index\schedule-backup.log`) plus a guard in the odds job. Owen registers the task.
 
 ## Waiting on
 
