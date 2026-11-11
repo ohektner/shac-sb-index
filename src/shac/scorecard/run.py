@@ -4,7 +4,8 @@ Run as:
     uv run python -m shac.scorecard.run --data-dir <private repo> [--out-dir scorecard/backtest]
 
 Reads (private repo):  tables/game_history.parquet
-Writes (private repo): tables/baseline_predictions.parquet (one row per game)
+Writes (private repo): tables/baseline_predictions.parquet and
+                       tables/model_predictions.parquet (one row per game each)
 Writes (public repo):  scorecard/backtest/*.csv (summary numbers only, one file per metric)
 
 All the logic is DuckDB SQL in sql/scorecard/. This module only wires the queries together:
@@ -28,6 +29,7 @@ from pathlib import Path
 import duckdb
 import pandas as pd
 
+from shac.model.margin import walk_forward
 from shac.tables.build import REPO_ROOT, query_df, write_parquet
 
 SQL_DIR = REPO_ROOT / "sql" / "scorecard"
@@ -152,8 +154,15 @@ def main(argv: list[str] | None = None) -> int:
     baseline = baseline_predictions(game_history)
     write_parquet(baseline, args.data_dir / "tables" / "baseline_predictions.parquet")
 
+    # The margin model (task 1.8), walk-forward, scored by the same SQL on the same games.
+    model, _ = walk_forward(game_history)
+    write_parquet(model, args.data_dir / "tables" / "model_predictions.parquet")
+    predictions = pd.concat(
+        [baseline[PREDICTION_COLUMNS], model[PREDICTION_COLUMNS]], ignore_index=True
+    )
+
     outputs = {"baseline_fit": baseline_fit(game_history, baseline)}
-    outputs.update(score(game_history, baseline, args.close_source))
+    outputs.update(score(game_history, predictions, args.close_source))
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
     for name, df in outputs.items():
