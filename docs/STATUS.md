@@ -38,6 +38,8 @@ Where the project stands right now. Update this at the end of every working sess
 
 ## In progress
 
+- **Task 1.11, news collection** (PR #33, merged 2026-11-11). Google News is the primary source by Owen's decision (DECISIONS.md): twice a day, one search per team playing in the next 36 hours, headlines only, private repo. A 3-team test run on GitHub Actions worked (18 items), so it runs there; the first full run is the 14:53 UTC slot. Watch `data/status/news_log.csv` for `blocked` rows. Next: SIDEARM team sites as the slow secondary source (needs a team-site list first).
+
 - **Scheduled jobs skip slots:** GitHub still skips some (on 2026-11-11 it missed the 13:17 UTC odds slot). The backup trigger started it at 13:53 UTC, once the PC woke. The backup only works while the PC is awake.
 
 ## Waiting on
@@ -45,7 +47,7 @@ Where the project stands right now. Update this at the end of every working sess
 | What | Waiting for | Blocks | Fallback |
 | --- | --- | --- | --- |
 | Task 1.2: are CBBD's lines true closes? | About a week of finished games in our own snapshots | The $30 historical-odds decision | n/a |
-| Availability report access | HD Intelligence's reply (email drafted 2026-11-11 to andy@hdintelligence.com, Owen sends) | Official reports for conference games | News sources (below) |
+| Availability report access | HD Intelligence's reply (email drafted 2026-11-11 to andy@hdintelligence.com, Owen sends) | Official reports for conference games | Google News headlines (task 1.11, running) |
 
 ## Next up
 
