@@ -15,6 +15,7 @@ Where the project stands right now. Update this at the end of every working sess
 | Odds snapshot (US books + Pinnacle) | GitHub Actions | 7 a day | `data/status/odds_snapshot_log.csv` |
 | Polymarket snapshot | GitHub Actions | 6 a day | `data/status/polymarket_snapshot_log.csv` |
 | Polymarket history (recent games) | GitHub Actions | Daily, 10:29 UTC | Actions tab, `polymarket-history` |
+| News collection (Google News) | GitHub Actions | Twice a day, 14:53 and 21:53 UTC | `data/status/news_log.csv` |
 | Snapshot watch (alarm) | GitHub Actions | Twice a day | Fails and emails Owen if odds snapshots stop |
 | Schedule backup (starts skipped jobs) | Owen's PC, Windows task | Every 15 minutes | `%LOCALAPPDATA%\shac-sb-index\schedule-backup.log` |
 | Torvik daily snapshot | Owen's PC, Windows task | 5:00 AM Phoenix | `data/status/torvik_snapshot_log.csv`, and `%LOCALAPPDATA%\shac-sb-index\torvik-task.log` |
@@ -45,7 +46,6 @@ Where the project stands right now. Update this at the end of every working sess
 | --- | --- | --- | --- |
 | Task 1.2: are CBBD's lines true closes? | About a week of finished games in our own snapshots | The $30 historical-odds decision | n/a |
 | Availability report access | HD Intelligence's reply (email drafted 2026-11-11 to andy@hdintelligence.com, Owen sends) | Official reports for conference games | News sources (below) |
-| Task 1.11 news source | Owen's decision: Google News RSS and team sites are ruled out by their terms (VERIFIED.md); Bluesky is allowed but needs an account + app password, coverage untested; X is pay-per-read | G2 labeling set (2.1) | Official reports only |
 
 ## Next up
 
