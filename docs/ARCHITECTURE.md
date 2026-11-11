@@ -268,7 +268,7 @@ Only final D-I vs D-I team-games with a box score are included; a team's first g
 | `as_of` | timestamp | When these ratings were known. For our daily pulls, the fetch time. For the Time Machine backfill, 06:00 US Eastern on the day after `rating_date` (no-leakage rule 3). |
 | `fetched_at` | timestamp | |
 
-**`news_raw`** (`news/raw/google_news/YYYY/MM/DD/google_news_<stamp>.json.gz`). Writer: `shac.news.google_news` (twice a day, `news-collect.yml`). One file per run: for each team searched, the query, the raw RSS XML and the parsed items (guid, title, outlet, link, publish time). Headlines only; article pages are never fetched. A flattened table with the columns below is built later, for G2.
+**`news_raw`** (`news/raw/google_news/YYYY/MM/DD/google_news_<stamp>.json.gz`). Writer: `shac.news.google_news` (twice a day, `news-collect.yml`). One file per run: for each team searched, the query, the raw RSS XML and the parsed items (guid, title, outlet, link, publish time). Headlines only; article pages are never fetched. Team-site feeds (the secondary source, `shac.news.sidearm`, daily, `news-sidearm.yml`) go to `news/raw/sidearm/YYYY/MM/DD/sidearm_<stamp>.json.gz` in the same shape, with each item's summary too. A flattened table with the columns below is built later, for G2.
 
 | Column | Type | Notes |
 | --- | --- | --- |
