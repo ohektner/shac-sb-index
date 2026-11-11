@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shac SB Index Progress</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one reading column; a scoreboard-style gate track up top, then task board, model, stats, process. */
+:root {
+  --bg: #f5f6f3;
+  --surface: #ffffff;
+  --ink: #17201c;
+  --muted: #5b6660;
+  --line: #d9ded9;
+  --accent: #b5561b;      /* hardwood */
+  --accent-soft: #f6e6da;
+  --done: #2f7a4f;
+  --done-soft: #e1f0e6;
+  --built: #2c5d8f;
+  --built-soft: #e0eaf5;
+  --wait: #9a6b00;
+  --wait-soft: #f7edd2;
+  --todo: #7a827d;
+  --todo-soft: #eceeec;
+  --block: #a8322b;
+  --block-soft: #f6dfdd;
+  --code-bg: #eef0ec;
+  --display: "Barlow Condensed", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --body: "Source Sans 3", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111613; --surface: #19201c; --ink: #e7ece8; --muted: #9aa59f; --line: #2c3631;
+    --accent: #e08a4f; --accent-soft: #3a2619;
+    --done: #6cc28f; --done-soft: #1b3326; --built: #7fb1e3; --built-soft: #1b2a3a;
+    --wait: #e2b54a; --wait-soft: #352a10; --todo: #8d968f; --todo-soft: #232a26;
+    --block: #ec7b72; --block-soft: #3a1d1b; --code-bg: #212924;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111613; --surface: #19201c; --ink: #e7ece8; --muted: #9aa59f; --line: #2c3631;
+  --accent: #e08a4f; --accent-soft: #3a2619;
+  --done: #6cc28f; --done-soft: #1b3326; --built: #7fb1e3; --built-soft: #1b2a3a;
+  --wait: #e2b54a; --wait-soft: #352a10; --todo: #8d968f; --todo-soft: #232a26;
+  --block: #ec7b72; --block-soft: #3a1d1b; --code-bg: #212924;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 32px 64px;
+}
+main { max-width: 980px; margin: 0 auto; display: flex; flex-direction: column; gap: 56px; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; line-height: 1.05; }
+h1 { font-size: clamp(2.6rem, 7vw, 4rem); font-weight: 700; letter-spacing: 0.01em; text-transform: uppercase; }
+h2 { font-size: 2rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; }
+h3 { font-size: 1.35rem; font-weight: 600; }
+p { margin: 0; max-width: 68ch; }
+.eyebrow { font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+.sub { color: var(--muted); font-size: 1.15rem; }
+section { display: flex; flex-direction: column; gap: 18px; }
+.lede { display: flex; flex-direction: column; gap: 10px; }
+code, .mono { font-family: var(--mono); font-size: 0.88em; }
+code { background: var(--code-bg); padding: 1px 5px; border-radius: 4px; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* Headline answer */
+.answer { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px 22px; display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.answer div { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.answer .k { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.answer .v { font-family: var(--display); font-size: 1.5rem; font-weight: 600; line-height: 1.1; }
+.answer .d { color: var(--muted); font-size: 0.95rem; }
+
+/* Gate track */
+.track { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; position: relative; }
+.gate { display: flex; flex-direction: column; gap: 8px; padding: 0 10px 0 0; position: relative; min-width: 0; }
+.gate .bar { height: 8px; border-radius: 4px; background: var(--todo-soft); position: relative; overflow: hidden; }
+.gate .bar i { position: absolute; inset: 0 auto 0 0; background: var(--todo); border-radius: 4px; }
+.gate.s-active .bar i { background: var(--accent); }
+.gate.s-almost .bar i { background: var(--done); }
+.gate .code { font-family: var(--display); font-size: 2.2rem; font-weight: 700; line-height: 1; }
+.gate.s-active .code { color: var(--accent); }
+.gate.s-almost .code { color: var(--done); }
+.gate.s-later .code { color: var(--todo); }
+.gate .name { font-weight: 700; }
+.gate .state { font-family: var(--mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+.gate .what { font-size: 0.93rem; color: var(--muted); }
+@media (max-width: 760px) {
+  .track { grid-template-columns: 1fr; gap: 18px; }
+  .gate { padding: 0; }
+}
+
+/* Legend + pills */
+.legend { display: flex; flex-wrap: wrap; gap: 8px 14px; font-size: 0.9rem; color: var(--muted); }
+.pill { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; padding: 3px 8px; border-radius: 999px; white-space: nowrap; }
+.pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.p-done { color: var(--done); background: var(--done-soft); }
+.p-built { color: var(--built); background: var(--built-soft); }
+.p-wait { color: var(--wait); background: var(--wait-soft); }
+.p-todo { color: var(--todo); background: var(--todo-soft); }
+.p-block { color: var(--block); background: var(--block-soft); }
+
+/* Task board */
+.board { display: flex; flex-direction: column; gap: 28px; }
+.phase { display: flex; flex-direction: column; gap: 10px; }
+.phase h3 { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.phase h3 small { font-family: var(--body); font-size: 0.95rem; font-weight: 400; color: var(--muted); }
+.tasks { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.task { display: grid; grid-template-columns: 56px 1fr 150px; gap: 6px 16px; padding: 14px 0; border-bottom: 1px solid var(--line); align-items: start; }
+.task .id { font-family: var(--mono); font-weight: 600; color: var(--muted); padding-top: 2px; }
+.task .body { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.task .t { font-weight: 700; }
+.task .why { color: var(--muted); font-size: 0.95rem; }
+.task .why b { color: var(--ink); font-weight: 600; }
+.task .st { justify-self: end; padding-top: 2px; }
+.task.now { background: linear-gradient(90deg, var(--accent-soft), transparent 70%); }
+@media (max-width: 640px) {
+  .task { grid-template-columns: 44px 1fr; }
+  .task .st { grid-column: 2; justify-self: start; grid-row: 2; }
+  .task .body { grid-column: 2; grid-row: 1; }
+  .task .id { grid-row: 1 / span 2; }
+}
+
+/* Model section */
+.formula { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; gap: 12px; overflow-x: auto; }
+.formula .eq { font-family: var(--mono); font-size: 1.05rem; white-space: nowrap; }
+.formula .eq em { font-style: normal; color: var(--accent); font-weight: 600; }
+.example { display: grid; grid-template-columns: auto 1fr auto; gap: 6px 14px; font-size: 0.95rem; align-items: baseline; }
+.example .n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; }
+.example .lbl { color: var(--muted); font-family: var(--mono); font-size: 0.8rem; }
+.example .tot { border-top: 1px solid var(--line); padding-top: 6px; font-weight: 700; }
+.verdict { border-left: 4px solid var(--accent); padding: 4px 0 4px 16px; display: flex; flex-direction: column; gap: 8px; }
+.verdict p { max-width: 70ch; }
+
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.diff { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.diff .tag { align-self: flex-start; }
+.diff p { font-size: 0.97rem; }
+
+/* Stats table */
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; min-width: 680px; font-size: 0.95rem; }
+th, td { text-align: left; vertical-align: top; padding: 11px 14px; border-bottom: 1px solid var(--line); }
+th { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 600; background: var(--code-bg); }
+tr:last-child td { border-bottom: 0; }
+td:first-child { font-weight: 700; white-space: nowrap; }
+td .group { display: block; font-family: var(--mono); font-size: 0.7rem; font-weight: 400; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; }
+
+/* Process steps */
+.steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; counter-reset: s; }
+.steps li { display: grid; grid-template-columns: 40px 1fr; gap: 12px; counter-increment: s; }
+.steps li::before { content: counter(s); font-family: var(--display); font-size: 1.6rem; font-weight: 700; color: var(--accent); line-height: 1.1; }
+.steps li div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.steps b { font-weight: 700; }
+.steps span { color: var(--muted); }
+
+.waits { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.waits li { display: grid; grid-template-columns: 110px 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.waits .who { font-family: var(--mono); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); padding-top: 3px; }
+@media (max-width: 520px) { .waits li { grid-template-columns: 1fr; gap: 2px; } }
+footer { color: var(--muted); font-size: 0.9rem; border-top: 1px solid var(--line); padding-top: 16px; }
+a { color: var(--accent); }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+</style>
+</head>
+<body>
+
+<main>
+  <header class="lede">
+    <span class="eyebrow">Status as of Nov 11, 2026</span>
+    <h1>Shac SB Index</h1>
+    <p class="sub">A college basketball forecasting model. Where the project stands, what each step is for, and how the math gets decided.</p>
+  </header>
+
+  <div class="answer" aria-label="Summary">
+    <div><span class="k">Gates</span><span class="v">G0 nearly closed, G1 in progress</span><span class="d">G0 needs 3 straight days of scheduled odds snapshots, around Nov 13.</span></div>
+    <div><span class="k">G1 tasks</span><span class="v num">7 done, 2 built, 5 to go</span><span class="d">Out of 14. Built means the code is finished but the real-data run waits on task 1.2.</span></div>
+    <div><span class="k">The one thing holding up the model</span><span class="v">Task 1.2, about Nov 17</span><span class="d">It decides which closing line the backtest is measured against.</span></div>
+  </div>
+
+  <section aria-labelledby="gates">
+    <span class="eyebrow">The big picture</span>
+    <h2 id="gates">Five gates</h2>
+    <p>The project moves in gates rather than dates. A gate closes when its exit check passes. Each one builds what the next one needs.</p>
+    <div class="track">
+      <div class="gate s-almost">
+        <div class="bar"><i style="width:90%"></i></div>
+        <span class="code">G0</span><span class="name">Snapshots</span><span class="state">Closing ~Nov 13</span>
+        <span class="what">Start recording betting lines several times a day. Lines that aren't saved now can't be recovered later.</span>
+      </div>
+      <div class="gate s-active">
+        <div class="bar"><i style="width:55%"></i></div>
+        <span class="code">G1</span><span class="name">Foundation</span><span class="state">In progress</span>
+        <span class="what">History, the Torvik baseline, our own model, the scorecard, and a public record of every call.</span>
+      </div>
+      <div class="gate s-later">
+        <div class="bar"><i style="width:12%"></i></div>
+        <span class="code">G2</span><span class="name">AI availability</span><span class="state">Groundwork laid</span>
+        <span class="what">An AI reads injury and absence news and adjusts the margin. This is the main build.</span>
+      </div>
+      <div class="gate s-later">
+        <div class="bar"><i style="width:8%"></i></div>
+        <span class="code">G3</span><span class="name">Market study</span><span class="state">Data collecting</span>
+        <span class="what">How lines move before tip, and how sharp books and prediction markets compare with US books.</span>
+      </div>
+      <div class="gate s-later">
+        <div class="bar"><i style="width:0%"></i></div>
+        <span class="code">G4</span><span class="name">Season review</span><span class="state">After the season</span>
+        <span class="what">The case study for your portfolio site, including what failed.</span>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="tasks">
+    <span class="eyebrow">Task board</span>
+    <h2 id="tasks">What's done and what's next</h2>
+    <div class="legend">
+      <span class="pill p-done">Done</span>
+      <span class="pill p-built">Built, run waits</span>
+      <span class="pill p-wait">Waiting</span>
+      <span class="pill p-block">Blocked on a decision</span>
+      <span class="pill p-todo">Not started</span>
+    </div>
+
+    <div class="board">
+      <div class="phase">
+        <h3>G0 · Snapshots <small>all built; gate check pending</small></h3>
+        <ul class="tasks">
+          <li class="task"><span class="id">0.x</span><div class="body"><span class="t">Odds, Pinnacle, Torvik and Polymarket snapshot jobs</span><span class="why"><b>What:</b> scheduled jobs save lines from 8 US books and Pinnacle 7 times a day, Torvik ratings every morning and Polymarket prices 6 times a day. <b>Why:</b> a closing line exists only if someone saved it before tip.</span></div><span class="st"><span class="pill p-done">Done</span></span></li>
+          <li class="task now"><span class="id">Gate</span><div class="body"><span class="t">3 days in a row of scheduled runs</span><span class="why"><b>What:</b> check the status log, then have the auditor review. <b>Why:</b> proves collection runs unattended before anything depends on it. GitHub skipped some slots; the backup trigger on your PC fills them while the PC is awake.</span></div><span class="st"><span class="pill p-wait">~Nov 13</span></span></li>
+        </ul>
+      </div>
+
+      <div class="phase">
+        <h3>G1 · Foundation <small>the model and its yardstick</small></h3>
+        <ul class="tasks">
+          <li class="task"><span class="id">1.1</span><div class="body"><span class="t">Game history from CBBD, 8 seasons</span><span class="why"><b>What:</b> every D-I game since 2018-19 with scores, lines and box scores, plus a daily feed for this season. <b>Why:</b> the raw material for training and testing.</span></div><span class="st"><span class="pill p-done">Done</span></span></li>
+          <li class="task now"><span class="id">1.2</span><div class="body"><span class="t">Are CBBD's lines true closing lines?</span><span class="why"><b>What:</b> compare CBBD's lines with our own pre-tip snapshots once about a week of games has finished, then decide on the $30 month of historical odds. <b>Why:</b> the closing line is the yardstick. It has to be chosen before any result is seen against it.</span></div><span class="st"><span class="pill p-wait">~Nov 17</span></span></li>
+          <li class="task"><span class="id">1.3</span><div class="body"><span class="t">Torvik Time Machine backfill</span><span class="why"><b>What:</b> 1,185 daily snapshots of Torvik's ratings as they stood on each day, with Bart Torvik's OK. <b>Why:</b> a backtest can only use what was known at the time. End-of-season ratings already include the games being predicted.</span></div><span class="st"><span class="pill p-done">Done</span></span></li>
+          <li class="task"><span class="id">1.4</span><div class="body"><span class="t">When is each ratings file known?</span><span class="why"><b>What:</b> found that the file dated D already counts D's games, so it's treated as known at 6 a.m. Eastern the next day. <b>Why:</b> the old rule would have let 52 late-night games see their own result.</span></div><span class="st"><span class="pill p-done">Done</span></span></li>
+          <li class="task"><span class="id">1.5</span><div class="body"><span class="t">Team-name map</span><span class="why"><b>What:</b> 369 teams matched across CBBD, Torvik and the odds feed, with 0 unmatched. <b>Why:</b> "NC State," "North Carolina St." and "N.C. State" have to be one team.</span></div><span class="st"><span class="pill p-done">Done</span></span></li>
+          <li class="task"><span class="id">1.6</span><div class="body"><span class="t">One history table and the leakage tests</span><span class="why"><b>What:</b> <code>game_history</code>, where every column is labeled input, result or line, and tests that fail if any input was known after tip. <b>Why:</b> leakage is the most common way sports models fool their builders.</span></div><span class="st"><span class="pill p-done">Done</span></span></li>
+          <li class="task"><span class="id">1.7</span><div class="body"><span class="t">Torvik baseline and scorecard</span><span class="why"><b>What:</b> the baseline formula and all six pre-registered metrics, as DuckDB SQL. <b>Why:</b> the model has to beat something fixed and public, or it isn't worth shipping.</span></div><span class="st"><span class="pill p-built">Built</span></span></li>
+          <li class="task now"><span class="id">1.8</span><div class="body"><span class="t">Margin model, walk-forward</span><span class="why"><b>What:</b> our own predicted margin, fit only on seasons before the one it predicts. PR #30 awaits your sign-off. <b>Why:</b> this is the number every call comes from.</span></div><span class="st"><span class="pill p-built">PR #30</span></span></li>
+          <li class="task"><span class="id">1.9</span><div class="body"><span class="t">Calibration and Pick/Lean tiers</span><span class="why"><b>What:</b> turn "model says +2.5 points vs. the line" into "this side covers 55% of the time," then a Pick, a Lean or no call. <b>Why:</b> raw confidence from a formula is always too high; tiers have to be earned.</span></div><span class="st"><span class="pill p-todo">After 1.2</span></span></li>
+          <li class="task"><span class="id">1.10</span><div class="body"><span class="t">Ledger and pricing jobs</span><span class="why"><b>What:</b> the append-only ledger writer and its test are merged. Still to build: morning and late pricing runs that write calls before tip. <b>Why:</b> a public, timestamped record that can't be edited after the fact.</span></div><span class="st"><span class="pill p-built">Half done</span></span></li>
+          <li class="task"><span class="id">1.11</span><div class="body"><span class="t">News collection</span><span class="why"><b>What:</b> gather injury and availability news before tip. <b>Why:</b> G2's AI needs something to read. Google News and team sites were ruled out by their terms.</span></div><span class="st"><span class="pill p-block">Your call</span></span></li>
+          <li class="task"><span class="id">1.12</span><div class="body"><span class="t">Board and scorecard website</span><span class="why"><b>What:</b> a static site showing today's calls and the running record. <b>Why:</b> makes the record readable and checkable.</span></div><span class="st"><span class="pill p-todo">Later</span></span></li>
+          <li class="task"><span class="id">1.13</span><div class="body"><span class="t">Leakage and evaluation audit</span><span class="why"><b>What:</b> an independent review of everything from 1.6 to 1.10. <b>Why:</b> a second pair of eyes before results go public.</span></div><span class="st"><span class="pill p-todo">Later</span></span></li>
+          <li class="task"><span class="id">1.14</span><div class="body"><span class="t">README</span><span class="why"><b>What:</b> the public front page of the repo, with the diagram and decision log. <b>Why:</b> what a recruiter or reader sees first.</span></div><span class="st"><span class="pill p-todo">Later</span></span></li>
+        </ul>
+      </div>
+
+      <div class="phase">
+        <h3>Started early for G2 and G3</h3>
+        <ul class="tasks">
+          <li class="task"><span class="id">G2</span><div class="body"><span class="t">Rotation-player truth set and labeling guide</span><span class="why"><b>What:</b> for every past game, who the top 8 players were and whether each played, from box scores. A draft guide for hand-labeling about 200 news items. <b>Why:</b> the AI's precision is checked against these.</span></div><span class="st"><span class="pill p-done">Done</span></span></li>
+          <li class="task"><span class="id">G2</span><div class="body"><span class="t">Official availability reports</span><span class="why"><b>What:</b> permission email to HD Intelligence. <b>Why:</b> conference injury reports are the cleanest source.</span></div><span class="st"><span class="pill p-wait">You send</span></span></li>
+          <li class="task"><span class="id">G3</span><div class="body"><span class="t">Pinnacle and Polymarket collection</span><span class="why"><b>What:</b> Pinnacle lines in every snapshot, and the full 2025-26 Polymarket price history (21,906 files). <b>Why:</b> the market study needs these saved as they happen.</span></div><span class="st"><span class="pill p-done">Running</span></span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="model">
+    <span class="eyebrow">The model today</span>
+    <h2 id="model">What the model is right now</h2>
+    <p>Every prediction starts from Bart Torvik's team ratings. Each team has an offensive and a defensive efficiency: points scored and allowed per 100 possessions against an average D-I team. The model turns two teams' ratings into a predicted margin.</p>
+
+    <div class="formula">
+      <span class="eq">predicted home margin = <em>slope</em> × (rating gap × possessions ÷ 100) + <em>home court</em></span>
+      <div class="example" aria-label="Worked example">
+        <span class="lbl">Example</span><span>Home team net rating (offense − defense)</span><span class="n">+18.0</span>
+        <span></span><span>Away team net rating</span><span class="n">+6.0</span>
+        <span></span><span>Rating gap, points per 100 possessions</span><span class="n">12.0</span>
+        <span></span><span>Expected possessions (both teams' tempo)</span><span class="n">68</span>
+        <span></span><span>Rating part: 12.0 × 68 ÷ 100</span><span class="n">8.2</span>
+        <span></span><span>× slope 1.01, + home court 3.4</span><span class="n">+3.5</span>
+        <span></span><span class="tot">Predicted: home team by</span><span class="n tot">11.7</span>
+      </div>
+    </div>
+
+    <div class="verdict">
+      <h3>Is it different from existing models? Not yet.</h3>
+      <p>The Torvik baseline is that same formula with the slope fixed at 1 and home court fit to past seasons. Our model learns both numbers. On real data the slope came out at 1.00 to 1.03 and home court at 3.3 to 3.5 points, which is almost exactly the baseline.</p>
+      <p>We also tried four extra inputs: early-season ratings weighted differently, rest days, offense and defense weighted separately, and a separate home court for conference games. None helped enough to pass the rule set before the test. Torvik's ratings already contain what those inputs know.</p>
+      <p>That is a real finding, and an expected one. Re-weighting public ratings won't beat a market that already uses them. An edge has to come from information the ratings don't have.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="diff">
+    <span class="eyebrow">The differentiators</span>
+    <h2 id="diff">What will make it different</h2>
+    <div class="cols">
+      <div class="diff">
+        <span class="pill p-todo tag">G2</span>
+        <h3>An AI that reads availability news</h3>
+        <p>Ratings don't know that a star sprained an ankle this morning. An AI model reads injury reports and news, flags rotation players who are out or questionable, and adjusts the margin for new absences only. Most public models don't do this, and none measure the AI's accuracy in public.</p>
+        <p>Bars, fixed in advance: 95% reading accuracy, and 95% precision on "out," checked against box scores.</p>
+      </div>
+      <div class="diff">
+        <span class="pill p-built tag">G1</span>
+        <h3>An honest, checkable record</h3>
+        <p>Metrics and Pick/Lean cutoffs were written down before any result existed. Every call is committed to a public ledger before tip, and the ledger can't be edited. Losses stay on the record.</p>
+        <p>Most picks sites can't show that. For a portfolio, it's what makes the results believable.</p>
+      </div>
+      <div class="diff">
+        <span class="pill p-done tag">G3</span>
+        <h3>A market study</h3>
+        <p>We save Pinnacle (the sharpest book), 8 US books and Polymarket several times a day. That supports two questions: does our number predict which way the line moves, and how do sharp books, US books and a prediction market differ?</p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="stats">
+    <span class="eyebrow">The statistics</span>
+    <h2 id="stats">What we measure, and why each one</h2>
+    <p>Every metric is reported for our model and for the Torvik baseline, on the same games, season by season and pooled over the four test seasons (2022-23 to 2025-26).</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Measure</th><th>What it means</th><th>Why we use it</th></tr></thead>
+        <tbody>
+          <tr><td><span class="group">Primary</span>Distance to the close</td><td>Average gap, in points, between our predicted margin and the closing line.</td><td>The closing line is the best public forecast there is. Getting closer to it than Torvik does is the pass/fail test for G1. It's much less noisy than final scores.</td></tr>
+          <tr><td><span class="group">Primary</span>CLV (closing line value)</td><td>Did the line move toward our side between when we priced it and tip? Measured in points.</td><td>The standard test of whether a bettor is sharp. A model that keeps beating the close is likely right, even through a losing streak.</td></tr>
+          <tr><td><span class="group">Context</span>Error vs. final scores</td><td>Average miss against the actual margin, shown next to the closing line's own miss.</td><td>Easy to understand, but one game can miss by 20 for no reason, so small differences mean little.</td></tr>
+          <tr><td><span class="group">Context</span>ATS record at −110</td><td>Win % picking against the spread. Pushes are listed separately.</td><td>Break-even at −110 is 110 ÷ 210 = <b>52.4%</b>. Reported, but needs thousands of games to mean anything.</td></tr>
+          <tr><td><span class="group">Calibration</span>Brier score and reliability table</td><td>When the model says 56%, does that side win about 56% of the time? Grouped in 2-point bands.</td><td>Tiers are only honest if the probabilities behind them are.</td></tr>
+          <tr><td><span class="group">Tiers</span>Pick and Lean record</td><td>Calls, win %, a 95% Wilson interval, gap to 52.4% and mean CLV for each tier.</td><td>The interval shows when a hot start is really just a small sample. If no tier beats 52.4%, the scorecard says so.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Method</th><th>What it does</th><th>Why this one</th></tr></thead>
+        <tbody>
+          <tr><td>Least squares</td><td>Finds the slope and home-court numbers that make predicted margins closest to real ones.</td><td>The simplest fit there is, and easy to explain. Fancier methods (ridge, boosted trees) get tried only if they beat it.</td></tr>
+          <tr><td>Walk-forward by season</td><td>To predict 2024-25, the model is fit only on earlier seasons.</td><td>That is exactly what live use looks like. Mixing seasons would leak the future.</td></tr>
+          <tr><td>Logistic calibration</td><td>Maps "edge in points" to "chance this side covers," learned from past seasons.</td><td>The textbook normal-curve formula overstates confidence. Logistic is stable on small samples.</td></tr>
+          <tr><td>Tier cutoffs</td><td>Pick at 56%+ calibrated cover chance; Lean at 53% to 56%; otherwise no call.</td><td>Well above the 52.4% break-even, so a call has room to be wrong a little and still be worth making.</td></tr>
+          <tr><td>2020-21 set aside</td><td>Never trained on and kept out of the headline numbers; reported on its own.</td><td>No fans meant home court nearly vanished that season.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="how">
+    <span class="eyebrow">The process</span>
+    <h2 id="how">How the calculations get decided</h2>
+    <p>The rule underneath everything: <b>decide how you'll be judged before you see how you did.</b> The steps below happen in this order.</p>
+    <ol class="steps">
+      <li><div><b>Start from standard practice.</b><span>CLV and distance to the Pinnacle or US-book close are the industry's own yardsticks. Torvik's formula is the published standard for turning ratings into a margin.</span></div></li>
+      <li><div><b>Write it down first.</b><span>Metrics, test seasons and tier cutoffs went into the pre-registration file on Nov 9, before any data was pulled. Git history proves the date.</span></div></li>
+      <li><div><b>Start with the simplest model.</b><span>The baseline formula with learned weights. Anything added has to earn its place.</span></div></li>
+      <li><div><b>Choose inputs on training seasons only.</b><span>Candidate inputs are compared on 2018-19, 2019-20 and 2021-22. The rule for keeping one was written before the comparison ran: at least 2 standard errors better, and better in every season. The four test seasons have no say.</span></div></li>
+      <li><div><b>Test once on held-out seasons.</b><span>After task 1.2 fixes the closing line, the scorecard runs once on 2022-23 to 2025-26. Those are the numbers that get reported.</span></div></li>
+      <li><div><b>Log every choice.</b><span>Each choice goes in DECISIONS.md with the options considered and why. Changing a rule later needs a dated entry, applied only going forward.</span></div></li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="waiting">
+    <span class="eyebrow">Open items</span>
+    <h2 id="waiting">What's waiting on whom</h2>
+    <ul class="waits">
+      <li><span class="who">You</span><span>Review and sign off on <a href="https://github.com/ohektner/shac-sb-index/pull/30">PR #30</a> (the margin model).</span></li>
+      <li><span class="who">You</span><span>Send the HD Intelligence permission email (drafted). Decide on a news source for 1.11: Bluesky needs an account and app password; X charges per read.</span></li>
+      <li><span class="who">Time</span><span>About a week of finished games in our snapshots, so task 1.2 can run (~Nov 17).</span></li>
+      <li><span class="who">Claude</span><span>G0 gate check and audit (~Nov 13). Then task 1.2 and the recommendation on the $30 historical odds month. Then the first real scorecard run, then 1.9.</span></li>
+    </ul>
+  </section>
+
+  <footer>Shac SB Index, a college basketball forecasting model. Research, not betting advice. Sources: docs/STATUS.md, PLAN.md, PREREGISTRATION.md, MODEL.md and DECISIONS.md in the repo, as of Nov 11, 2026.</footer>
+</main>
+</body>
+</html>
