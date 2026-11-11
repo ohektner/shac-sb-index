@@ -25,4 +25,7 @@ jobs:
       - run: uv sync --frozen
       - run: uv run --no-sync ruff check .
       - run: uv run --no-sync ruff format --check .
+      # The ledger append-only test compares with main, so fetch it (checkout only
+      # brings the PR's own commit).
+      - run: git fetch --no-tags --depth=1 origin main:refs/remotes/origin/main
       - run: uv run --no-sync pytest -q
