@@ -30,6 +30,7 @@ Where the project stands right now. Update this at the end of every working sess
 - **Task 1.4, Time Machine columns and timing** (PR #18, merged 2026-11-11). All 45 columns named; for two seasons they match the season-end CSV exactly (`docs/TORVIK.md`). The file dated D already counts D's games, late West Coast and Hawaii games included, so it is known at 06:00 Eastern on D+1. A game uses the latest file known before its tip. Rule 3 was tightened: the old Eastern-date reading would have leaked 52 late-night games. One early count remains in 90,423 team-games (an 11 a.m. game against a non-D-I team).
 - **Task 1.6, `game_history` and the no-leakage tests** (PR #19, merged 2026-11-11 with Owen's OK). The `auditor` found no blockers; its three fixes are in (daily pulls never mixed, a real-data record-clock test, `status` moved to labels).
 - **2026-27 CBBD games, daily** (PR #21, merged 2026-11-11). New `current` mode: settled windows once, plus a live `games`/`lines` window re-fetched daily at 10:07 UTC (also in the PC backup trigger). First run: 3 calls, 1,044 games from Nov 1 to Nov 20. Odds events now match 96% (100 of 104; 3 `swapped`, 1 `no_game`), and `closing_lines` has its first 55 `own_snapshots` and 55 `pinnacle` rows.
+- **2026-27 Time Machine files** (PR #23, 2026-11-11): Oct 31 to Nov 10 fetched, so every 2026-27 game so far has ratings. Our daily 5 a.m. pulls match the Time Machine file for the day before to rounding error (`docs/TORVIK.md`). Re-run `uv run python -m shac.ingest.torvik_timemachine --data-dir ../shac-sb-index-data --seasons 2027` before going live to add the days since.
 - **Polymarket 2025-26 history backfill:** finished 2026-11-10. 21,983 calls over 10 runs, 0 errors, 21,906 price-history files. New games are picked up by the daily `polymarket-history` job.
 
 ## In progress
@@ -48,7 +49,6 @@ Where the project stands right now. Update this at the end of every working sess
 1. **About 2026-11-13:** check the G0 gate and run the auditor.
 2. **About 2026-11-17:** task 1.2, comparing CBBD's lines with our pre-tip snapshots. Then recommend to Owen whether to buy one month of historical odds. It looks likely, because CBBD has no opening spreads before 2024-25.
 3. **Task 1.7 and everything after it is model logic, for Fable.** The baseline scorecard reads `game_history`. Tell Owen; don't start it.
-4. **Optional:** 2026-27 games from Nov 3 to Nov 9 (363) have no ratings, because our daily Torvik pulls began Nov 10. The 2026-27 Time Machine files would fill them, but `shac.ingest.torvik_timemachine` plans days from the games table, which now holds future games, and it records a missing day (404) as never to be asked again. Cap it at yesterday before running it for 2027.
 
 ## Notes for the next session
 
