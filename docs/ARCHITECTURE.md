@@ -77,7 +77,7 @@ flowchart LR
 
 1. Every feature row carries `as_of`, the moment the information was available.
 2. A feature may be used for a game only if `as_of < tip_at`.
-3. Ratings used for a game on date D come from the file dated D-1, until a test shows the file dated D excludes games played on D.
+3. A Torvik Time Machine file dated D counts every game played on D, late West Coast and Hawaii games included, so it is known at 06:00 US Eastern on D+1. A game uses the latest file whose `as_of` is before its tip (rule 2). Each season's first file must show every team at 0-0; rows that don't are dropped. Tested in task 1.4: see `docs/TORVIK.md`.
 4. In backtests, a season's games are predicted by a model trained only on earlier seasons. Calibration is fit only on those earlier seasons too.
 5. Nothing computed from a game's own result, or from any later game, can reach that game's features. This includes season-end ratings, final rosters and closing lines.
 
@@ -233,13 +233,15 @@ Each run also appends one row to `data/status/odds_snapshot_log.csv` in the publ
 
 | Column | Type | Notes |
 | --- | --- | --- |
-| `rating_date` **PK** | date | The date in the file name |
+| `rating_date` **PK** | date | The date in the file name (Time Machine), or the US Eastern date of our pull (daily) |
+| `season` | int | Season (ending year) |
 | `team_id` **PK** | int | |
 | `source` **PK** | text | `torvik_time_machine` (backfill) or `torvik_daily` (our own daily pull) |
 | `adj_o`, `adj_d`, `adj_tempo` | float | Adjusted offense, defense, tempo |
 | `barthag` | float | Torvik's power rating |
 | `rank` | int | |
-| `as_of` | timestamp | When these ratings were known. For our daily pulls, the fetch time. For backfill, end of `rating_date` until tested (see no-leakage rule 3). |
+| `wins`, `losses` | int | Record to date, as Torvik counts it (used to test timing) |
+| `as_of` | timestamp | When these ratings were known. For our daily pulls, the fetch time. For the Time Machine backfill, 06:00 US Eastern on the day after `rating_date` (no-leakage rule 3). |
 | `fetched_at` | timestamp | |
 
 **`news_raw`** (`news/raw/YYYY/MM/DD/*.json.gz`). Writer: `collect_news`.

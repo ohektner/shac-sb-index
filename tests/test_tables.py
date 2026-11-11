@@ -11,6 +11,7 @@ import pytest
 from shac.tables import cbbd, odds, raw
 from shac.tables.build import build_closing_lines, write_parquet
 from shac.tables.check import SQL_PATH, open_tables, run_checks
+from shac.tables.torvik import time_machine_as_of
 
 TEAMS = pd.DataFrame(
     {
@@ -384,7 +385,37 @@ def test_match_types_unmapped_and_no_game():
 # ---------- SQL checks ----------
 
 
-def _write_tables(tmp_path: Path, closing: pd.DataFrame) -> Path:
+def ratings_fixture() -> pd.DataFrame:
+    """Two Time Machine rows and one daily pull, built the way the real build does."""
+    rating_date = pd.to_datetime(pd.Series(["2025-01-23", "2025-03-09"]))
+    tm = pd.DataFrame(
+        {
+            "rating_date": rating_date.dt.date,
+            "season": 2025,
+            "team_id": [1, 2],
+            "source": "torvik_time_machine",
+            "adj_o": 110.0,
+            "adj_d": 95.0,
+            "adj_tempo": 68.0,
+            "barthag": 0.8,
+            "rank": [1, 2],
+            "wins": 3,
+            "losses": 1,
+            "as_of": time_machine_as_of(rating_date),
+            "fetched_at": pd.Timestamp("2026-11-10T21:30:00Z"),
+        }
+    )
+    daily = tm.iloc[[0]].assign(
+        source="torvik_daily",
+        as_of=pd.Timestamp("2026-11-10T12:00:00Z"),
+        fetched_at=pd.Timestamp("2026-11-10T12:00:00Z"),
+    )
+    return pd.concat([tm, daily], ignore_index=True)
+
+
+def _write_tables(
+    tmp_path: Path, closing: pd.DataFrame, ratings: pd.DataFrame | None = None
+) -> Path:
     snaps, times, games, matches, _ = odds_fixture()
     deduped = _deduped(cbbd_game(500, 1, 2, startDate="2026-11-12T00:00:00.000Z", season=2027))
     tables = {
@@ -399,6 +430,7 @@ def _write_tables(tmp_path: Path, closing: pd.DataFrame) -> Path:
         "odds_snapshots": snaps,
         "odds_event_matches": matches,
         "closing_lines": closing,
+        "ratings_daily": ratings if ratings is not None else ratings_fixture(),
     }
     for name, df in tables.items():
         write_parquet(df, tmp_path / "tables" / f"{name}.parquet")
@@ -438,3 +470,22 @@ def test_check_catches_timestamp_without_timezone(tmp_path):
     closing["close_snapshot_at"] = closing["close_snapshot_at"].dt.tz_localize(None)
     counts = _check_counts(_write_tables(tmp_path, closing))
     assert counts["l_timestamp_not_utc"] == 1
+
+
+@pytest.mark.parametrize("bad", ["midnight_as_of", "duplicate", "missing"])
+def test_checks_catch_ratings_problems(tmp_path, bad):
+    snaps, times, *_ = odds_fixture()
+    closing = build_closing_lines(snaps, times, EMPTY_CBBD_LINES)
+    ratings = ratings_fixture()
+    if bad == "midnight_as_of":
+        ratings.loc[0, "as_of"] = ratings.loc[0, "as_of"] - pd.Timedelta(hours=6)
+        check = "n_ratings_time_machine_as_of_wrong"
+    elif bad == "duplicate":
+        ratings = pd.concat([ratings, ratings.iloc[[0]]], ignore_index=True)
+        check = "m_ratings_daily_duplicate_pk"
+    else:
+        ratings.loc[1, "barthag"] = None
+        check = "o_ratings_daily_missing_values"
+    counts = _check_counts(_write_tables(tmp_path, closing, ratings))
+    assert counts[check] == 1
+    assert sum(counts.values()) == 1, counts

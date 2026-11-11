@@ -57,12 +57,13 @@ FROM aliases al
 ANTI JOIN teams t ON t.team_id = al.team_id;
 
 -- check: d_torvik_names_unmatched
--- Every name in a Torvik team_results file (Torvik's D-I list) must resolve that season.
+-- Every name in a Torvik team_results or Time Machine file (Torvik's D-I list) must
+-- resolve that season.
 -- in_review = true means it is deliberately waiting in data/team_map_review.csv.
 SELECT n.season, n.name,
        EXISTS (SELECT 1 FROM review r WHERE r.source = 'torvik' AND r.alias = n.name) AS in_review
 FROM torvik_names n
-WHERE n.file_kind = 'team_results'
+WHERE n.file_kind IN ('team_results', 'timemachine')
   AND NOT EXISTS (
       SELECT 1 FROM aliases al
       WHERE al.source = 'torvik' AND al.alias = n.name
@@ -82,20 +83,22 @@ WHERE NOT EXISTS (
 );
 
 -- check: f_torvik_two_names_one_team
--- Two different Torvik team_results names landing on the same team in one season
--- would mean one of them is mapped wrong.
+-- Two different Torvik names landing on the same team in one season and file kind
+-- would mean one of them is mapped wrong. (Kinds are kept apart because Torvik renamed
+-- some schools across its archive: the Time Machine files keep the older names while
+-- the season files fetched today use the new ones.)
 WITH m AS (
-    SELECT n.season, n.name, al.team_id
+    SELECT n.season, n.file_kind, n.name, al.team_id
     FROM torvik_names n
     JOIN aliases al
       ON al.source = 'torvik' AND al.alias = n.name
      AND n.season >= al.valid_from_season
      AND n.season <= coalesce(al.valid_to_season, 9999)
-    WHERE n.file_kind = 'team_results'
+    WHERE n.file_kind IN ('team_results', 'timemachine')
 )
-SELECT season, team_id, count(DISTINCT name) AS n_names
+SELECT season, file_kind, team_id, count(DISTINCT name) AS n_names
 FROM m
-GROUP BY season, team_id
+GROUP BY season, file_kind, team_id
 HAVING count(DISTINCT name) > 1;
 
 -- check: g_torvik_name_off_di_list
@@ -107,7 +110,7 @@ JOIN aliases al
   ON al.source = 'torvik' AND al.alias = n.name
  AND n.season >= al.valid_from_season
  AND n.season <= coalesce(al.valid_to_season, 9999)
-WHERE n.file_kind = 'team_results'
+WHERE n.file_kind IN ('team_results', 'timemachine')
   AND n.season IN (SELECT DISTINCT season FROM cbbd_team_seasons)
   AND NOT EXISTS (
       SELECT 1 FROM cbbd_team_seasons c WHERE c.season = n.season AND c.team_id = al.team_id
