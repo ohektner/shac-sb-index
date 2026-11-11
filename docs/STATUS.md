@@ -26,12 +26,12 @@ Where the project stands right now. Update this at the end of every working sess
 - **Task 1.5:** team-name map, 369 teams, 0 unmatched (PR #6).
 - **Clean tables** in the private repo: games, results, player_box, cbbd_lines, odds_snapshots, closing_lines (PR #10). Rebuild with `uv run python -m shac.tables.build --data-dir <private repo>`.
 - **Polymarket collection** (PR #8), the G3 second market, with written permission.
+- **Task 1.3, Torvik Time Machine backfill:** finished 2026-11-10 with Bart Torvik's OK. 1,185 daily ratings files (the day before each season's first game through its last, 2018-19 to 2025-26) plus 8 `super_sked` files, 0 blocks, 0 missing days. Re-running makes 0 requests. Teams per file: 353, 353, 347, 358, 363, 362, 364, 365 by season. Manifest at `torvik/timemachine/manifest.csv` in the private repo (PRs #14, #15).
 - **Polymarket 2025-26 history backfill:** finished 2026-11-10. 21,983 calls over 10 runs, 0 errors, 21,906 price-history files. New games are picked up by the daily `polymarket-history` job.
 
 ## In progress
 
-- **Task 1.3, Torvik Time Machine backfill:** Bart Torvik OK'd it on 2026-11-10 (do it slowly; the CDN may block). Runs from Owen's PC, one season at a time, about 1,235 files at 20+ seconds apart. See DECISIONS.md.
-- **Scheduled jobs skip slots:** on 2026-11-10 GitHub ran 5 of the first 11 slots, 17 minutes to 3 hours late. PR #13 (comment-only edit, merged early at about 1:28 p.m. Arizona, before the agreed 2:17 p.m. check) didn't help; switching the workflows off and on (8:36 p.m.) is too new to judge. Fix: the backup trigger (`scripts/schedule-backup.ps1`, Windows task every 15 minutes, log in `%LOCALAPPDATA%\shac-sb-index\schedule-backup.log`) plus a guard in the odds job. Owen registers the task.
+- **Scheduled jobs skip slots:** on 2026-11-10 GitHub ran 5 of the first 11 slots, 17 minutes to 3 hours late. PR #13 (comment-only edit, merged early at about 1:28 p.m. Arizona, before the agreed 2:17 p.m. check) didn't help; switching the workflows off and on (8:36 p.m.) is too new to judge. Fix: the backup trigger (`scripts/schedule-backup.ps1`, Windows task every 15 minutes, log in `%LOCALAPPDATA%\shac-sb-index\schedule-backup.log`) plus a guard in the odds job. Task registered by Owen 2026-11-10.
 
 ## Waiting on
 
@@ -44,7 +44,8 @@ Where the project stands right now. Update this at the end of every working sess
 
 1. **About 2026-11-13:** check the G0 gate and run the auditor.
 2. **About 2026-11-17:** task 1.2, comparing CBBD's lines with our pre-tip snapshots. Then recommend to Owen whether to buy one month of historical odds. It looks likely, because CBBD has no opening spreads before 2024-25.
-3. **Once the Torvik backfill is done:** decode the columns (1.4), join history and write the leakage tests (1.6), then the baseline scorecard (1.7).
+3. **Now unblocked:** decode the Time Machine columns and test whether a date's file includes that day's games (1.4), then join history and write the leakage tests (1.6).
+4. **Stop before 1.7.** The baseline scorecard and everything after it is model logic: tell Owen first so Fable handles it.
 
 ## Notes for the next session
 
