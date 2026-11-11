@@ -258,13 +258,14 @@ def build_ratings_daily(
 
     dl = daily.copy()
     fetched = pd.to_datetime(dl["fetched_at"], utc=True)
-    # rating_date for our own pulls = the US Eastern date of the pull; keep the first pull
-    # of each date (the scheduled one). as_of is the fetch time itself.
+    # rating_date for our own pulls = the US Eastern date of the pull; keep the WHOLE first
+    # pull of each date (the scheduled one), never a mix of pulls. as_of is the fetch time.
     dl["rating_date"] = fetched.dt.tz_convert(EASTERN).dt.date
     dl["as_of"] = fetched
     dl["rating_key"] = dl["fetched_at"].astype(str)
     dl, counts["daily_unmatched_names"] = attach_team_ids(dl, aliases)
-    dl = dl.sort_values("as_of").drop_duplicates(["rating_date", "team_id"], keep="first")
+    first_pull = dl.groupby("rating_date")["as_of"].transform("min")
+    dl = dl[dl["as_of"] == first_pull].drop_duplicates(["rating_date", "team_id"])
     counts["daily_rows"] = len(dl)
 
     parts = [_finish(tm, "torvik_time_machine")]
