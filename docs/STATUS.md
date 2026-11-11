@@ -31,6 +31,7 @@ Where the project stands right now. Update this at the end of every working sess
 - **Task 1.6, `game_history` and the no-leakage tests** (PR #19, merged 2026-11-11 with Owen's OK). The `auditor` found no blockers; its three fixes are in (daily pulls never mixed, a real-data record-clock test, `status` moved to labels).
 - **2026-27 CBBD games, daily** (PR #21, merged 2026-11-11). New `current` mode: settled windows once, plus a live `games`/`lines` window re-fetched daily at 10:07 UTC (also in the PC backup trigger). First run: 3 calls, 1,044 games from Nov 1 to Nov 20. Odds events now match 96% (100 of 104; 3 `swapped`, 1 `no_game`), and `closing_lines` has its first 55 `own_snapshots` and 55 `pinnacle` rows.
 - **2026-27 Time Machine files** (PR #23, 2026-11-11): Oct 31 to Nov 10 fetched, so every 2026-27 game so far has ratings. Our daily 5 a.m. pulls match the Time Machine file for the day before to rounding error (`docs/TORVIK.md`). Re-run `uv run python -m shac.ingest.torvik_timemachine --data-dir ../shac-sb-index-data --seasons 2027` before going live to add the days since.
+- **Task 1.7, baseline scorecard: built, not yet run on real data** (2026-11-11). The Torvik baseline and all six pre-registered metrics are DuckDB SQL in `sql/scorecard/`, with a runner (`shac.scorecard.run`) and tests on made-up games with hand-worked answers. Seven DECISIONS.md entries settle the gaps in the pre-registration; Owen approved the three that were choices. How to read it: `docs/SCORECARD.md`.
 - **Polymarket 2025-26 history backfill:** finished 2026-11-10. 21,983 calls over 10 runs, 0 errors, 21,906 price-history files. New games are picked up by the daily `polymarket-history` job.
 
 ## In progress
@@ -48,9 +49,10 @@ Where the project stands right now. Update this at the end of every working sess
 ## Next up
 
 1. **About 2026-11-13:** check the G0 gate and run the auditor.
-2. **About 2026-11-17:** task 1.2, comparing CBBD's lines with our pre-tip snapshots. Then recommend to Owen whether to buy one month of historical odds. It looks likely, because CBBD has no opening spreads before 2024-25.
-3. **Task 1.7 and everything after it is model logic, for Fable.** The baseline scorecard reads `game_history`. Tell Owen; don't start it.
-4. **Before the first live pricing run (task 1.10):** top up the 2026-27 Time Machine files with `--seasons 2027` (from Owen's PC), then rebuild the tables. Also in PLAN.md, task 1.10.
+2. **About 2026-11-17:** task 1.2, comparing CBBD's lines with our pre-tip snapshots. Then recommend to Owen whether to buy one month of historical odds. It looks likely, because CBBD has no opening spreads before 2024-25. The $30 would not make the model more accurate (lines are never inputs); it would firm up the yardstick, add opening lines for CLV in more seasons, and feed the G3 line-movement study.
+3. **After 1.2: fix the backtest close in DECISIONS.md, then run the scorecard on real data for the first time** (`uv run python -m shac.scorecard.run --data-dir ../shac-sb-index-data`). Don't run it before; no baseline number has been seen, on purpose.
+4. **Task 1.8 and everything after it is model logic, for Fable.** Tell Owen; don't start it on another model.
+5. **Before the first live pricing run (task 1.10):** top up the 2026-27 Time Machine files with `--seasons 2027` (from Owen's PC), then rebuild the tables. Also in PLAN.md, task 1.10.
 
 ## Notes for the next session
 
@@ -61,6 +63,6 @@ Where the project stands right now. Update this at the end of every working sess
   - `C:\Users\omhek\shac-sb-index` is the main checkout.
   - `C:\Users\omhek\shac-sb-index-data` is the private repo (raw data and built tables).
   - `C:\Users\omhek\shac-sb-index-runner` is used only by the Torvik task. Don't work in it.
-  - `C:\Users\omhek\shac-sb-index-wt-*` folders are task worktrees (`-tm`, `-history`, `-cbbdcur`: all merged). Safe to remove with `git worktree remove` once their branches are merged.
+  - `C:\Users\omhek\shac-sb-index-wt-*` folders are task worktrees (`-tm`, `-history`, `-cbbdcur`: all merged; `-baseline` is task 1.7). Safe to remove with `git worktree remove` once their branches are merged.
 - Merge rules are in DECISIONS.md (2026-11-10): Claude merges docs, plumbing and data PRs when the PR's own check passes; Owen signs off on model, ledger and scorecard PRs.
 - Free-tier budgets: The Odds API about 434 of 500 credits a month; CBBD 504 of 1,000 used in November.

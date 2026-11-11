@@ -38,7 +38,7 @@ Tasks 1.1, 1.3 and 1.11 can run in parallel. So can 1.9 and 1.10 once the ledger
 | 1.4 | Decode Time Machine columns; test whether a date's file includes that date's games | data-quality (opus) | 1.3 | Columns documented; no-leakage rule 3 confirmed or relaxed in DECISIONS.md |
 | 1.5 | Team-name map across CBBD, Torvik and The Odds API | data-quality (opus) | 1.1, 1.3, G0 data | `sql/checks/team_map.sql` returns 0 unmatched and 0 duplicate rows |
 | 1.6 | Join history; no-leakage tests | data-quality (opus) | 1.5 | `uv run pytest tests/test_no_leakage.py` passes |
-| 1.7 | Torvik baseline scorecard in DuckDB SQL | modeler (opus) | 1.6 | `sql/scorecard/*.sql` run on held-out seasons and produce every pre-registered metric |
+| 1.7 | Torvik baseline scorecard in DuckDB SQL | modeler (opus) | 1.6 | `sql/scorecard/*.sql` run on held-out seasons and produce every pre-registered metric. Built and tested on made-up data 2026-11-11; the first real run waits for 1.2 to fix the backtest close |
 | 1.8 | Margin model, walk-forward by season | modeler (opus) | 1.7 | Distance to the close reported next to the baseline for each held-out season |
 | 1.9 | Calibration, tiers and the per-tier backtest | modeler (opus) | 1.8 | Reliability table and per-tier record with confidence intervals |
 | 1.10 | Ledger writer, append-only test, morning and late pricing jobs. Before the first live run, top up the 2026-27 Time Machine files (`uv run python -m shac.ingest.torvik_timemachine --data-dir <private repo> --seasons 2027`, from Owen's PC) so days a daily pull missed have ratings, then rebuild the tables | data-engineer (sonnet) | 1.8 | CI fails on a PR that edits a ledger row; a job run adds rows before tip |
