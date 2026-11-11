@@ -61,6 +61,25 @@ def manifest(data_dir):
     return read_log_rows(data_dir / tm.MANIFEST)
 
 
+def test_last_final_day_switches_at_six_am_eastern():
+    # 2026-11-11 10:59 UTC = 05:59 EST: the Nov 10 file isn't surely frozen yet.
+    assert tm.last_final_day(datetime(2026, 11, 11, 10, 59, tzinfo=UTC)) == date(2026, 11, 9)
+    assert tm.last_final_day(datetime(2026, 11, 11, 11, 0, tzinfo=UTC)) == date(2026, 11, 10)
+
+
+def test_season_in_progress_stops_at_last_final_day_and_skips_its_schedule():
+    ranges = {
+        2026: (date(2025, 11, 3), date(2026, 4, 6)),
+        2027: (date(2026, 11, 3), date(2027, 4, 5)),
+    }
+    plan = tm.plan_sources(ranges, [2026, 2027], last_day=date(2026, 11, 10))
+    sources_2027 = [src for season, src in plan if season == 2027]
+    assert sources_2027[0].endswith("20261102_team_results.json.gz")
+    assert sources_2027[-1].endswith("20261110_team_results.json.gz")
+    assert len(sources_2027) == 9  # Nov 2 to Nov 10; no schedule file yet
+    assert (2026, "2026_super_sked.csv") in plan  # a finished season keeps its schedule
+
+
 def test_season_dates_start_the_day_before():
     days = tm.season_dates(date(2018, 11, 6), date(2018, 11, 8))
     assert days == [date(2018, 11, 5), date(2018, 11, 6), date(2018, 11, 7), date(2018, 11, 8)]
