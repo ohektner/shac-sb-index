@@ -11,7 +11,7 @@ uv run python -m shac.scorecard.run --data-dir <private repo>
 ```
 
 - Reads `tables/game_history.parquet` from the private repo. No network.
-- Writes one row per game to `tables/baseline_predictions.parquet` in the private repo.
+- Writes one row per game to `tables/baseline_predictions.parquet` and `tables/model_predictions.parquet` in the private repo.
 - Writes summary numbers only to `scorecard/backtest/*.csv` here, one file per metric.
 
 ## The queries (`sql/scorecard/`)
@@ -51,6 +51,6 @@ Every metric has a row per season (`scope` = the season) and a `pooled` row for 
 - The baseline query never reads a closing line or a score from the game it predicts.
 - `tests/test_scorecard.py` checks both by rewriting later results and every line and confirming no prediction moves. It also checks each metric against answers worked out by hand on made-up games.
 
-## Adding the model (task 1.8)
+## The model's rows (task 1.8)
 
-Hand `shac.scorecard.run.score` a `predictions` frame with the model's rows next to the baseline's (`predictor`, `game_id`, `pred_margin`, `cover_prob`). The same SQL scores both, on the games both predict. One row per predictor per game; a repeat is refused.
+The run fits the margin model walk-forward ([MODEL.md](MODEL.md)) and hands `score` its rows next to the baseline's (`predictor`, `game_id`, `pred_margin`, `cover_prob`). The same SQL scores both, on the games both predict. One row per predictor per game; a repeat is refused.
