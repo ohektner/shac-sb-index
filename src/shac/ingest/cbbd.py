@@ -6,6 +6,9 @@ row in a manifest CSV. Nothing is parsed into tables here.
 Run:
     uv run python -m shac.ingest.cbbd --data-dir <private repo checkout> --mode discover
     uv run python -m shac.ingest.cbbd --data-dir <private repo checkout> --mode backfill
+    uv run python -m shac.ingest.cbbd --data-dir <private repo checkout> --mode current
+
+`current` is the daily run for the season in progress (see `Ingestor.current`).
 
 The free quota is 1,000 calls a month, so every call goes through one function
 (`Ingestor.fetch`) that checks the manifest first (never repeat a saved call) and
@@ -34,7 +37,10 @@ from shac.ingest.windows import (
     CAP_ROWS,
     MONTHLY_ENDPOINTS,
     Window,
+    block_windows,
     is_single_day,
+    month_windows,
+    season_bounds,
     split_window,
     windows_for,
 )
@@ -55,6 +61,13 @@ MAX_ATTEMPTS = 3
 DEFAULT_MONTHLY_BUDGET = 800
 DISCOVER_MAX_CALLS = 8
 BACKFILL_MAX_CALLS = 300
+CURRENT_MAX_CALLS = 30
+# `current` mode: a window is "settled" (fetched once, kept for good) when it ended at
+# least this many days ago, so late score fixes and box scores have landed.
+SETTLE_DAYS = 7
+# `current` mode: the live window reaches this many days past today, so upcoming games
+# are in `games` before tip and odds snapshots can be matched to them.
+LOOKAHEAD_DAYS = 9
 DEFAULT_SEASONS = "2019-2026"
 RAW_DIR = Path("cbbd") / "raw"
 
@@ -370,6 +383,39 @@ class Ingestor:
         month = (datetime(2026, 1, 1, tzinfo=UTC), datetime(2026, 2, 1, tzinfo=UTC))
         self.fetch_window("games", month, split=False, show_shape=True)
 
+    def current(self, season: int) -> None:
+        """Daily run for the season in progress.
+
+        Backfill can't do this: it saves whole months once and never asks again, which
+        would freeze a month whose games haven't been played yet. Instead:
+
+        - Settled windows (ended SETTLE_DAYS or more ago) are fetched once and cached for
+          good, exactly like backfill (same windows, so the same manifest entries).
+        - `games` and `lines` also get one live window, from the end of the last settled
+          month to LOOKAHEAD_DAYS past today. Its end date changes every day, so it is a
+          new call each day; the table build keeps the most recently fetched copy of each
+          game, so newer results and lines replace older ones.
+        - Team and player box scores are fetched only once settled.
+        """
+        today = self.clock().replace(hour=0, minute=0, second=0, microsecond=0)
+        settled_before = today - timedelta(days=SETTLE_DAYS)
+        season_start, season_end = season_bounds(season)
+        live_end = min(today + timedelta(days=LOOKAHEAD_DAYS), season_end)
+        self.out(f"== season {season} (current) ==")
+        self.run_call("teams", {"season": season})
+        for endpoint in MONTHLY_ENDPOINTS:
+            settled = [w for w in month_windows(season) if w[1] <= settled_before]
+            for window in settled:
+                self.fetch_window(endpoint, window, split=True)
+            if endpoint == "games/teams":
+                continue
+            live_start = settled[-1][1] if settled else season_start
+            if live_start < live_end:
+                self.fetch_window(endpoint, (live_start, live_end), split=True)
+        for window in block_windows(season):
+            if window[1] <= settled_before:
+                self.fetch_window("games/players", window, split=True)
+
     def backfill(self, seasons: list[int]) -> None:
         """Fetch teams and every window of every season, newest season first."""
         for season in sorted(seasons, reverse=True):
@@ -378,6 +424,11 @@ class Ingestor:
             for endpoint in (*MONTHLY_ENDPOINTS, "games/players"):
                 for window in windows_for(endpoint, season):
                     self.fetch_window(endpoint, window, split=True)
+
+
+def current_season(now: datetime) -> int:
+    """The season (ending year) in progress or coming up: July onward counts as next year's."""
+    return now.year + 1 if now.month >= 7 else now.year
 
 
 def parse_seasons(text: str) -> list[int]:
@@ -403,7 +454,7 @@ def main(
     """Command-line entry point. Returns the exit code."""
     parser = argparse.ArgumentParser(description="Save raw CBBD responses to the private repo.")
     parser.add_argument("--data-dir", required=True, type=Path)
-    parser.add_argument("--mode", required=True, choices=["discover", "backfill"])
+    parser.add_argument("--mode", required=True, choices=["discover", "backfill", "current"])
     parser.add_argument("--seasons", default=DEFAULT_SEASONS)
     parser.add_argument("--max-calls", type=int, default=None)
     parser.add_argument("--monthly-budget", type=int, default=DEFAULT_MONTHLY_BUDGET)
@@ -414,7 +465,11 @@ def main(
         print("CBBD_API_KEY is not set.")
         return 1
     if args.max_calls is None:
-        args.max_calls = DISCOVER_MAX_CALLS if args.mode == "discover" else BACKFILL_MAX_CALLS
+        args.max_calls = {
+            "discover": DISCOVER_MAX_CALLS,
+            "backfill": BACKFILL_MAX_CALLS,
+            "current": CURRENT_MAX_CALLS,
+        }[args.mode]
 
     ingestor = Ingestor(
         args.data_dir,
@@ -429,6 +484,9 @@ def main(
     try:
         if args.mode == "discover":
             ingestor.discover()
+        elif args.mode == "current":
+            # --seasons is ignored here: the season comes from today's date.
+            ingestor.current(current_season(clock()))
         else:
             ingestor.backfill(parse_seasons(args.seasons))
     except StopRun as stop:

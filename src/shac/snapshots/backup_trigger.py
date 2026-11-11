@@ -40,6 +40,7 @@ WORKFLOWS = [
     "polymarket-snapshot.yml",
     "polymarket-history.yml",
     "snapshot-watch.yml",
+    "cbbd-ingest.yml",
 ]
 GRACE_MINUTES = 35
 MAX_LATE_MINUTES = 180

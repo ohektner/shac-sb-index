@@ -369,3 +369,79 @@ def test_parse_seasons():
 def test_manifest_path_never_inside_public_repo_paths(tmp_path, monkeypatch):
     run(tmp_path, monkeypatch, FakeApi(), "--max-calls", "1")
     assert Path(manifest(tmp_path)[0]["file"]).parts[:2] == ("cbbd", "raw")
+
+
+# ---------- current mode (the season in progress) ----------
+
+
+def fixed(when: datetime):
+    return lambda: when
+
+
+def calls_by_path(api: FakeApi) -> dict[str, list]:
+    out: dict[str, list] = {}
+    for request in api.requests:
+        params = request.url.params
+        key = request.url.path
+        out.setdefault(key, []).append(
+            window_of(request) if "startDateRange" in params else dict(params)
+        )
+    return out
+
+
+def test_current_season_from_date():
+    assert cbbd.current_season(datetime(2026, 11, 11, tzinfo=UTC)) == 2027
+    assert cbbd.current_season(datetime(2027, 3, 20, tzinfo=UTC)) == 2027
+    assert cbbd.current_season(datetime(2027, 7, 1, tzinfo=UTC)) == 2028
+
+
+def test_current_early_season_fetches_live_games_and_lines_only(tmp_path, monkeypatch):
+    api = FakeApi()
+    now = datetime(2026, 11, 11, 10, 7, tzinfo=UTC)
+    assert run(tmp_path, monkeypatch, api, mode="current", now=fixed(now)) == 0
+    calls = calls_by_path(api)
+    live = (datetime(2026, 11, 1, tzinfo=UTC), datetime(2026, 11, 20, tzinfo=UTC))
+    assert calls == {"/teams": [{"season": "2027"}], "/games": [live], "/lines": [live]}
+
+    # Same day again: everything is cached.
+    api2 = FakeApi()
+    run(tmp_path, monkeypatch, api2, mode="current", now=fixed(now))
+    assert api2.requests == []
+
+    # Next day: the live window ends a day later, so games and lines are fetched again,
+    # and the first player block (Nov 1 to 5) is now 7 days old, so it settles.
+    api3 = FakeApi()
+    run(tmp_path, monkeypatch, api3, mode="current", now=fixed(now + timedelta(days=1)))
+    later = (datetime(2026, 11, 1, tzinfo=UTC), datetime(2026, 11, 21, tzinfo=UTC))
+    first_block = (datetime(2026, 11, 1, tzinfo=UTC), datetime(2026, 11, 5, tzinfo=UTC))
+    assert calls_by_path(api3) == {
+        "/games": [later],
+        "/lines": [later],
+        "/games/players": [first_block],
+    }
+
+
+def test_current_settles_old_windows_once_and_keeps_live_after_them(tmp_path, monkeypatch):
+    api = FakeApi()
+    now = datetime(2026, 12, 10, 10, 7, tzinfo=UTC)
+    run(tmp_path, monkeypatch, api, mode="current", now=fixed(now))
+    calls = calls_by_path(api)
+    november = (datetime(2026, 11, 1, tzinfo=UTC), datetime(2026, 12, 1, tzinfo=UTC))
+    live = (datetime(2026, 12, 1, tzinfo=UTC), datetime(2026, 12, 19, tzinfo=UTC))
+    assert calls["/games"] == [november, live]
+    assert calls["/lines"] == [november, live]
+    assert calls["/games/teams"] == [november]  # box stats only once settled
+    # Player blocks that ended by Dec 3 (7 days before): Nov 1 to Dec 3, 4 days each.
+    blocks = calls["/games/players"]
+    assert len(blocks) == 8 and blocks[-1][1] == datetime(2026, 12, 3, tzinfo=UTC)
+    # The settled windows are the same as backfill's, so backfill would skip them.
+    assert november == month_windows(2027)[0]
+    assert blocks == block_windows(2027)[:8]
+
+
+def test_current_after_season_end_has_no_live_window(tmp_path, monkeypatch):
+    api = FakeApi()
+    now = datetime(2027, 5, 1, 10, 7, tzinfo=UTC)
+    run(tmp_path, monkeypatch, api, "--max-calls", "1000", mode="current", now=fixed(now))
+    games = calls_by_path(api)["/games"]
+    assert games == month_windows(2027)  # all settled, no live window past Apr 16
