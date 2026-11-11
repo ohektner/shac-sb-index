@@ -148,7 +148,7 @@ Only a consensus number is published, never a per-book table. For backtest seaso
 
 Integrity rules:
 
-- Rows are only ever added. `tests/test_ledger_append_only.py` compares the ledger with the version on `main` and fails if any existing row is changed, reordered or missing. It runs in CI on every PR and at the start of every pricing job.
+- Rows are only ever added. `tests/test_ledger_append_only.py` compares the ledger with the version on `main` and fails if any existing row is changed, reordered or missing. It runs in CI on every PR and at the start of every pricing job. CI fetches `main` for it, and in CI a missing `main` fails the test rather than skipping it. Rows are written only through `shac.ledger.writer.append_rows`, which checks every row first and writes nothing if one fails, opens the file in append mode, refuses a game that tipped before the write, and refuses a duplicate (`game_id`, `run`, `priced_at`).
 - A row is written only if `priced_at < tip_at`. The job refuses to price a game that has started.
 - The commit that adds a row is the public timestamp. Commits go straight to `main`.
 - If the morning and late runs disagree, the last row with `priced_at < tip_at` is the one scored. Both stay on record.
@@ -240,6 +240,18 @@ Each run also appends one row to `data/status/odds_snapshot_log.csv` in the publ
 | `cbbd_close_home_spread`, `cbbd_open_home_spread`, `cbbd_close_basis`, `own_close_home_spread`, `pinnacle_close_home_spread` | Benchmark | From `closing_lines`. Never a feature (rule 5) |
 
 The column groups are listed in `src/shac/tables/history.py`; only feature columns may feed a prediction.
+
+**`rotation_players`** (`tables/rotation_players.parquet`). Writer: `shac.tables.build` (`sql/tables/rotation_players.sql`). The G2 ground truth: who was a rotation player before each game, and whether they played. One row per game, team and player already listed for that team earlier in the season.
+
+| Column | Group | Notes |
+| --- | --- | --- |
+| `game_id`, `team_id`, `athlete_id` **PK**, `season`, `tip_at`, `player_name` | Key | |
+| `team_games_before`, `games_played_before`, `minutes_before`, `mpg_before` | Point in time | From the team's earlier games that season only. `mpg_before` = minutes / games played (minutes > 0) |
+| `games_sat_in_a_row_before` | Point in time | Team games in a row the player sat just before this one; 0 = played last game. Separates new absences from long-running ones |
+| `rotation_rank`, `is_rotation` | Point in time | Rank by `mpg_before` (ties: more minutes, then lower `athlete_id`); rotation = top 8 (PREREGISTRATION.md) |
+| `played`, `minutes`, `starter` | Outcome | This game's box score. A player not listed sat (0 minutes) |
+
+Only final D-I vs D-I team-games with a box score are included; a team's first game of a season has no rows.
 
 **`ratings_daily`**. Writer: `ingest_torvik`. Point-in-time.
 
