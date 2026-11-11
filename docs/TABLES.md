@@ -24,6 +24,7 @@ aggregates (shares, counts) meant for a local run when this page is refreshed.
 | `src/shac/tables/cbbd.py` | `games`, `results`, `player_box`, `cbbd_lines` |
 | `src/shac/tables/odds.py` | `odds_snapshots` (flattened) and `odds_event_matches` |
 | `src/shac/tables/torvik.py` | `ratings_daily` (Torvik ratings; columns and timing in `docs/TORVIK.md`) |
+| `sql/tables/game_history.sql`, `src/shac/tables/history.py` | `game_history` (DuckDB), and which columns are features, labels and benchmarks |
 | `sql/tables/closing_lines.sql` | `closing_lines` (DuckDB) |
 | `sql/checks/tables.sql` | Checks; each returns zero rows when the tables are good |
 | `sql/tables/findings.sql` | The numbers in "Findings" below |
@@ -41,6 +42,7 @@ All timestamps are `TIMESTAMP WITH TIME ZONE` (UTC). Keys are marked **PK**.
 | `odds_snapshots` | snapshot x event x book (**PK** `snapshot_at, odds_event_id, book`) | Per the contract. Spreads market only; every book in the file, US and `eu`. `home_spread` is the point on the outcome named like the feed's home team. |
 | `odds_event_matches` | Odds API event (**PK** `odds_event_id`) | Team ids the names map to (via `team_aliases`, source `odds_api`), and `match_type`: `matched` (same home and away, tip dates within a day; sets `game_id`), `swapped` (only a game with home/away reversed exists; `game_id` stays empty, the game is in `candidate_game_id`), `no_game`, `unmapped_team`. |
 | `closing_lines` | game per source (**PK** `game_id, source`) | Contract columns plus `basis`. See below. |
+| `game_history` | game (**PK** `game_id`) | Every game in `games` with point-in-time ratings for both teams, the result and the closes. Column groups in ARCHITECTURE.md. Leakage tests: `tests/test_no_leakage.py`. |
 | `ratings_daily` | rating date x team x source (**PK** `rating_date, team_id, source`) | Contract columns: `season`, `adj_o`, `adj_d`, `adj_tempo`, `barthag`, `rank`, `wins`, `losses`, `as_of`, `fetched_at`. `torvik_time_machine` rows: `as_of` = 06:00 US Eastern the day after `rating_date`. `torvik_daily` rows: our own pulls, `as_of` = fetch time, first pull per Eastern date. See `docs/TORVIK.md`. |
 
 ### Closing lines
@@ -75,6 +77,8 @@ All timestamps are `TIMESTAMP WITH TIME ZONE` (UTC). Keys are marked **PK**.
 `odds_snapshots`: 1,314 rows from 2 files, 56 events. `odds_event_matches`: 56 events, all `no_game` (match rate 0%, expected until 2027 CBBD games are ingested). Every team name mapped; no `swapped` or `unmapped_team` events.
 
 `ratings_daily` (build of 2026-11-11): 425,457 rows. Time Machine 424,727 (353 to 365 teams a day; 132 to 156 days a season; 2 pre-season rows dropped; 0 unmatched names). Daily pulls 730 (2026-27, two days so far).
+
+`game_history` (build of 2026-11-11): 44,740 games. Ratings file dated the day before (US Eastern date): 44,627. A file two days old: 110 (81 games with no set tip time, whose placeholder is midnight Eastern, and the midnight-to-6 a.m. tips). No file: 3 (cancelled 2020-21 games dated before the season's first file). A team missing from the file: 1 (the 2025-26 opener whose pre-season rows were dropped). With a result: 43,301. With a `cbbd` close: 42,815. Ratings known at or after tip: 0.
 
 Games not final: 2021 has 636 cancelled and 272 scheduled (COVID); every other season has under 400 non-final games. No final game lacks a result.
 

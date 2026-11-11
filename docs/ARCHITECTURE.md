@@ -81,7 +81,7 @@ flowchart LR
 4. In backtests, a season's games are predicted by a model trained only on earlier seasons. Calibration is fit only on those earlier seasons too.
 5. Nothing computed from a game's own result, or from any later game, can reach that game's features. This includes season-end ratings, final rosters and closing lines.
 
-Tests enforce this. `tests/test_no_leakage.py` (G1) fails if any feature row has `as_of >= tip_at`, and if the feature builder's output for a game changes when later games are removed from its input.
+Tests enforce this. `tests/test_no_leakage.py` (G1) fails if any feature row has `as_of >= tip_at`, and if the feature builder's output for a game changes when later games are removed from its input. Its synthetic half runs in CI; its real-data half runs locally with `SHAC_DATA_DIR` set to the private repo (24 cutoffs, three per season).
 
 ## Data contracts
 
@@ -228,6 +228,18 @@ Each run also appends one row to `data/status/odds_snapshot_log.csv` in the publ
 | `minutes` | float | 0 or missing = did not play |
 | `starter` | bool | |
 | `fetched_at` | timestamp | |
+
+**`game_history`** (`tables/game_history.parquet`). Writer: `shac.tables.build` (`sql/tables/game_history.sql`). One row per game in `games`. The only table the baseline and the model read history from.
+
+| Columns | Group | Notes |
+| --- | --- | --- |
+| `game_id` **PK**, `season`, `season_type`, `tip_at`, `tip_tbd`, `neutral_site`, `conference_game`, `status`, `home_team_id`, `away_team_id` | Key | From `games` |
+| `ratings_source`, `rating_date`, `ratings_as_of`, `file_n_teams`, `file_mean_tempo` | Feature | The ratings file used: the latest of the game's season with `as_of < tip_at`. `file_mean_tempo` is the mean `adj_tempo` of every team in that file |
+| `home_adj_o`, `home_adj_d`, `home_adj_tempo`, `home_barthag`, `home_rank`, and the same for `away_` | Feature | Both teams from that one file. A team missing from it gets empty ratings, never an older file |
+| `home_points`, `away_points`, `home_margin`, `overtimes` | Label | From `results` |
+| `cbbd_close_home_spread`, `cbbd_open_home_spread`, `cbbd_close_basis`, `own_close_home_spread`, `pinnacle_close_home_spread` | Benchmark | From `closing_lines`. Never a feature (rule 5) |
+
+The column groups are listed in `src/shac/tables/history.py`; only feature columns may feed a prediction.
 
 **`ratings_daily`**. Writer: `ingest_torvik`. Point-in-time.
 
