@@ -52,3 +52,13 @@ Run locally: `CBBD_API_KEY=... uv run python -m shac.ingest.cbbd --data-dir <pri
 ## Call estimate for a full 8-season backfill
 
 Per season: 1 teams + 6 months x 3 endpoints + 17 player blocks = 36 calls, so 288 for 8 seasons before any splitting. Splits add roughly 20 to 60 if only the busiest player blocks are capped. If the player cap turns out to count rows (players), most blocks would split down to days and the total could pass 1,000 per season. Run discover first.
+
+## The season in progress (`--mode current`)
+
+Runs daily on GitHub Actions (`cbbd-ingest.yml`, 10:07 UTC, 3:07 a.m. Arizona) and is the workflow's default when started by hand. The season comes from today's date (July onward counts as next season). Each run:
+
+- `/teams` for the season, once.
+- **Settled windows**, those that ended at least 7 days ago: the same monthly windows (`games`, `lines`, `games/teams`) and 4-day blocks (`games/players`) as backfill, fetched once and cached for good.
+- **One live window** for `games` and `lines`: from the end of the last settled month to 9 days past today. Its end date changes daily, so it is a new call each day. The table build keeps the most recently fetched copy of each game, so new scores and lines replace old ones.
+
+About 2 to 4 calls a day. The monthly budget guard (800) still applies.
