@@ -241,6 +241,18 @@ Each run also appends one row to `data/status/odds_snapshot_log.csv` in the publ
 
 The column groups are listed in `src/shac/tables/history.py`; only feature columns may feed a prediction.
 
+**`rotation_players`** (`tables/rotation_players.parquet`). Writer: `shac.tables.build` (`sql/tables/rotation_players.sql`). The G2 ground truth: who was a rotation player before each game, and whether they played. One row per game, team and player already listed for that team earlier in the season.
+
+| Column | Group | Notes |
+| --- | --- | --- |
+| `game_id`, `team_id`, `athlete_id` **PK**, `season`, `tip_at`, `player_name` | Key | |
+| `team_games_before`, `games_played_before`, `minutes_before`, `mpg_before` | Point in time | From the team's earlier games that season only. `mpg_before` = minutes / games played (minutes > 0) |
+| `games_sat_in_a_row_before` | Point in time | Team games in a row the player sat just before this one; 0 = played last game. Separates new absences from long-running ones |
+| `rotation_rank`, `is_rotation` | Point in time | Rank by `mpg_before` (ties: more minutes, then lower `athlete_id`); rotation = top 8 (PREREGISTRATION.md) |
+| `played`, `minutes`, `starter` | Outcome | This game's box score. A player not listed sat (0 minutes) |
+
+Only final D-I vs D-I team-games with a box score are included; a team's first game of a season has no rows.
+
 **`ratings_daily`**. Writer: `ingest_torvik`. Point-in-time.
 
 | Column | Type | Notes |
