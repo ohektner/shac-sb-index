@@ -3,7 +3,7 @@
 --
 -- The runner makes one view per parquet file in <private repo>/tables/:
 --   games, results, player_box, cbbd_lines, odds_snapshots, odds_event_matches,
---   closing_lines, ratings_daily, game_history
+--   closing_lines, ratings_daily, game_history, rotation_players
 
 -- check: a_games_duplicate_pk
 SELECT game_id, count(*) AS n FROM games GROUP BY game_id HAVING count(*) > 1;
@@ -124,3 +124,22 @@ SELECT game_id FROM game_history WHERE ratings_as_of >= tip_at;
 SELECT game_id FROM games ANTI JOIN game_history USING (game_id)
 UNION ALL
 SELECT game_id FROM game_history ANTI JOIN games USING (game_id);
+
+-- check: s_rotation_players_duplicate_pk
+SELECT game_id, team_id, athlete_id, count(*) AS n
+FROM rotation_players
+GROUP BY game_id, team_id, athlete_id
+HAVING count(*) > 1;
+
+-- check: t_rotation_more_than_eight
+SELECT game_id, team_id, count(*) AS n
+FROM rotation_players
+WHERE is_rotation
+GROUP BY game_id, team_id
+HAVING count(*) > 8;
+
+-- check: u_rotation_without_earlier_minutes
+-- A rotation player must have played before this game (point in time).
+SELECT game_id, team_id, athlete_id
+FROM rotation_players
+WHERE is_rotation AND NOT (games_played_before > 0 AND minutes_before > 0);
