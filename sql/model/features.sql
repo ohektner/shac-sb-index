@@ -2,7 +2,9 @@
 -- Task 1.8. Run by shac.model.margin.build_features.
 --
 -- Reads game_history only, and from it only KEY and FEATURE columns, plus the `status`
--- of EARLIER games (to skip cancelled and postponed games when counting rest days).
+-- of games that tipped earlier (to skip cancelled and postponed games when counting
+-- rest days). Live, a just-cancelled earlier game may still read 'scheduled', so the
+-- rest input would need a point-in-time status before it could ship. It is not in the model.
 -- It never reads a score or a line. tests/test_margin_model.py checks that by blanking
 -- every score and line and confirming no feature moves.
 --
@@ -23,16 +25,18 @@
 
 WITH team_games AS (
     -- One row per team per game, to find each team's previous game that season.
-    -- Cancelled and postponed games were never played, so they don't count as rest.
-    SELECT game_id, season, tip_at, home_team_id AS team_id
+    SELECT game_id, season, tip_at, home_team_id AS team_id,
+           coalesce(status IN ('cancelled', 'postponed'), FALSE) AS not_played
     FROM game_history
-    WHERE status IS NULL OR status NOT IN ('cancelled', 'postponed')
     UNION ALL
-    SELECT game_id, season, tip_at, away_team_id AS team_id
+    SELECT game_id, season, tip_at, away_team_id AS team_id,
+           coalesce(status IN ('cancelled', 'postponed'), FALSE) AS not_played
     FROM game_history
-    WHERE status IS NULL OR status NOT IN ('cancelled', 'postponed')
 ),
 rest AS (
+    -- Days since the team's last game that tipped STRICTLY earlier (at least a minute
+    -- before) and was not cancelled or postponed. The window never includes the game
+    -- itself or one with the same tip time, so a game's own status can't touch its rest.
     SELECT
         game_id,
         team_id,
@@ -40,7 +44,11 @@ rest AS (
             coalesce(
                 date_diff(
                     'minute',
-                    lag(tip_at) OVER (PARTITION BY season, team_id ORDER BY tip_at, game_id),
+                    max(CASE WHEN NOT not_played THEN tip_at END) OVER (
+                        PARTITION BY season, team_id
+                        ORDER BY tip_at
+                        RANGE BETWEEN UNBOUNDED PRECEDING AND INTERVAL 1 MINUTE PRECEDING
+                    ),
                     tip_at
                 ) / 1440.0,
                 7.0

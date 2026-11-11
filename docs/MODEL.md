@@ -67,10 +67,12 @@ Each candidate adds one idea to the two-input model. They are compared on the th
 
 16,400 games. None passed, so the model stays at two inputs.
 
+Two caveats. The standard errors treat games as independent, but a season's predictions share one fit, so they run a little small; the all-three-seasons condition guards against that. And 2022 comes after 2020-21, so that one separately reported row is predicted by a model whose inputs were chosen with a later season in view. The choice was the default, so nothing changed.
+
 **What this says.** Ratings-only inputs don't add to what Torvik's ratings already know. A real gain has to come from information the ratings don't have, which is what the availability layer (G2) is for.
 
 ## No leakage
 
 - The feature query reads no score and no line. A test blanks them all and checks that no input moves.
 - A season's predictions don't change when its own or any later results are rewritten, or when every line is rewritten. Tests check both, and that earlier results do move the fit.
-- Rest days read only the status of earlier games.
+- Rest days read the status of games that tipped earlier, and nothing else from the label columns. A game's own status, a later game's, or a game at the same tip time can't change it (tested). Live, a just-cancelled earlier game may still read as scheduled, so the rest input would need a point-in-time status before it could ship. It is not in the model.
