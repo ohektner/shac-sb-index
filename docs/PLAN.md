@@ -41,7 +41,7 @@ Tasks 1.1, 1.3 and 1.11 can run in parallel. So can 1.9 and 1.10 once the ledger
 | 1.7 | Torvik baseline scorecard in DuckDB SQL | modeler (opus) | 1.6 | `sql/scorecard/*.sql` run on held-out seasons and produce every pre-registered metric |
 | 1.8 | Margin model, walk-forward by season | modeler (opus) | 1.7 | Distance to the close reported next to the baseline for each held-out season |
 | 1.9 | Calibration, tiers and the per-tier backtest | modeler (opus) | 1.8 | Reliability table and per-tier record with confidence intervals |
-| 1.10 | Ledger writer, append-only test, morning and late pricing jobs | data-engineer (sonnet) | 1.8 | CI fails on a PR that edits a ledger row; a job run adds rows before tip |
+| 1.10 | Ledger writer, append-only test, morning and late pricing jobs. Before the first live run, top up the 2026-27 Time Machine files (`uv run python -m shac.ingest.torvik_timemachine --data-dir <private repo> --seasons 2027`, from Owen's PC) so days a daily pull missed have ratings, then rebuild the tables | data-engineer (sonnet) | 1.8 | CI fails on a PR that edits a ledger row; a job run adds rows before tip |
 | 1.11 | News collection to the private repo | data-engineer (sonnet) | Permitted sources settled | Rows with fetch timestamps arrive daily |
 | 1.12 | Board and scorecard page on Cloudflare Pages | web-builder (sonnet) | 1.10 | The site builds from the ledger and scorecard files alone |
 | 1.13 | Leakage and evaluation audit | auditor (opus) | 1.6 to 1.10 | Written findings; every blocker fixed or accepted by Owen |
