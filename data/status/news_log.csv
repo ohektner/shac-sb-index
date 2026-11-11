@@ -1,0 +1,2 @@
+fetched_at_utc,status,http_status,n_teams,n_queries,n_items,n_new_items,file,sha256,bytes
+2026-11-11T21:39:54Z,ok,200,3,3,18,18,news/raw/google_news/2026/11/11/google_news_20261111T213954Z.json.gz,22e9a4494bcb4b9ba5117ced2839d9a4c0df58a58019b6c5e4c339b4af5ad46b,7017
