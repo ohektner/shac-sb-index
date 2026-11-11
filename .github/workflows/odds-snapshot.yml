@@ -25,6 +25,7 @@ on:
 
 permissions:
   contents: write
+  actions: read  # the guard lists this workflow's recent runs
 
 concurrency:
   group: odds-snapshot
@@ -34,7 +35,38 @@ env:
   LOG: data/status/odds_snapshot_log.csv
 
 jobs:
+  # GitHub sometimes runs a scheduled job very late or not at all, so Owen's PC starts it
+  # by hand when a slot is missed (scripts/schedule-backup.ps1). If GitHub's late run then
+  # turns up for a slot that's already covered, this skips it so the slot isn't paid twice.
+  # It fails open: if the check itself breaks, the snapshot still runs.
+  guard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      skip: ${{ steps.check.outputs.skip }}
+    steps:
+      - name: Check out this repo
+        if: github.event_name == 'schedule'
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: main
+          persist-credentials: false
+
+      - name: Skip if this slot already has a run
+        id: check
+        if: github.event_name == 'schedule'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          PYTHONPATH: src
+        run: >
+          python3 -m shac.snapshots.backup_trigger --repo . --guard odds-snapshot.yml
+          --run-id "$GITHUB_RUN_ID" | tee -a "$GITHUB_OUTPUT"
+
   snapshot:
+    needs: guard
+    if: needs.guard.outputs.skip != 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
