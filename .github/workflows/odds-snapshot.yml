@@ -66,7 +66,8 @@ jobs:
 
   snapshot:
     needs: guard
-    if: needs.guard.outputs.skip != 'true'
+    # !cancelled() keeps the snapshot running even if the guard job itself fails.
+    if: ${{ !cancelled() && needs.guard.outputs.skip != 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
