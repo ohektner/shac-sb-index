@@ -5,10 +5,11 @@ Run (a Windows task runs this every 15 minutes via scripts/schedule-backup.ps1):
     uv run python -m shac.snapshots.backup_trigger --repo . --dry-run
     python -m shac.snapshots.backup_trigger --repo . --guard odds-snapshot.yml --run-id 123
 
-Why: GitHub doesn't promise to run scheduled jobs. On 2026-11-10 it ran 2 of the first
-10 slots and skipped the rest (see docs/DECISIONS.md). Missed odds snapshots can't be
-recreated later, so this checks each job's most recent slot and, if GitHub hasn't run the
-job since then, starts it by hand (workflow_dispatch) through the GitHub CLI (`gh`).
+Why: GitHub doesn't promise to run scheduled jobs. On 2026-11-10 it ran 5 of the first
+11 slots, up to 3 hours late, and skipped the rest (see docs/DECISIONS.md). Missed odds
+snapshots can't be recreated later, so this checks each job's most recent slot and, if
+GitHub hasn't run the job since then, starts it by hand (workflow_dispatch) through the
+GitHub CLI (`gh`).
 
 The schedule is read from the workflow files themselves, so there is one source of truth.
 A slot is only triggered once it is GRACE_MINUTES old (GitHub's own runs are often 30 to

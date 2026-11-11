@@ -31,7 +31,7 @@ Where the project stands right now. Update this at the end of every working sess
 ## In progress
 
 - **Task 1.3, Torvik Time Machine backfill:** Bart Torvik OK'd it on 2026-11-10 (do it slowly; the CDN may block). Runs from Owen's PC, one season at a time, about 1,235 files at 20+ seconds apart. See DECISIONS.md.
-- **Scheduled jobs skip slots:** on 2026-11-10 GitHub ran 5 of the first 15 slots, 17 minutes to 3 hours late. PR #13 (comment-only edit, merged early at about 1:28 p.m. Arizona, before the agreed 2:17 p.m. check) and switching the workflows off and on (8:36 p.m.) didn't visibly help. Fix: the backup trigger (`scripts/schedule-backup.ps1`, Windows task every 15 minutes, log in `%LOCALAPPDATA%\shac-sb-index\schedule-backup.log`) plus a guard in the odds job. Owen registers the task.
+- **Scheduled jobs skip slots:** on 2026-11-10 GitHub ran 5 of the first 11 slots, 17 minutes to 3 hours late. PR #13 (comment-only edit, merged early at about 1:28 p.m. Arizona, before the agreed 2:17 p.m. check) didn't help; switching the workflows off and on (8:36 p.m.) is too new to judge. Fix: the backup trigger (`scripts/schedule-backup.ps1`, Windows task every 15 minutes, log in `%LOCALAPPDATA%\shac-sb-index\schedule-backup.log`) plus a guard in the odds job. Owen registers the task.
 
 ## Waiting on
 
