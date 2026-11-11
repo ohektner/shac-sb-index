@@ -3,7 +3,7 @@
 --
 -- The runner makes one view per parquet file in <private repo>/tables/:
 --   games, results, player_box, cbbd_lines, odds_snapshots, odds_event_matches,
---   closing_lines
+--   closing_lines, ratings_daily
 
 -- check: a_games_duplicate_pk
 SELECT game_id, count(*) AS n FROM games GROUP BY game_id HAVING count(*) > 1;
@@ -91,3 +91,23 @@ FROM information_schema.columns
 WHERE table_schema = 'main'
   AND (data_type LIKE 'TIMESTAMP%' OR column_name LIKE '%\_at' ESCAPE '\')
   AND data_type <> 'TIMESTAMP WITH TIME ZONE';
+
+-- check: m_ratings_daily_duplicate_pk
+SELECT rating_date, team_id, source, count(*) AS n
+FROM ratings_daily
+GROUP BY rating_date, team_id, source
+HAVING count(*) > 1;
+
+-- check: n_ratings_time_machine_as_of_wrong
+-- A Time Machine file dated D is known at 06:00 US Eastern on D+1 (DECISIONS.md,
+-- 2026-11-11). Anything else would let a file reach games it already counts.
+SELECT rating_date, team_id
+FROM ratings_daily
+WHERE source = 'torvik_time_machine'
+  AND as_of <> timezone('America/New_York', (rating_date + 1)::timestamp + INTERVAL 6 HOUR);
+
+-- check: o_ratings_daily_missing_values
+SELECT rating_date, team_id, source
+FROM ratings_daily
+WHERE adj_o IS NULL OR adj_d IS NULL OR adj_tempo IS NULL OR barthag IS NULL
+   OR wins IS NULL OR losses IS NULL OR as_of IS NULL OR season IS NULL;

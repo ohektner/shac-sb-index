@@ -367,104 +367,197 @@ cbbd,Wyoming,2019,,358
 cbbd,Xavier,2019,,359
 cbbd,Yale,2019,,360
 cbbd,Youngstown State,2019,,361
+odds_api,Abilene Christian Wildcats,2027,,1
+odds_api,Air Force Falcons,2027,,2
+odds_api,Albany Great Danes,2027,,306
 odds_api,Alcorn St Braves,2027,,7
+odds_api,American Eagles,2027,,8
 odds_api,Arizona St Sun Devils,2027,,10
 odds_api,Arizona Wildcats,2027,,11
+odds_api,Arkansas Razorbacks,2027,,12
 odds_api,Arkansas St Red Wolves,2027,,13
 odds_api,Arkansas-Little Rock Trojans,2027,,144
+odds_api,Arkansas-Pine Bluff Golden Lions,2027,,14
 odds_api,Army Knights,2027,,15
 odds_api,BYU Cougars,2027,,18
 odds_api,Baylor Bears,2027,,20
 odds_api,Belmont Bruins,2027,,22
+odds_api,Bethune-Cookman Wildcats,2027,,23
+odds_api,Boise State Broncos,2027,,25
 odds_api,Boston College Eagles,2027,,26
 odds_api,Bradley Braves,2027,,29
 odds_api,Bryant Bulldogs,2027,,31
 odds_api,Bucknell Bison,2027,,32
+odds_api,Cal Baptist Lancers,2027,,39
+odds_api,Cal Poly Mustangs,2027,,35
+odds_api,California Golden Bears,2027,,40
+odds_api,Campbell Fighting Camels,2027,,41
 odds_api,Central Michigan Chippewas,2027,,45
+odds_api,Charleston Cougars,2027,,46
 odds_api,Charleston Southern Buccaneers,2027,,47
+odds_api,Chicago St Cougars,2027,,50
+odds_api,Colgate Raiders,2027,,55
 odds_api,Colorado Buffaloes,2027,,56
+odds_api,Colorado St Rams,2027,,57
+odds_api,Cornell Big Red,2027,,60
 odds_api,Creighton Bluejays,2027,,61
+odds_api,Dartmouth Big Green,2027,,62
 odds_api,Davidson Wildcats,2027,,63
 odds_api,Dayton Flyers,2027,,64
+odds_api,Delaware Blue Hens,2027,,66
 odds_api,Delaware St Hornets,2027,,67
 odds_api,Detroit Mercy Titans,2027,,69
+odds_api,Drexel Dragons,2027,,71
 odds_api,Duke Blue Devils,2027,,72
 odds_api,Duquesne Dukes,2027,,73
+odds_api,East Carolina Pirates,2027,,74
+odds_api,East Tennessee St Buccaneers,2027,,75
+odds_api,East Texas A&M Lions,2027,,76
 odds_api,Eastern Kentucky Colonels,2027,,78
 odds_api,Elon Phoenix,2027,,81
 odds_api,Evansville Purple Aces,2027,,82
 odds_api,Fairfield Stags,2027,,83
+odds_api,Fairleigh Dickinson Knights,2027,,84
+odds_api,Florida A&M Rattlers,2027,,85
+odds_api,Florida Atlantic Owls,2027,,86
 odds_api,Florida Gators,2027,,87
 odds_api,Florida St Seminoles,2027,,90
 odds_api,Fordham Rams,2027,,91
 odds_api,Fresno St Bulldogs,2027,,92
+odds_api,Furman Paladins,2027,,93
 odds_api,GW Revolutionaries,2027,,96
 odds_api,Georgetown Hoyas,2027,,97
 odds_api,Georgia Southern Eagles,2027,,99
 odds_api,Georgia St Panthers,2027,,100
 odds_api,Georgia Tech Yellow Jackets,2027,,101
+odds_api,Grand Canyon Antelopes,2027,,104
 odds_api,Green Bay Phoenix,2027,,105
 odds_api,Harvard Crimson,2027,,107
 odds_api,Hofstra Pride,2027,,110
+odds_api,Holy Cross Crusaders,2027,,111
 odds_api,Houston Christian Huskies,2027,,112
+odds_api,Houston Cougars,2027,,113
+odds_api,IUPUI Jaguars,2027,,115
 odds_api,Illinois Fighting Illini,2027,,118
+odds_api,Incarnate Word Cardinals,2027,,120
+odds_api,Indiana St Sycamores,2027,,122
 odds_api,Iona Gaels,2027,,123
 odds_api,Iowa Hawkeyes,2027,,124
 odds_api,Iowa State Cyclones,2027,,125
+odds_api,Jackson St Tigers,2027,,126
+odds_api,Jacksonville St Gamecocks,2027,,128
+odds_api,James Madison Dukes,2027,,129
 odds_api,Kansas Jayhawks,2027,,131
 odds_api,Kansas St Wildcats,2027,,132
 odds_api,Kennesaw St Owls,2027,,133
+odds_api,Kent State Golden Flashes,2027,,134
 odds_api,Kentucky Wildcats,2027,,135
 odds_api,La Salle Explorers,2027,,137
+odds_api,Lindenwood Lions,2027,,366
 odds_api,Lipscomb Bisons,2027,,143
+odds_api,Long Beach St 49ers,2027,,145
+odds_api,Loyola (Chi) Ramblers,2027,,151
 odds_api,Loyola Marymount Lions,2027,,153
 odds_api,Maine Black Bears,2027,,154
+odds_api,Marquette Golden Eagles,2027,,157
 odds_api,Maryland-Eastern Shore Hawks,2027,,159
+odds_api,Massachusetts Minutemen,2027,,161
 odds_api,Memphis Tigers,2027,,163
 odds_api,Mercer Bears,2027,,164
 odds_api,Michigan St Spartans,2027,,169
+odds_api,Michigan Wolverines,2027,,170
 odds_api,Middle Tennessee Blue Raiders,2027,,171
+odds_api,Milwaukee Panthers,2027,,172
+odds_api,Miss Valley St Delta Devils,2027,,175
 odds_api,Montana Grizzlies,2027,,179
 odds_api,Murray St Racers,2027,,184
 odds_api,NC State Wolfpack,2027,,185
 odds_api,NJIT Highlanders,2027,,186
+odds_api,Navy Midshipmen,2027,,187
+odds_api,Nebraska Cornhuskers,2027,,188
+odds_api,Nevada Wolf Pack,2027,,189
 odds_api,New Haven Chargers,2027,,1507
 odds_api,New Mexico Lobos,2027,,191
 odds_api,Nicholls St Colonels,2027,,195
+odds_api,Norfolk St Spartans,2027,,196
+odds_api,North Carolina A&T Aggies,2027,,198
+odds_api,North Carolina Central Eagles,2027,,199
 odds_api,North Carolina Tar Heels,2027,,200
+odds_api,North Texas Mean Green,2027,,204
 odds_api,Northeastern Huskies,2027,,205
 odds_api,Northern Arizona Lumberjacks,2027,,206
 odds_api,Northern Iowa Panthers,2027,,209
 odds_api,Northern Kentucky Norse,2027,,210
+odds_api,Notre Dame Fighting Irish,2027,,213
+odds_api,Oakland Golden Grizzlies,2027,,214
+odds_api,Old Dominion Monarchs,2027,,219
 odds_api,Ole Miss Rebels,2027,,220
+odds_api,Oral Roberts Golden Eagles,2027,,222
+odds_api,Oregon Ducks,2027,,223
+odds_api,Pacific Tigers,2027,,225
+odds_api,Pennsylvania Quakers,2027,,227
+odds_api,Pepperdine Waves,2027,,228
+odds_api,Portland St Vikings,2027,,231
 odds_api,Prairie View Panthers,2027,,232
 odds_api,Presbyterian Blue Hose,2027,,233
+odds_api,Princeton Tigers,2027,,234
 odds_api,Providence Friars,2027,,235
 odds_api,Queens University Royals,2027,,362
 odds_api,Rhode Island Rams,2027,,240
+odds_api,Robert Morris Colonials,2027,,244
 odds_api,Rutgers Scarlet Knights,2027,,245
 odds_api,SE Louisiana Lions,2027,,246
 odds_api,SMU Mustangs,2027,,248
+odds_api,Saint Joseph's Hawks,2027,,251
 odds_api,Saint Louis Billikens,2027,,252
+odds_api,Saint Peter's Peacocks,2027,,254
+odds_api,Sam Houston St Bearkats,2027,,255
+odds_api,San Diego St Aztecs,2027,,257
 odds_api,San Diego Toreros,2027,,258
 odds_api,San Francisco Dons,2027,,259
+odds_api,Santa Clara Broncos,2027,,261
+odds_api,Seattle Redhawks,2027,,262
 odds_api,Siena Saints,2027,,264
 odds_api,South Alabama Jaguars,2027,,265
+odds_api,South Carolina Gamecocks,2027,,266
+odds_api,South Carolina St Bulldogs,2027,,267
 odds_api,South Dakota Coyotes,2027,,269
+odds_api,South Dakota St Jackrabbits,2027,,270
+odds_api,South Florida Bulls,2027,,271
+odds_api,Southern Indiana Screaming Eagles,2027,,365
 odds_api,Southern Jaguars,2027,,274
+odds_api,Southern Miss Golden Eagles,2027,,275
+odds_api,St. Bonaventure Bonnies,2027,,277
+odds_api,St. John's Red Storm,2027,,279
+odds_api,Stephen F. Austin Lumberjacks,2027,,282
+odds_api,Stony Brook Seawolves,2027,,285
 odds_api,TCU Horned Frogs,2027,,287
+odds_api,Temple Owls,2027,,289
 odds_api,Tenn-Martin Skyhawks,2027,,325
 odds_api,Texas State Bobcats,2027,,297
 odds_api,Texas Tech Red Raiders,2027,,298
 odds_api,Toledo Rockets,2027,,300
 odds_api,Troy Trojans,2027,,302
 odds_api,Tulane Green Wave,2027,,303
+odds_api,Tulsa Golden Hurricane,2027,,304
+odds_api,UC Davis Aggies,2027,,307
+odds_api,UC Santa Barbara Gauchos,2027,,311
 odds_api,UCF Knights,2027,,312
+odds_api,UCLA Bruins,2027,,313
 odds_api,UL Monroe Warhawks,2027,,316
+odds_api,UMKC Kangaroos,2027,,130
+odds_api,UMass Lowell River Hawks,2027,,318
+odds_api,UNC Asheville Bulldogs,2027,,319
+odds_api,UNC Wilmington Seahawks,2027,,321
+odds_api,USC Trojans,2027,,323
 odds_api,UT Rio Grande Valley Vaqueros,2027,,326
+odds_api,UTSA Roadrunners,2027,,328
 odds_api,Utah State Aggies,2027,,329
 odds_api,Utah Tech Trailblazers,2027,,330
 odds_api,Utah Utes,2027,,331
+odds_api,VCU Rams,2027,,333
+odds_api,VMI Keydets,2027,,334
+odds_api,Valparaiso Beacons,2027,,335
 odds_api,Vanderbilt Commodores,2027,,336
 odds_api,Villanova Wildcats,2027,,338
 odds_api,Virginia Cavaliers,2027,,339
@@ -472,6 +565,8 @@ odds_api,Virginia Tech Hokies,2027,,340
 odds_api,Wake Forest Demon Deacons,2027,,342
 odds_api,Washington St Cougars,2027,,344
 odds_api,Weber State Wildcats,2027,,345
+odds_api,West Georgia Wolves,2027,,346
+odds_api,William & Mary Tribe,2027,,353
 odds_api,Winthrop Eagles,2027,,354
 odds_api,Wisconsin Badgers,2027,,355
 odds_api,Wright St Raiders,2027,,357
@@ -535,6 +630,7 @@ torvik,Clemson,2019,,52
 torvik,Cleveland St.,2019,,53
 torvik,Coastal Carolina,2019,,54
 torvik,Colgate,2019,,55
+torvik,College of Charleston,2019,2024,46
 torvik,Colorado,2019,,56
 torvik,Colorado St.,2019,,57
 torvik,Columbia,2019,,58
@@ -549,7 +645,9 @@ torvik,DePaul,2019,,65
 torvik,Delaware,2019,,66
 torvik,Delaware St.,2019,,67
 torvik,Denver,2019,,68
+torvik,Detroit,2019,2024,69
 torvik,Detroit Mercy,2019,,69
+torvik,Dixie St.,2021,2022,330
 torvik,Drake,2019,,70
 torvik,Drexel,2019,,71
 torvik,Duke,2019,,72
@@ -572,6 +670,7 @@ torvik,Florida Atlantic,2019,,86
 torvik,Florida Gulf Coast,2019,,88
 torvik,Florida St.,2019,,90
 torvik,Fordham,2019,,91
+torvik,Fort Wayne,2019,2024,237
 torvik,Fresno St.,2019,,92
 torvik,Furman,2019,,93
 torvik,Gardner Webb,2019,,94
@@ -594,9 +693,11 @@ torvik,High Point,2019,,109
 torvik,Hofstra,2019,,110
 torvik,Holy Cross,2019,,111
 torvik,Houston,2019,,113
+torvik,Houston Baptist,2019,2022,112
 torvik,Houston Christian,2019,,112
 torvik,Howard,2019,,114
 torvik,IU Indy,2019,,115
+torvik,IUPUI,2019,2024,115
 torvik,Idaho,2019,,117
 torvik,Idaho St.,2019,,116
 torvik,Illinois,2019,,118
@@ -618,6 +719,7 @@ torvik,Kennesaw St.,2019,,133
 torvik,Kent St.,2019,,134
 torvik,Kentucky,2019,,135
 torvik,LIU,2019,,146
+torvik,LIU Brooklyn,2019,2024,146
 torvik,LSU,2019,,136
 torvik,La Salle,2019,,137
 torvik,Lafayette,2019,,138
@@ -631,6 +733,7 @@ torvik,Little Rock,2019,,144
 torvik,Long Beach St.,2019,,145
 torvik,Longwood,2019,,147
 torvik,Louisiana,2019,,148
+torvik,Louisiana Lafayette,2019,2024,148
 torvik,Louisiana Monroe,2019,,316
 torvik,Louisiana Tech,2019,,149
 torvik,Louisville,2019,,150
@@ -687,6 +790,7 @@ torvik,North Alabama,2019,,197
 torvik,North Carolina,2019,,200
 torvik,North Carolina A&T,2019,,198
 torvik,North Carolina Central,2019,,199
+torvik,North Carolina St.,2019,2024,185
 torvik,North Dakota,2019,,201
 torvik,North Dakota St.,2019,,202
 torvik,North Florida,2019,,203
@@ -766,6 +870,7 @@ torvik,Southern Miss,2019,,275
 torvik,Southern Utah,2019,,276
 torvik,St. Bonaventure,2019,,277
 torvik,St. Francis NY,2019,2023,364
+torvik,St. Francis PA,2019,2024,278
 torvik,St. John's,2019,,279
 torvik,St. Thomas,2022,,280
 torvik,Stanford,2019,,281
@@ -783,6 +888,7 @@ torvik,Tennessee St.,2019,,290
 torvik,Tennessee Tech,2019,,291
 torvik,Texas,2019,,295
 torvik,Texas A&M,2019,,293
+torvik,Texas A&M Commerce,2023,2025,76
 torvik,Texas A&M Corpus Chris,2019,,294
 torvik,Texas Southern,2019,,296
 torvik,Texas St.,2019,,297

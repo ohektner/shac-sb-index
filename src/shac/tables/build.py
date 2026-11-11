@@ -3,10 +3,11 @@
 Run as:
     uv run python -m shac.tables.build --data-dir <private repo> [--map-dir data]
 
-Reads (private repo):  cbbd/raw/{games,lines,games-players}/*.json.gz, odds/raw/**/*.json.gz
+Reads (private repo):  cbbd/raw/{games,lines,games-players}/*.json.gz, odds/raw/**/*.json.gz,
+                       torvik/timemachine/**/*.json.gz, torvik/raw/**/*_team_results_*.csv.gz
 Reads (public repo):   data/teams.csv, data/team_aliases.csv
 Writes (private repo): tables/{games,results,player_box,cbbd_lines,odds_snapshots,
-                       odds_event_matches,closing_lines}.parquet
+                       odds_event_matches,closing_lines,ratings_daily}.parquet
 
 Prints counts only (no team names, scores or lines), so the output is safe for public CI
 logs. No network calls.
@@ -23,7 +24,7 @@ from pathlib import Path
 import duckdb
 import pandas as pd
 
-from shac.tables import cbbd, odds, raw
+from shac.tables import cbbd, odds, raw, torvik
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 CLOSING_SQL = REPO_ROOT / "sql" / "tables" / "closing_lines.sql"
@@ -52,6 +53,7 @@ TABLE_NAMES = [
     "odds_snapshots",
     "odds_event_matches",
     "closing_lines",
+    "ratings_daily",
 ]
 
 
@@ -122,6 +124,11 @@ def build_all(data_dir: Path, map_dir: Path) -> tuple[dict[str, pd.DataFrame], d
     snapshot_times = cbbd.utc(pd.Series([w["fetched_at"] for _n, w in odds_files], dtype=str))
     closing = build_closing_lines(odds_snapshots, snapshot_times, cbbd_lines)
 
+    ratings_daily, ratings_counts = torvik.build_ratings_daily(
+        torvik.load_time_machine(data_dir), torvik.load_daily(data_dir), aliases
+    )
+    report["ratings_counts"] = ratings_counts
+
     tables = {
         "games": games,
         "results": results,
@@ -130,6 +137,7 @@ def build_all(data_dir: Path, map_dir: Path) -> tuple[dict[str, pd.DataFrame], d
         "odds_snapshots": odds_snapshots,
         "odds_event_matches": matches,
         "closing_lines": closing,
+        "ratings_daily": ratings_daily,
     }
     return tables, report
 
@@ -160,6 +168,9 @@ def print_report(tables: dict[str, pd.DataFrame], report: dict) -> None:
     print(f"odds snapshot files: {report['odds_files']}")
     for name, n in report["odds_counts"].items():
         print(f"odds_snapshots {name}: {n}")
+
+    for name, n in report["ratings_counts"].items():
+        print(f"ratings_daily {name}: {n}")
 
     for name in TABLE_NAMES:
         print(f"table {name}: {len(tables[name])} rows")
