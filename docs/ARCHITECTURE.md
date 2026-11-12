@@ -128,6 +128,8 @@ Only a consensus number is published, never a per-book table. For backtest seaso
 
 **`predictions_ledger`** (`ledger/season=YYYY/ledger.csv`). Writer: the pricing job. Append-only.
 
+The columns below are what PR #27 built. Task 1.10 replaces them with schema v2 in [LEDGER.md](LEDGER.md) (2026-11-12), which also covers the two pricing runs, grading and the gaps in the append-only check. No ledger file exists yet.
+
 | Column | Type | Notes |
 | --- | --- | --- |
 | `game_id` **PK** | int | |

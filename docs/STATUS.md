@@ -39,17 +39,17 @@ Where the project stands right now. Update this at the end of every working sess
 
 ## Design session, 2026-11-12 (the lead's last before Fable access ends 2026-11-16)
 
-Specs written so Opus and Sonnet can build without making choices. Docs only; no real-data scorecard run, no number against a line. PRs #38 to #41 are stacked and **wait for Owen's sign-off; merge them in number order.**
+Specs written so Opus and Sonnet can build without making choices. Docs only; no real-data scorecard run, no number against a line. Owen approved all of them on 2026-11-12. #38 merged; #39 to #41 were stacked, and deleting their base branches closed #39 and #41, so items 2, 3 and 5 merged together in [#43](https://github.com/ohektner/shac-sb-index/pull/43).
 
 | Work item | PR | What it is | Status |
 | --- | --- | --- | --- |
-| 1. Task 1.9 calibration gaps | [#38](https://github.com/ohektner/shac-sb-index/pull/38) | `docs/CALIBRATION.md` + DECISIONS entry | Open, needs Owen (model) |
-| 2. Task 1.2 test and decision tree | [#39](https://github.com/ohektner/shac-sb-index/pull/39) | `docs/BACKTEST_CLOSE.md` + DECISIONS entry, committed before 1.2 has results | Open, needs Owen (scorecard) |
-| 3. Task 1.10 ledger and pricing spec | [#40](https://github.com/ohektner/shac-sb-index/pull/40) | `docs/LEDGER.md` + DECISIONS entry | Open, needs Owen (ledger) |
+| 1. Task 1.9 calibration gaps | [#38](https://github.com/ohektner/shac-sb-index/pull/38) | `docs/CALIBRATION.md` + DECISIONS entry | Merged (#38) |
+| 2. Task 1.2 test and decision tree | [#39](https://github.com/ohektner/shac-sb-index/pull/39) | `docs/BACKTEST_CLOSE.md` + DECISIONS entry, committed before 1.2 has results | Merged (#43) |
+| 3. Task 1.10 ledger and pricing spec | [#40](https://github.com/ohektner/shac-sb-index/pull/40) | `docs/LEDGER.md` + DECISIONS entry | Merged (#43) |
 | 4. Leakage and soundness review | [#42](https://github.com/ohektner/shac-sb-index/pull/42) | `docs/REVIEW_2026-11-12.md`: 16 findings, nothing fixed | Merged with this update |
-| 5a. Continuity candidate, design only | [#41](https://github.com/ohektner/shac-sb-index/pull/41) | `docs/CONTINUITY.md` + DECISIONS entry | Open, needs Owen (model); on hold |
-| 5b. G2 design (extraction schema, labeling-guide check, task 2.5 method) | none | Not started | Left |
-| 5c. G3 design (line-movement model and its held-out test) | none | Not started | Left |
+| 5a. Continuity candidate, design only | [#41](https://github.com/ohektner/shac-sb-index/pull/41) | `docs/CONTINUITY.md` + DECISIONS entry | Merged (#43); on hold |
+| 5b. G2 design (extraction schema, labeling-guide check, task 2.5 method) | none | Not started | Left; possible in a Fable session before 2026-11-16 |
+| 5c. G3 design (line-movement model and its held-out test) | none | Not started | Left; possible in a Fable session before 2026-11-16 |
 
 Main review result: no leak in the backtest path. The one High finding is that the ledger's append-only test doesn't cover direct commits to `main`, which is how the ledger is written; the fix is in `docs/LEDGER.md`, section 6.
 
@@ -69,10 +69,10 @@ Main review result: no leak in the backtest path. The one High finding is that t
 ## Next up
 
 1. **About 2026-11-13:** check the G0 gate and run the auditor.
-2. **About 2026-11-17:** task 1.2, comparing CBBD's lines with our pre-tip snapshots. **Run exactly the tests in `docs/BACKTEST_CLOSE.md` (PR #39) and read the branch off its rules;** if there are too few games, wait. Then recommend to Owen whether to buy one month of historical odds. It looks likely, because CBBD has no opening spreads before 2024-25. The $30 would not make the model more accurate (lines are never inputs); it would firm up the yardstick, add opening lines for CLV in more seasons, and feed the G3 line-movement study.
+2. **About 2026-11-17:** task 1.2, comparing CBBD's lines with our pre-tip snapshots. **Run exactly the tests in `docs/BACKTEST_CLOSE.md` (PR #43) and read the branch off its rules;** if there are too few games, wait. Then recommend to Owen whether to buy one month of historical odds. It looks likely, because CBBD has no opening spreads before 2024-25. The $30 would not make the model more accurate (lines are never inputs); it would firm up the yardstick, add opening lines for CLV in more seasons, and feed the G3 line-movement study.
 3. **After 1.2: fix the backtest close in DECISIONS.md, then run the scorecard on real data for the first time** (`uv run python -m shac.scorecard.run --data-dir ../shac-sb-index-data`). It now scores the margin model next to the baseline, which is task 1.8's exit check. Don't run it before; no number against a line has been seen, on purpose.
-4. **Task 1.9 (calibration and tiers) is next.** Its model logic is now fully specified in `docs/CALIBRATION.md` (PR #38), so once Owen has signed that off, Opus can build it step by step on made-up data; anything the spec doesn't cover goes to Owen, not to the builder's judgment. It needs lines, so it also waits for 1.2. `leave_one_season_out` in `shac.model.margin` already gives it the out-of-sample edges.
-5. **Task 1.10 (ledger and pricing jobs) follows `docs/LEDGER.md` (PR #40).** It also needs task 1.9's parameters file and a branch rule on `main` that blocks force pushes (Owen sets it). The fixes from `docs/REVIEW_2026-11-12.md` are assigned to tasks there.
+4. **Task 1.9 (calibration and tiers) is next.** Its model logic is now fully specified in `docs/CALIBRATION.md` (PR #38, approved), so Opus can build it step by step on made-up data; anything the spec doesn't cover goes to Owen, not to the builder's judgment. It needs lines, so it also waits for 1.2. `leave_one_season_out` in `shac.model.margin` already gives it the out-of-sample edges.
+5. **Task 1.10 (ledger and pricing jobs) follows `docs/LEDGER.md` (PR #43).** It also needs task 1.9's parameters file and a ruleset on `main` that blocks force pushes and deletions (Owen sets it). The fixes from `docs/REVIEW_2026-11-12.md` are assigned to tasks there.
 6. **Before the first live pricing run (task 1.10):** top up the 2026-27 Time Machine files with `--seasons 2027` (from Owen's PC), then rebuild the tables. Also in PLAN.md, task 1.10.
 
 ## Notes for the next session
