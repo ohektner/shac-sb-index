@@ -2,3 +2,4 @@ fetched_at_utc,status,http_status,n_teams,n_queries,n_items,n_new_items,file,sha
 2026-11-11T21:39:54Z,ok,200,3,3,18,18,news/raw/google_news/2026/11/11/google_news_20261111T213954Z.json.gz,22e9a4494bcb4b9ba5117ced2839d9a4c0df58a58019b6c5e4c339b4af5ad46b,7017
 2026-11-11T22:38:34Z,ok,200,153,153,1536,991,news/raw/google_news/2026/11/11/google_news_20261111T223834Z.json.gz,6cf3d0a7e0958835ee49864e852a886324d2ebccbd3eb71928dee1cdc13527b7,496862
 2026-11-12T02:33:33Z,ok,200,71,71,668,87,news/raw/google_news/2026/11/12/google_news_20261112T023333Z.json.gz,dfaa8d370a4488c5ed9136fe5ae1ebc519292dbe6627eb91961df67eb0e7cc96,204016
+2026-11-12T15:38:35Z,ok,200,167,167,1965,879,news/raw/google_news/2026/11/12/google_news_20261112T153835Z.json.gz,8cecfbcd56b7a490af6fae3fa956262ebb8bcefe7b34c97fe3caa36a982cc72b,619452
