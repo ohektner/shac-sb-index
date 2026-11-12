@@ -7,3 +7,5 @@ fetched_at_utc,status,http_status,source_file,n_lines,file,sha256,bytes
 2026-11-10T15:07:17Z,ok,200,2027_super_sked.csv,6009,torvik/raw/2026/11/10/2027_super_sked_20261110T150717Z.csv.gz,0e33e45e268bfb81639d01d2ac79ce19cacbdabd2e36edafa89f1c1738f8d6e9,1285081
 2026-11-11T14:33:18Z,ok,200,2027_team_results.csv,366,torvik/raw/2026/11/11/2027_team_results_20261111T143318Z.csv.gz,fca5bd9b9d122d3d9e6c4c56cde427696aed56fbce372c43be701e47ea3bde6a,85482
 2026-11-11T14:33:28Z,ok,200,2027_super_sked.csv,6009,torvik/raw/2026/11/11/2027_super_sked_20261111T143328Z.csv.gz,857126765b6397f16a05afad8ba07cf9230aa767bf4b415567ea0dfe6ebfb188,1303355
+2026-11-12T14:43:34Z,ok,200,2027_team_results.csv,366,torvik/raw/2026/11/12/2027_team_results_20261112T144334Z.csv.gz,9bd222b99dbee8b264ff7e3ceaa0da22b74858ed959a1f995ffd6f7bddaf70d8,85800
+2026-11-12T14:43:44Z,ok,200,2027_super_sked.csv,6009,torvik/raw/2026/11/12/2027_super_sked_20261112T144344Z.csv.gz,6bb8a9a2f0acb7c067216cac63c00569f3cd12d7203f9e55c7bcef1b8977d2b3,1320574
