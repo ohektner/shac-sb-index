@@ -35,6 +35,19 @@ function Invoke-Git([string]$Repo, [string[]]$GitArgs) {
     return $output
 }
 
+# Same, but try up to 5 times. Pulls can collide with the 15-minute backup task or a status
+# push touching the same ref ("cannot lock ref"); that clears itself within seconds.
+function Invoke-GitWithRetry([string]$Repo, [string[]]$GitArgs) {
+    for ($attempt = 1; $attempt -le 5; $attempt++) {
+        $output = & git -C $Repo @GitArgs 2>&1
+        if ($LASTEXITCODE -eq 0) { return $output }
+        if ($attempt -eq 5) {
+            throw "git $($GitArgs -join ' ') failed in ${Repo} after 5 tries: $output"
+        }
+        Start-Sleep -Seconds (5 * $attempt)
+    }
+}
+
 # Push, pulling and rebasing between tries in case someone else pushed first.
 function Push-WithRetry([string]$Repo) {
     for ($attempt = 1; $attempt -le 5; $attempt++) {
@@ -50,8 +63,8 @@ $exitCode = 0
 try {
     Write-Log "start"
     Invoke-Git $Runner @("checkout", "-q", "main") | Out-Null
-    Invoke-Git $Runner @("pull", "-q", "--ff-only", "origin", "main") | Out-Null
-    Invoke-Git $DataRepo @("pull", "-q", "--rebase", "origin", "main") | Out-Null
+    Invoke-GitWithRetry $Runner @("pull", "-q", "--ff-only", "origin", "main") | Out-Null
+    Invoke-GitWithRetry $DataRepo @("pull", "-q", "--rebase", "origin", "main") | Out-Null
 
     Push-Location $Runner
     try {
