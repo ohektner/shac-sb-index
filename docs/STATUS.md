@@ -48,8 +48,20 @@ Specs written so Opus and Sonnet can build without making choices. Docs only; no
 | 3. Task 1.10 ledger and pricing spec | [#40](https://github.com/ohektner/shac-sb-index/pull/40) | `docs/LEDGER.md` + DECISIONS entry | Merged (#43) |
 | 4. Leakage and soundness review | [#42](https://github.com/ohektner/shac-sb-index/pull/42) | `docs/REVIEW_2026-11-12.md`: 16 findings, nothing fixed | Merged with this update |
 | 5a. Continuity candidate, design only | [#41](https://github.com/ohektner/shac-sb-index/pull/41) | `docs/CONTINUITY.md` + DECISIONS entry | Merged (#43); on hold |
-| 5b. G2 design (extraction schema, labeling-guide check, task 2.5 method) | none | Not started | Left; possible in a Fable session before 2026-11-16 |
-| 5c. G3 design (line-movement model and its held-out test) | none | Not started | Left; possible in a Fable session before 2026-11-16 |
+| 5b. G2 design (extraction schema, labeling-guide check, task 2.5 method) | [#44](https://github.com/ohektner/shac-sb-index/pull/44) | `docs/EXTRACTION.md`, `docs/LABELING_GUIDE.md` (rewritten), `docs/PLAYER_IMPACT.md`, one new ledger column in `docs/LEDGER.md`, task 2.0 in PLAN.md | Open; needs Owen's sign-off |
+| 5c. G3 design (line-movement model and its held-out test) | [#45](https://github.com/ohektner/shac-sb-index/pull/45) | `docs/LINE_MOVEMENT.md` | Open; needs Owen's sign-off |
+| 6. Decisions and status for 5b and 5c | The PR that carries this update | Five DECISIONS.md entries (marked proposed) and this page | Open; merge after #44 and #45 |
+
+**G2 and G3 design (second session, 2026-11-12).** Docs only again; nothing was run and no number was compared with a line. What Owen should know before signing off:
+
+- **The first labeling guide was not enough.** The first two days of collected headlines are mostly other sports, other leagues, previews and old stories. The rewrite shows the model and Owen a numbered list of each team's players, lets only a listed player be flagged, and fixes a stratified pick of 240 items (40 for writing the prompt, 200 for the score).
+- **Reading accuracy is judged per item:** the model's set of (player, status) must equal the label's.
+- **Task 2.5 adjusts for new absences only,** with one learned number (points per full-time player) and sit rates measured from our own flags. `questionable` adjusts nothing until 50 cases exist.
+- **One ledger column was added** (`absence_adj`), because the columns can't change after the first row. Task 1.10 builds 23 columns, not 22.
+- **News runs must move earlier** when extraction is built (13:07 and 20:17 UTC): today they start a few minutes after each pricing run would.
+- **G3's held-out test** freezes its coefficients on or after 2027-02-01 and scores only games that tip after that.
+
+**The `main` ruleset `protect-main` is active as of 2026-11-12** (checked through the GitHub API: enforcement `active`). It closes gap 2 in `docs/LEDGER.md`, section 6 (block force pushes and deletions on `main`). Scheduled jobs can still push straight to `main`.
 
 Main review result: no leak in the backtest path. The one High finding is that the ledger's append-only test doesn't cover direct commits to `main`, which is how the ledger is written; the fix is in `docs/LEDGER.md`, section 6.
 
@@ -64,6 +76,7 @@ Main review result: no leak in the backtest path. The one High finding is that t
 | What | Waiting for | Blocks | Fallback |
 | --- | --- | --- | --- |
 | Task 1.2: are CBBD's lines true closes? | About a week of finished games in our own snapshots | The $30 historical-odds decision | n/a |
+| Sign-off on the G2 and G3 specs | Owen's review of #44, #45 and the decisions PR (merge the decisions PR last) | Building tasks 2.0 to 2.5 and G3; the 23rd ledger column in task 1.10 | n/a |
 | Availability report access | HD Intelligence's reply (email drafted 2026-11-11 to andy@hdintelligence.com, Owen sends) | Official reports for conference games | Google News headlines (task 1.11, running) |
 
 ## Next up
@@ -72,8 +85,9 @@ Main review result: no leak in the backtest path. The one High finding is that t
 2. **About 2026-11-17:** task 1.2, comparing CBBD's lines with our pre-tip snapshots. **Run exactly the tests in `docs/BACKTEST_CLOSE.md` (PR #43) and read the branch off its rules;** if there are too few games, wait. Then recommend to Owen whether to buy one month of historical odds. It looks likely, because CBBD has no opening spreads before 2024-25. The $30 would not make the model more accurate (lines are never inputs); it would firm up the yardstick, add opening lines for CLV in more seasons, and feed the G3 line-movement study.
 3. **After 1.2: fix the backtest close in DECISIONS.md, then run the scorecard on real data for the first time** (`uv run python -m shac.scorecard.run --data-dir ../shac-sb-index-data`). It now scores the margin model next to the baseline, which is task 1.8's exit check. Don't run it before; no number against a line has been seen, on purpose.
 4. **Task 1.9 (calibration and tiers) is next.** Its model logic is now fully specified in `docs/CALIBRATION.md` (PR #38, approved), so Opus can build it step by step on made-up data; anything the spec doesn't cover goes to Owen, not to the builder's judgment. It needs lines, so it also waits for 1.2. `leave_one_season_out` in `shac.model.margin` already gives it the out-of-sample edges.
-5. **Task 1.10 (ledger and pricing jobs) follows `docs/LEDGER.md` (PR #43).** It also needs task 1.9's parameters file and a ruleset on `main` that blocks force pushes and deletions (Owen sets it). The fixes from `docs/REVIEW_2026-11-12.md` are assigned to tasks there.
-6. **Before the first live pricing run (task 1.10):** top up the 2026-27 Time Machine files with `--seasons 2027` (from Owen's PC), then rebuild the tables. Also in PLAN.md, task 1.10.
+5. **Task 1.10 (ledger and pricing jobs) follows `docs/LEDGER.md` (PR #43).** It also needs task 1.9's parameters file. The ruleset on `main` that blocks force pushes and deletions is in place (`protect-main`, active 2026-11-12). If #44 is merged, the ledger has 23 columns (`absence_adj` is the last). The fixes from `docs/REVIEW_2026-11-12.md` are assigned to tasks there.
+6. **G2 and G3 are specified, not built** (#44, #45). After Owen signs off: task 2.0 (daily box scores) is small and can be built any time; tasks 2.1 to 2.5 follow `docs/EXTRACTION.md`, `docs/LABELING_GUIDE.md` and `docs/PLAYER_IMPACT.md` once G1 is closed and about 30 days of news exist; G3 follows `docs/LINE_MOVEMENT.md` after task 1.10, and its coefficients are frozen on or after 2027-02-01. Builders make no choices: anything a spec doesn't cover goes to Owen.
+7. **Before the first live pricing run (task 1.10):** top up the 2026-27 Time Machine files with `--seasons 2027` (from Owen's PC), then rebuild the tables. Also in PLAN.md, task 1.10.
 
 ## Notes for the next session
 
