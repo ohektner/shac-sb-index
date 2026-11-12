@@ -1,2 +1,3 @@
 fetched_at_utc,status,n_teams,n_feeds_read,n_refused,n_errors,n_items,file,sha256,bytes
 2026-11-11T22:23:10Z,ok,128,128,0,0,2191,news/raw/sidearm/2026/11/11/sidearm_20261111T222310Z.json.gz,013deb7e6439641eb16c8b7dce06748a8673ac478234e8b8dce9fd9c94a97a09,546167
+2026-11-12T22:49:30Z,ok,139,139,0,0,2745,news/raw/sidearm/2026/11/12/sidearm_20261112T224930Z.json.gz,36e6d48cb1dfb8b4452270061cb5acdf65e322c6c37152a9b7d96732bccf8562,693398
