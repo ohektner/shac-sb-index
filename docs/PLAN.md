@@ -54,12 +54,15 @@ Tasks 1.1, 1.3 and 1.11 can run in parallel. So can 1.9 and 1.10 once the ledger
 
 | # | Task | Owner (model) | Exit check |
 | --- | --- | --- | --- |
-| 2.1 | Labeling set: about 200 news items, hand-labeled by Owen | ai-extraction (opus) | Label file committed with a labeling guide |
+| 2.0 | Fetch this season's player box scores every day, and record when each was first fetched ([EXTRACTION.md](EXTRACTION.md), section 1) | data-engineer (sonnet) | A game fetched twice keeps its first fetch time; `shac.tables.check` passes |
+| 2.1 | Labeling set: 240 news items (40 dev, 200 test) from a fixed pick list, hand-labeled by Owen ([LABELING_GUIDE.md](LABELING_GUIDE.md)) | ai-extraction (opus) | Pick list, label file and labeling guide committed |
 | 2.2 | Extraction step with schema-constrained JSON output, starting on `claude-haiku-5-5` | ai-extraction (opus) | Runs on the labeled set; cost per day logged |
 | 2.3 | Evaluation harness: reading accuracy, precision and recall against box scores | ai-extraction (opus) | One command prints all three with intervals |
 | 2.4 | Move to `claude-sonnet-5-5` only if Haiku misses a bar | ai-extraction (opus) | Side-by-side results recorded in DECISIONS.md |
 | 2.5 | Player impact and status probabilities; adjust the margin for new absences only | modeler (opus) | Error vs. the close on flagged games, with and without the adjustment |
 | 2.6 | Audit and accuracy report | auditor (opus), docs-writer (sonnet) | Report drafted |
+
+G2 is specified in [EXTRACTION.md](EXTRACTION.md) (tasks 2.0 to 2.4) and [PLAYER_IMPACT.md](PLAYER_IMPACT.md) (task 2.5), written 2026-11-12. Builders follow those pages and make no choices of their own.
 
 ## G3 and G4
 
