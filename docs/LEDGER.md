@@ -32,10 +32,11 @@ Written 2026-11-12 by the lead. It builds on what PR #27 shipped (`src/shac/ledg
 | 20 | `side` | text | `home` if `edge > 0`, `away` if `edge < 0` |
 | 21 | `tier` | text | `pick`, `lean` or `none`, from `tier_for(cover_prob)`, then caps |
 | 22 | `flags` | text, may be empty | Words from the list below, sorted A to Z, joined by `;` |
+| 23 | `absence_adj` | float | **new (added 2026-11-12 for G2, before any row exists).** Points added to the base margin for flagged new absences ([PLAYER_IMPACT.md](PLAYER_IMPACT.md)). `model_margin` already includes it, so the base margin is `model_margin − absence_adj`. Always `0.0` until the availability adjustment is live |
 
 Formats are unchanged from the 2026-11-11 entry: UTC `YYYY-MM-DDTHH:MM:SSZ`, floats by Python `repr`, empty cell for empty.
 
-**Flags (the whole list; the writer refuses any other word):** `edge_over_10` (`abs(edge) >= 10`), `manual_run` (job started by hand), `no_side` (`edge` exactly 0: write `side = home`, `cover_prob = 0.5`, `tier = none`; left out of the record), `questionable_player` (G2; caps at Lean), `stale_line`, `stale_ratings`, `thin_line` (`n_books < 3`), `tip_mismatch` (feed tip and CBBD tip differ by more than 60 minutes).
+**Flags (the whole list; the writer refuses any other word):** `absence_adjusted` (G2; `absence_adj` is not 0), `absence_skipped` (G2; a team's latest box score was not in hand, so its absences could not be checked), `edge_over_10` (`abs(edge) >= 10`), `manual_run` (job started by hand), `no_side` (`edge` exactly 0: write `side = home`, `cover_prob = 0.5`, `tier = none`; left out of the record), `questionable_player` (G2; caps at Lean), `stale_line`, `stale_ratings`, `thin_line` (`n_books < 3`), `tip_mismatch` (feed tip and CBBD tip differ by more than 60 minutes).
 
 **No result, no score and no closing line ever goes in the ledger.** No raw third-party number either: the line is our own median, the ratings are named by file, not copied.
 
@@ -52,6 +53,7 @@ Formats are unchanged from the 2026-11-11 entry: UTC `YYYY-MM-DDTHH:MM:SSZ`, flo
 ```
 
 - `model_margin = weights.rating_margin × rating_margin + weights.home × home`, with `rating_margin` and `home` exactly as `sql/model/features.sql` defines them.
+- G2 may add an `absence` block to a later file (PLAYER_IMPACT.md, section 4). A file without it means `absence_adj = 0.0` on every row.
 - A new model or curve is a new file (`v2.json`) with a dated DECISIONS.md entry, used only for games priced after it. A test fails if a parameters file named in any ledger row no longer hashes to that row's `model_version`.
 - The live pricing job cannot run for real until this file exists. Build and test with a made-up file.
 
@@ -131,7 +133,7 @@ What `test_ledger_matches_main_plus_appends` does today: it compares the checkou
 | 3 | The comparison is by `splitlines()`, so a change of line endings, or a dropped final newline, passes. Checked 2026-11-12: both pass today | Compare bytes: the new file must start with the old file's exact bytes, and the old file must end with a newline. Add both cases to the parametrized test |
 | 4 | A pull request can append rows. Only the jobs should | New test, active when `GITHUB_EVENT_NAME` is `pull_request`: `git diff --name-only origin/main HEAD -- ledger` must be empty |
 | 5 | `test_every_ledger_file_has_the_contract_header` reads every CSV under `ledger/` as a ledger | Apply it to files named `ledger.csv` only; give `annotations.csv` its own header check |
-| 6 | The writer doesn't check that a row agrees with itself | In `format_row`, refuse a row unless: ids and `n_books` are whole numbers (write `str(int(v))`, so `401.0` can't appear); every float is finite; `side` matches the sign of `model_margin + line` (or `no_side` is flagged); `tier` equals `tier_for(cover_prob)`, or is `lean` with `cover_prob >= 0.56` and `questionable_player` flagged; `ratings_as_of < priced_at` and `line_snapshot_at < priced_at`; every flag is on the list and they are sorted. A `cover_prob` of `None` must raise `LedgerError` (today it raises `TypeError`) |
+| 6 | The writer doesn't check that a row agrees with itself | In `format_row`, refuse a row unless: ids and `n_books` are whole numbers (write `str(int(v))`, so `401.0` can't appear); every float is finite; `side` matches the sign of `model_margin + line` (or `no_side` is flagged); `tier` equals `tier_for(cover_prob)`, or is `lean` with `cover_prob >= 0.56` and `questionable_player` flagged; `ratings_as_of < priced_at` and `line_snapshot_at < priced_at`; every flag is on the list and they are sorted; `absence_adj` is finite, and `absence_adjusted` is flagged exactly when `absence_adj` is not 0. A `cover_prob` of `None` must raise `LedgerError` (today it raises `TypeError`) |
 | 7 | A crash mid-write could leave half a line | Build the whole text first and write it with one `write` call, then flush. The job verifies the file before committing (section 3), so a broken file never reaches `main` |
 
 ## 7. Build order and exit check
