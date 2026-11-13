@@ -1,7 +1,9 @@
 # What this does, in plain language:
 # Twice a day, during the hours when the odds snapshot runs hourly, it reads the public
-# status log and fails if the last good snapshot is more than 3 hours old. GitHub can
-# skip scheduled runs silently, so this is the alarm. A failed run sends an email.
+# status log and fails if the newest scheduled odds slot that is at least 3 hours old has no
+# good snapshot. (The odds job runs 7 times a day, not hourly, so a plain "3 hours old"
+# limit raised false alarms overnight.) GitHub can skip scheduled runs silently, so this is
+# the alarm. A failed run sends an email. Keep --slots-utc in step with odds-snapshot.yml.
 name: snapshot-watch
 
 on:
@@ -16,18 +18,19 @@ permissions:
 
 jobs:
   watch:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           ref: main
           persist-credentials: false
-      - uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
         with:
           enable-cache: true
       - run: uv sync --frozen --no-dev
       - run: >
           uv run --no-sync python -m shac.snapshots.watch
           --log data/status/odds_snapshot_log.csv
-          --max-age-hours 3
+          --slots-utc 01:17,03:17,13:17,16:17,19:17,21:17,23:17
+          --grace-hours 3
