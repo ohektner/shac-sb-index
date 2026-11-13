@@ -331,7 +331,7 @@ Workflows never print secrets or raw data, and never run with shell tracing on. 
 | --- | --- | --- | --- |
 | Odds snapshot | 7 a day at :17 (13, 16, 19, 21, 23, 1, 3), US books plus Pinnacle | The Odds API | `odds_snapshots`, public status log |
 | Torvik daily snapshot | 11:43 | Barttorvik CSV files | Raw Torvik files, public status log |
-| Snapshot watch | 23:47 and 05:47 | Public status log | Nothing. Fails, and GitHub emails Owen, if the last good odds snapshot is over 3 hours old |
+| Snapshot watch | 23:47 and 05:47 | Public status log | Nothing. Fails, and GitHub emails Owen, if the newest scheduled odds slot that is over 3 hours old has no good snapshot |
 | CBBD ingestion (G1) | Nightly | CBBD | `games`, `results`, `player_box` |
 | Pricing, morning and late (G1) | Morning, and about 2 hours before the day's tips | Ratings, latest snapshot | `predictions_ledger` |
 | Results and scorecard (G1) | Nightly | Ledger, results, closing lines | `closing_lines`, scorecard outputs, site data |
