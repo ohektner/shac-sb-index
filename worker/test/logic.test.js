@@ -30,3 +30,32 @@ test("a run after the slot covers it; an older run does not", () => {
   assert.equal(slotAlreadyCovered(slot, ["2026-11-17T10:00:00Z"]), false);
   assert.equal(slotAlreadyCovered(slot, []), false);
 });
+
+import { shouldRetry } from "../src/logic.js";
+
+const newsTimes = ["14:53", "21:53"];
+const failed = (created_at) => ({ created_at, status: "completed", conclusion: "failure" });
+
+test("retry: a failed run older than 15 minutes is retried", () => {
+  const now = new Date("2026-11-17T15:15:00Z");
+  assert.equal(shouldRetry(newsTimes, now, [failed("2026-11-17T14:55:00Z")]), true);
+});
+
+test("retry: too soon, still running, succeeded, or no run at all means no retry", () => {
+  const now = new Date("2026-11-17T15:05:00Z");
+  assert.equal(shouldRetry(newsTimes, now, [failed("2026-11-17T14:55:00Z")]), false);
+  const later = new Date("2026-11-17T15:30:00Z");
+  const running = { created_at: "2026-11-17T15:20:00Z", status: "in_progress", conclusion: null };
+  assert.equal(shouldRetry(newsTimes, later, [running, failed("2026-11-17T14:55:00Z")]), false);
+  const ok = { created_at: "2026-11-17T15:20:00Z", status: "completed", conclusion: "success" };
+  assert.equal(shouldRetry(newsTimes, later, [ok, failed("2026-11-17T14:55:00Z")]), false);
+  assert.equal(shouldRetry(newsTimes, later, []), false);
+});
+
+test("retry: stops after the start plus 2 retries, and outside the slot's window", () => {
+  const now = new Date("2026-11-17T16:10:00Z");
+  const three = ["14:55", "15:15", "15:40"].map((t) => failed(`2026-11-17T${t}:00Z`));
+  assert.equal(shouldRetry(newsTimes, now, three), false);
+  const far = new Date("2026-11-17T18:00:00Z");
+  assert.equal(shouldRetry(newsTimes, far, [failed("2026-11-17T14:55:00Z")]), false);
+});

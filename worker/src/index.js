@@ -9,7 +9,10 @@
 // Needs one secret, GITHUB_TOKEN: a fine-grained token for shac-sb-index only, with
 // Actions: read and write. It cannot read code or the private data repo.
 import slots from "../slots.json";
-import { dueWorkflows, slotAlreadyCovered } from "./logic.js";
+import { dueWorkflows, shouldRetry, slotAlreadyCovered } from "./logic.js";
+
+// Jobs worth starting again after a failed run (Google News blocks some GitHub addresses).
+const RETRY = ["news-collect.yml"];
 
 const REPO = "ohektner/shac-sb-index";
 const API = `https://api.github.com/repos/${REPO}`;
@@ -34,6 +37,18 @@ async function covered(env, workflow, slot) {
     return slotAlreadyCovered(slot, body.workflow_runs.map((run) => run.created_at));
   } catch {
     return false;
+  }
+}
+
+async function recentRuns(env, workflow) {
+  try {
+    const response = await fetch(`${API}/actions/workflows/${workflow}/runs?per_page=10`, {
+      headers: headers(env),
+    });
+    if (!response.ok) return null;
+    return (await response.json()).workflow_runs;
+  } catch {
+    return null;
   }
 }
 
@@ -67,6 +82,12 @@ export default {
         continue;
       }
       console.log(`${label}: ${await dispatch(env, workflow)}`);
+    }
+    for (const workflow of RETRY) {
+      const runs = await recentRuns(env, workflow);
+      if (runs && shouldRetry(slots[workflow], now, runs)) {
+        console.log(`${workflow}: last run failed, retrying: ${await dispatch(env, workflow)}`);
+      }
     }
   },
 
