@@ -24,6 +24,8 @@ What it found:
 - **GitHub's scheduler runs only 2 or 3 slots a day, often hours late.** For example, the 03:17 UTC slot has fired at about 08:00 UTC each day since 2026-11-13. Everything else came from the PC backup.
 - **The PC backup stops on battery.** The `shac-sb-index schedule backup` task has "start only on AC power" and "stop if on battery" on, and no wake. It last ran 2026-11-16 03:11 local, and the log has only sparse rows since 2026-11-13. The Torvik task already has both battery options off. Fix: turn them off on the backup task too (Owen's PC).
 - No `error` rows. Every run that started succeeded.
+- **Fixes, 2026-11-16:** the backup task's battery settings are off. A Cloudflare Worker (`worker/`, PR #49) now starts each job at its slot, with GitHub's schedule and the PC backup kept as extra layers. The 3-day count starts again on 2026-11-17. The gate bar is still Owen's to set.
+- **News collection:** Google News blocked GitHub runners (429/503) at 2026-11-16 01:26Z and 21:55Z; it worked from Owen's PC. The Worker retries a failed news run 15 minutes later on a fresh runner, up to 2 times (PR #50). If blocks continue, move the job to the PC.
 
 ## Running unattended
 
@@ -35,6 +37,7 @@ What it found:
 | News collection (Google News) | GitHub Actions | Twice a day, 14:53 and 21:53 UTC | `data/status/news_log.csv` |
 | News collection (team sites) | GitHub Actions | Daily, 20:13 UTC | `data/status/news_sidearm_log.csv` |
 | Snapshot watch (alarm) | GitHub Actions | Twice a day | Fails and emails Owen if odds snapshots stop |
+| Scheduler (starts every job at its slot) | Cloudflare Worker `shac-scheduler` (`worker/`, PRs #49, #50) | Every 5 minutes | Cloudflare dashboard, Worker, Observability; open its address to test the token |
 | Schedule backup (starts skipped jobs) | Owen's PC, Windows task | Every 15 minutes | `%LOCALAPPDATA%\shac-sb-index\schedule-backup.log` |
 | Torvik daily snapshot | Owen's PC, Windows task | 5:00 AM Phoenix | `data/status/torvik_snapshot_log.csv`, and `%LOCALAPPDATA%\shac-sb-index\torvik-task.log` |
 
