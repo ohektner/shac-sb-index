@@ -2,11 +2,28 @@
 
 Where the project stands right now. Update this at the end of every working session. For what was decided and why, see [DECISIONS.md](DECISIONS.md); for the plan, see [PLAN.md](PLAN.md).
 
-**Last updated:** 2026-11-12
+**Last updated:** 2026-11-16
 
 ## Current gate
 
-**G0, urgent.** Exit: the odds snapshot job runs on schedule several times a day, 3 days in a row. Scheduled runs started 2026-11-10, so the earliest close is about 2026-11-13. At the gate, run the check in PLAN.md and have the `auditor` review.
+**G0, urgent. Not met (checked 2026-11-16).** Exit: the odds snapshot job runs on schedule several times a day, 3 days in a row. The auditor review waits until the check passes.
+
+Gate check, 2026-11-16 (`data/status/odds_snapshot_log.csv`, UTC days):
+
+| Day | `ok` rows | Of 7 slots |
+| --- | --- | --- |
+| 2026-11-11 | 7 | 7 |
+| 2026-11-12 | 6 | 7 |
+| 2026-11-13 | 5 | 7 |
+| 2026-11-14 | 4 | 7 |
+| 2026-11-15 | 4 | 7 |
+
+What it found:
+
+- **The bar in PLAN.md can't be met as written.** It asks for at least 8 `ok` rows a day, but the schedule has 7 slots. Owen to pick the bar (for example, 6 of 7 on 3 straight days).
+- **GitHub's scheduler runs only 2 or 3 slots a day, often hours late.** For example, the 03:17 UTC slot has fired at about 08:00 UTC each day since 2026-11-13. Everything else came from the PC backup.
+- **The PC backup stops on battery.** The `shac-sb-index schedule backup` task has "start only on AC power" and "stop if on battery" on, and no wake. It last ran 2026-11-16 03:11 local, and the log has only sparse rows since 2026-11-13. The Torvik task already has both battery options off. Fix: turn them off on the backup task too (Owen's PC).
+- No `error` rows. Every run that started succeeded.
 
 ## Running unattended
 
@@ -80,7 +97,7 @@ Main review result: no leak in the backtest path. The one High finding is that t
 
 ## Next up
 
-1. **About 2026-11-13:** check the G0 gate and run the auditor.
+1. **G0:** fix the backup task's battery settings, settle the gate bar, then re-check over 3 new days and run the auditor. The Torvik task also ran late on 2026-11-16 (08:19 local, `WakeToRun` is on), so check its log again.
 2. **About 2026-11-17:** task 1.2, comparing CBBD's lines with our pre-tip snapshots. **Run exactly the tests in `docs/BACKTEST_CLOSE.md` (PR #43) and read the branch off its rules;** if there are too few games, wait. Then recommend to Owen whether to buy one month of historical odds. It looks likely, because CBBD has no opening spreads before 2024-25. The $30 would not make the model more accurate (lines are never inputs); it would firm up the yardstick, add opening lines for CLV in more seasons, and feed the G3 line-movement study.
 3. **After 1.2: fix the backtest close in DECISIONS.md, then run the scorecard on real data for the first time** (`uv run python -m shac.scorecard.run --data-dir ../shac-sb-index-data`). It now scores the margin model next to the baseline, which is task 1.8's exit check. Don't run it before; no number against a line has been seen, on purpose.
 4. **Task 1.9 (calibration and tiers) is next.** Its model logic is now fully specified in `docs/CALIBRATION.md` (PR #38, approved), so Opus can build it step by step on made-up data; anything the spec doesn't cover goes to Owen, not to the builder's judgment. It needs lines, so it also waits for 1.2. `leave_one_season_out` in `shac.model.margin` already gives it the out-of-sample edges.
