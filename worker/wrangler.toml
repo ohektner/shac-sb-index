@@ -1,12 +1,11 @@
 name = "shac-scheduler"
 main = "src/index.js"
 compatibility_date = "2026-11-01"
+preview_urls = false
 
 [triggers]
 # Every 5 minutes. src/logic.js decides which slots are due.
 crons = ["*/5 * * * *"]
-
-preview_urls = false
 
 [observability]
 enabled = true
