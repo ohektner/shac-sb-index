@@ -14,3 +14,4 @@ fetched_at_utc,status,http_status,n_teams,n_queries,n_items,n_new_items,file,sha
 2026-11-15T19:59:34Z,ok,200,102,102,1261,518,news/raw/google_news/2026/11/15/google_news_20261115T195934Z.json.gz,2a7584e1fbb9881a9596f6c11176d25e3937a2dfe08a028923d42e59700efb97,398634
 2026-11-16T01:26:21Z,blocked,503,59,0,0,0,,,
 2026-11-16T21:55:59Z,blocked,429,172,2,32,29,news/raw/google_news/2026/11/16/google_news_20261116T215559Z.json.gz,a677dabfed4ae390f4e8ae7321b454986ccace8d197c31b628e034ba6cb026cb,11542
+2026-11-16T22:35:59Z,blocked,429,172,2,31,1,news/raw/google_news/2026/11/16/google_news_20261116T223559Z.json.gz,ac6dbbc8f9954627d95886e22b5b4a9ebbffcf4195c71620ba3cfcf136a78f1c,11056
