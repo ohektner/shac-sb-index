@@ -20,11 +20,11 @@ Gate check, 2026-11-16 (`data/status/odds_snapshot_log.csv`, UTC days):
 
 What it found:
 
-- **The bar in PLAN.md can't be met as written.** It asks for at least 8 `ok` rows a day, but the schedule has 7 slots. Owen to pick the bar (for example, 6 of 7 on 3 straight days).
+- **The old bar couldn't be met.** It asked for at least 8 `ok` rows a day, but the schedule has 7 slots. Owen set the new bar on 2026-11-16: at least 6 of 7 on 3 straight UTC days, counted from 2026-11-17 (PLAN.md).
 - **GitHub's scheduler runs only 2 or 3 slots a day, often hours late.** For example, the 03:17 UTC slot has fired at about 08:00 UTC each day since 2026-11-13. Everything else came from the PC backup.
 - **The PC backup stops on battery.** The `shac-sb-index schedule backup` task has "start only on AC power" and "stop if on battery" on, and no wake. It last ran 2026-11-16 03:11 local, and the log has only sparse rows since 2026-11-13. The Torvik task already has both battery options off. Fix: turn them off on the backup task too (Owen's PC).
 - No `error` rows. Every run that started succeeded.
-- **Fixes, 2026-11-16:** the backup task's battery settings are off. A Cloudflare Worker (`worker/`, PR #49) now starts each job at its slot, with GitHub's schedule and the PC backup kept as extra layers. The 3-day count starts again on 2026-11-17. The gate bar is still Owen's to set.
+- **Fixes, 2026-11-16:** the backup task's battery settings are off. A Cloudflare Worker (`worker/`, PR #49) now starts each job at its slot, with GitHub's schedule and the PC backup kept as extra layers. The 3-day count starts again on 2026-11-17. The gate bar is now 6 of 7 slots a day for 3 days (Owen, 2026-11-16); earliest close is the end of 2026-11-19.
 - **News collection:** Google News blocked GitHub runners (429/503) at 2026-11-16 01:26Z and 21:55Z; it worked from Owen's PC. The Worker retries a failed news run 15 minutes later on a fresh runner, up to 2 times (PR #50). If blocks continue, move the job to the PC.
 
 ## Running unattended

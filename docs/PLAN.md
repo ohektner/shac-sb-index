@@ -24,7 +24,7 @@ Each task lists who owns it, which model that agent runs on, what it depends on 
 | 0.4 | Daily Torvik CSV snapshot (2 files, once a day). Actions is blocked by the site (tested 2026-11-10), so this runs from Owen's machine. | data-engineer (sonnet) | 0.1, secrets | A local run saves both files and pushes them |
 | 0.5 | Review: timestamps, no key or raw odds in the public repo or logs | auditor (opus) | 0.2 to 0.4 | Written findings, no open blockers |
 | 0.6 | First real call: confirm one call returns every game, record books seen | data-quality (opus) | 0.3 | VERIFIED.md updated |
-| **Gate** | 3 days in a row of scheduled runs | qa (sonnet) | 0.3 | `data/status/odds_snapshot_log.csv` shows at least 8 `ok` rows on each of 3 straight days |
+| **Gate** | 3 days in a row of scheduled runs | qa (sonnet) | 0.3 | `data/status/odds_snapshot_log.csv` shows at least 6 `ok` rows (of the 7 scheduled slots) on each of 3 straight UTC days, counted from 2026-11-17, the first full day with the Cloudflare scheduler |
 
 ## G1: foundation
 
