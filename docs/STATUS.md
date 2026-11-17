@@ -2,7 +2,7 @@
 
 Where the project stands right now. Update this at the end of every working session. For what was decided and why, see [DECISIONS.md](DECISIONS.md); for the plan, see [PLAN.md](PLAN.md).
 
-**Last updated:** 2026-11-16
+**Last updated:** 2026-11-17
 
 ## Current gate
 
@@ -101,7 +101,8 @@ Main review result: no leak in the backtest path. The one High finding is that t
 ## Next up
 
 1. **G0:** fix the backup task's battery settings, settle the gate bar, then re-check over 3 new days and run the auditor. The Torvik task also ran late on 2026-11-16 (08:19 local, `WakeToRun` is on), so check its log again.
-2. **About 2026-11-17:** task 1.2, comparing CBBD's lines with our pre-tip snapshots. **Run exactly the tests in `docs/BACKTEST_CLOSE.md` (PR #43) and read the branch off its rules;** if there are too few games, wait. Then recommend to Owen whether to buy one month of historical odds. It looks likely, because CBBD has no opening spreads before 2024-25. The $30 would not make the model more accurate (lines are never inputs); it would firm up the yardstick, add opening lines for CLV in more seasons, and feed the G3 line-movement study.
+2. **Task 1.2: the tests are built; the sample isn't there yet (2026-11-17).** Run `uv run python -m shac.tables.backtest_close --data-dir ../shac-sb-index-data` after `shac.tables.build`. It covers every test and link in `docs/BACKTEST_CLOSE.md` (SQL in `sql/checks/backtest_close.sql`; T4(b) reads the raw CBBD files). As of 2026-11-17: Draft Kings 99 of 150 tested games and Bovada 91 (WAIT for T1, T3, T4); T2 has enough movers for both. Expect 150 around 2026-11-20 to 11-22 if the odds slots stay on time. **L2 can never pass:** ESPN BET's 2025-26 lines end 2025-12-02 and Draft Kings' start 2025-11-25, so only 17 games overlap (10 movers, of 40 needed). So 2023, 2024 and 2025 can't be verified by links, branch A is out, and the best case is branch B. Recorded here, not decided; the branch is read when the sample is reached.
+   - Earlier plan for this item: task 1.2, comparing CBBD's lines with our pre-tip snapshots. **Run exactly the tests in `docs/BACKTEST_CLOSE.md` (PR #43) and read the branch off its rules;** if there are too few games, wait. Then recommend to Owen whether to buy one month of historical odds. It looks likely, because CBBD has no opening spreads before 2024-25. The $30 would not make the model more accurate (lines are never inputs); it would firm up the yardstick, add opening lines for CLV in more seasons, and feed the G3 line-movement study.
 3. **After 1.2: fix the backtest close in DECISIONS.md, then run the scorecard on real data for the first time** (`uv run python -m shac.scorecard.run --data-dir ../shac-sb-index-data`). It now scores the margin model next to the baseline, which is task 1.8's exit check. Don't run it before; no number against a line has been seen, on purpose.
 4. **Task 1.9 (calibration and tiers) is next.** Its model logic is now fully specified in `docs/CALIBRATION.md` (PR #38, approved), so Opus can build it step by step on made-up data; anything the spec doesn't cover goes to Owen, not to the builder's judgment. It needs lines, so it also waits for 1.2. `leave_one_season_out` in `shac.model.margin` already gives it the out-of-sample edges.
 5. **Task 1.10 (ledger and pricing jobs) follows `docs/LEDGER.md` (PR #43).** It also needs task 1.9's parameters file. The ruleset on `main` that blocks force pushes and deletions is in place (`protect-main`, active 2026-11-12). If #44 is merged, the ledger has 23 columns (`absence_adj` is the last). The fixes from `docs/REVIEW_2026-11-12.md` are assigned to tasks there.
