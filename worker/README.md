@@ -8,4 +8,4 @@ Starts the GitHub Actions jobs on time. GitHub's own cron is best effort (jobs r
 - Logs: Cloudflare dashboard, Worker, Observability.
 - Deploy: `cd worker && npx wrangler@4 deploy` (first time: `npx wrangler@4 login`).
 - Test the logic: `cd worker && node --test`.
-- News retry: Google News blocks some GitHub runner addresses (429 or 503 on 2026-11-16). If a `news-collect` run fails, the Worker starts it again 15 minutes later on a fresh runner, up to 2 retries per slot.
+- News retry (off since 2026-11-17): Google News blocked GitHub runners from 2026-11-16, retries included, so `news-collect` moved to Owen's PC (`scripts/news-local.ps1`) and left `slots.json`. The retry code stays; `RETRY` in `src/index.js` is empty.

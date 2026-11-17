@@ -11,8 +11,9 @@
 import slots from "../slots.json";
 import { dueWorkflows, shouldRetry, slotAlreadyCovered } from "./logic.js";
 
-// Jobs worth starting again after a failed run (Google News blocks some GitHub addresses).
-const RETRY = ["news-collect.yml"];
+// Jobs worth starting again after a failed run. Empty since 2026-11-17: news-collect, the
+// only one, moved to Owen's PC because Google News blocks GitHub's runners.
+const RETRY = [];
 
 const REPO = "ohektner/shac-sb-index";
 const API = `https://api.github.com/repos/${REPO}`;
