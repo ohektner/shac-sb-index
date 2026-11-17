@@ -68,6 +68,8 @@ SETTLE_DAYS = 7
 # `current` mode: the live window reaches this many days past today, so upcoming games
 # are in `games` before tip and odds snapshots can be matched to them.
 LOOKAHEAD_DAYS = 9
+# `current` mode: most not-yet-settled player blocks fetched again each day (task 2.0).
+MAX_LIVE_PLAYER_BLOCKS = 3
 DEFAULT_SEASONS = "2019-2026"
 RAW_DIR = Path("cbbd") / "raw"
 
@@ -241,10 +243,23 @@ class Ingestor:
 
     # ---- the one function that calls the API --------------------------------------------
 
-    def fetch(self, endpoint: str, params: dict[str, str | int]) -> FetchResult:
-        """Fetch one endpoint with params, unless it is already saved. Saves file + manifest row."""
+    def fetch(
+        self,
+        endpoint: str,
+        params: dict[str, str | int],
+        *,
+        fresh_after: datetime | None = None,
+    ) -> FetchResult:
+        """Fetch one endpoint with params, unless it is already saved. Saves file + manifest row.
+
+        With `fresh_after`, a saved copy counts only if it was fetched at or after that time;
+        an older copy is fetched again (a new file; the old one is kept).
+        """
         params_json = json.dumps(params, sort_keys=True)
         hit = self.cache.get((endpoint, params_json))
+        if hit is not None and fresh_after is not None:
+            if datetime.fromisoformat(hit["fetched_at_utc"].replace("Z", "+00:00")) < fresh_after:
+                hit = None
         if hit is not None:
             self.cached_skips += 1
             return FetchResult(hit["status"], int(hit["n_rows"] or 0), cached=True)
@@ -331,10 +346,15 @@ class Ingestor:
     # ---- helpers that decide which calls to make ----------------------------------------
 
     def run_call(
-        self, endpoint: str, params: dict[str, str | int], *, show_shape: bool = False
+        self,
+        endpoint: str,
+        params: dict[str, str | int],
+        *,
+        show_shape: bool = False,
+        fresh_after: datetime | None = None,
     ) -> FetchResult:
         """Fetch, then print one safe line (endpoint, dates, count, status)."""
-        result = self.fetch(endpoint, params)
+        result = self.fetch(endpoint, params, fresh_after=fresh_after)
         note = "cached" if result.cached else result.status
         self.out(f"/{endpoint} {describe_params(params)}: {note} rows={result.n_rows}")
         if show_shape:
@@ -352,11 +372,17 @@ class Ingestor:
             self.out(f"  fields: {fields}")
 
     def fetch_window(
-        self, endpoint: str, window: Window, *, split: bool, show_shape: bool = False
+        self,
+        endpoint: str,
+        window: Window,
+        *,
+        split: bool,
+        show_shape: bool = False,
+        fresh_after: datetime | None = None,
     ) -> None:
         """Fetch a date window. If capped and `split`, fetch the two halves instead."""
         params = {"startDateRange": iso_z(window[0]), "endDateRange": iso_z(window[1])}
-        result = self.run_call(endpoint, params, show_shape=show_shape)
+        result = self.run_call(endpoint, params, show_shape=show_shape, fresh_after=fresh_after)
         if result.status != "capped":
             return
         if not split:
@@ -366,8 +392,8 @@ class Ingestor:
             self.still_capped.append((endpoint, describe_params(params)))
         else:
             first, second = split_window(window)
-            self.fetch_window(endpoint, first, split=True)
-            self.fetch_window(endpoint, second, split=True)
+            self.fetch_window(endpoint, first, split=True, fresh_after=fresh_after)
+            self.fetch_window(endpoint, second, split=True, fresh_after=fresh_after)
 
     # ---- the two modes ------------------------------------------------------------------
 
@@ -395,7 +421,12 @@ class Ingestor:
           month to LOOKAHEAD_DAYS past today. Its end date changes every day, so it is a
           new call each day; the table build keeps the most recently fetched copy of each
           game, so newer results and lines replace older ones.
-        - Team and player box scores are fetched only once settled.
+        - Team box scores are fetched only once settled.
+        - Player box scores (task 2.0, docs/EXTRACTION.md section 1): every 4-day block that
+          has started but is not yet settled (at most MAX_LIVE_PLAYER_BLOCKS) is fetched
+          again each day, so rosters are a day behind, not up to 11. A settled block is
+          fetched once more after it settles (a copy fetched earlier doesn't count) and then
+          kept for good.
         """
         today = self.clock().replace(hour=0, minute=0, second=0, microsecond=0)
         settled_before = today - timedelta(days=SETTLE_DAYS)
@@ -412,9 +443,15 @@ class Ingestor:
             live_start = settled[-1][1] if settled else season_start
             if live_start < live_end:
                 self.fetch_window(endpoint, (live_start, live_end), split=True)
+        live_blocks = []
         for window in block_windows(season):
             if window[1] <= settled_before:
-                self.fetch_window("games/players", window, split=True)
+                settled_at = window[1] + timedelta(days=SETTLE_DAYS)
+                self.fetch_window("games/players", window, split=True, fresh_after=settled_at)
+            elif window[0] <= today:
+                live_blocks.append(window)
+        for window in live_blocks[-MAX_LIVE_PLAYER_BLOCKS:]:
+            self.fetch_window("games/players", window, split=True, fresh_after=today)
 
     def backfill(self, seasons: list[int]) -> None:
         """Fetch teams and every window of every season, newest season first."""

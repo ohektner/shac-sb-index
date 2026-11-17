@@ -122,10 +122,11 @@ def build_all(data_dir: Path, map_dir: Path) -> tuple[dict[str, pd.DataFrame], d
     results = cbbd.build_results(games_raw, games)
     report["games_files"] = (games_raw.n_raw, games_raw.n_duplicates)
 
-    players_raw = raw.dedupe_files(
-        raw.load_endpoint(data_dir, "games-players"), key=lambda r: (r["gameId"], r["teamId"])
-    )
-    player_box, pb_dropped = cbbd.build_player_box(players_raw, games)
+    player_files = raw.load_endpoint(data_dir, "games-players")
+    team_game_key = lambda r: (r["gameId"], r["teamId"])  # noqa: E731
+    players_raw = raw.dedupe_files(player_files, key=team_game_key)
+    first_fetched = raw.first_fetched_at(player_files, key=team_game_key)
+    player_box, pb_dropped = cbbd.build_player_box(players_raw, games, first_fetched)
     report["player_files"] = (players_raw.n_raw, players_raw.n_duplicates)
     report["player_box_dropped"] = pb_dropped
 
