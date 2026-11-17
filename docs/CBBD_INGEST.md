@@ -59,6 +59,7 @@ Runs daily on GitHub Actions (`cbbd-ingest.yml`, 10:07 UTC, 3:07 a.m. Arizona) a
 
 - `/teams` for the season, once.
 - **Settled windows**, those that ended at least 7 days ago: the same monthly windows (`games`, `lines`, `games/teams`) and 4-day blocks (`games/players`) as backfill, fetched once and cached for good.
+- **Live player blocks** (task 2.0, `docs/EXTRACTION.md` section 1): every 4-day `games/players` block that has started but isn't settled (at most 3) is fetched again each day, so rosters are a day behind instead of up to 11. A copy counts only if it was fetched today; a block that has just settled is fetched once more, then kept. About 3 more calls a day; the monthly guard of 800 stays.
 - **One live window** for `games` and `lines`: from the end of the last settled month to 9 days past today. Its end date changes daily, so it is a new call each day. The table build keeps the most recently fetched copy of each game, so new scores and lines replace old ones.
 
 About 2 to 4 calls a day. The monthly budget guard (800) still applies.

@@ -50,6 +50,20 @@ def dedupe_files(wrapped_files: list[tuple[str, dict]], key: Callable[[dict], Ha
     return Deduped(records=list(kept.values()), n_raw=n_raw, n_duplicates=n_raw - len(kept))
 
 
+def first_fetched_at(
+    wrapped_files: list[tuple[str, dict]], key: Callable[[dict], Hashable]
+) -> dict[Hashable, str]:
+    """The earliest `fetched_at` of any file that holds a record with each key."""
+    first: dict[Hashable, str] = {}
+    for _name, wrapped in wrapped_files:
+        fetched_at = wrapped["fetched_at"]
+        for record in wrapped.get("data") or []:
+            k = key(record)
+            if k not in first or fetched_at < first[k]:
+                first[k] = fetched_at
+    return first
+
+
 def load_endpoint(data_dir: Path, slug: str) -> list[tuple[str, dict]]:
     """All raw files for one CBBD endpoint folder, as (file name, wrapper) pairs."""
     folder = data_dir / "cbbd" / "raw" / slug

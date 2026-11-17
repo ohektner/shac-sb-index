@@ -150,3 +150,10 @@ HAVING count(*) > 8;
 SELECT game_id, team_id, athlete_id
 FROM rotation_players
 WHERE is_rotation AND NOT (games_played_before > 0 AND minutes_before > 0);
+
+-- check: v_player_box_first_fetch_after_latest
+-- box_first_fetched_at (task 2.0) is the earliest fetch holding the team-game, so it is
+-- never empty and never later than the kept copy's fetched_at.
+SELECT game_id, team_id, athlete_id
+FROM player_box
+WHERE box_first_fetched_at IS NULL OR box_first_fetched_at > fetched_at;
