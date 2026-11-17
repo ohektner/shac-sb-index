@@ -151,6 +151,27 @@ def test_player_box_did_not_play_rule_and_non_di_games_dropped():
     assert dropped == {"no_athlete_id": 0, "duplicate_athlete": 0}
 
 
+def test_box_first_fetched_at_is_the_earliest_file_holding_the_team_game():
+    # Task 2.0 exit check: a game present in two fetches gets the earlier time in
+    # box_first_fetched_at and the later fetch's rows in the table.
+    games = cbbd.build_games(_deduped(cbbd_game(1, 1, 2)), TEAMS)
+
+    def team_game(minutes):
+        return {"gameId": 1, "teamId": 1, "players": [{"athleteId": 100, "minutes": minutes}]}
+
+    early = wrap("2026-11-12T10:07:00Z", [team_game(0)])
+    late = wrap("2026-11-13T10:07:00Z", [team_game(30)])
+    files = [("b.json.gz", late), ("a.json.gz", early)]  # disk order must not matter
+    key = lambda r: (r["gameId"], r["teamId"])  # noqa: E731
+    box, _ = cbbd.build_player_box(
+        raw.dedupe_files(files, key=key), games, raw.first_fetched_at(files, key=key)
+    )
+    row = box.iloc[0]
+    assert row["minutes"] == 30.0  # the later copy's rows
+    assert row["fetched_at"] == pd.Timestamp("2026-11-13T10:07:00Z")
+    assert row["box_first_fetched_at"] == pd.Timestamp("2026-11-12T10:07:00Z")
+
+
 # ---------- odds snapshots and closing lines ----------
 
 TIP = "2026-11-12T00:00:00Z"

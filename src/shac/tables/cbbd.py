@@ -42,6 +42,7 @@ PLAYER_BOX_COLUMNS = [
     "played",
     "starter",
     "fetched_at",
+    "box_first_fetched_at",
 ]
 CBBD_LINES_COLUMNS = [
     "game_id",
@@ -162,8 +163,17 @@ def did_play(minutes) -> bool:
     return minutes is not None and not pd.isna(minutes) and minutes > 0
 
 
-def build_player_box(deduped: Deduped, games: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
+def build_player_box(
+    deduped: Deduped,
+    games: pd.DataFrame,
+    first_fetched: dict | None = None,
+) -> tuple[pd.DataFrame, dict]:
     """One row per player per team per D-I game.
+
+    `first_fetched` maps (game_id, team_id) to the earliest `fetched_at` of any raw file
+    holding that team-game (`raw.first_fetched_at`). It fills `box_first_fetched_at`: a
+    team-game's box is "in hand at T" when that time is before T (docs/EXTRACTION.md,
+    section 1). Without it, the column falls back to the kept copy's `fetched_at`.
 
     Rows for games not in `games` (non-D-I opponents) are dropped. `minutes` is kept as
     CBBD gives it; `played` applies the did-not-play rule. Returns the table and counts of
@@ -175,6 +185,7 @@ def build_player_box(deduped: Deduped, games: pd.DataFrame) -> tuple[pd.DataFram
     for fetched_at, team_game in deduped.records:
         if team_game["gameId"] not in game_ids:
             continue
+        first = (first_fetched or {}).get((team_game["gameId"], team_game["teamId"]), fetched_at)
         for p in team_game.get("players") or []:
             if p.get("athleteId") is None:
                 dropped["no_athlete_id"] += 1
@@ -190,6 +201,7 @@ def build_player_box(deduped: Deduped, games: pd.DataFrame) -> tuple[pd.DataFram
                     "played": did_play(minutes),
                     "starter": p.get("starter"),
                     "fetched_at": fetched_at,
+                    "box_first_fetched_at": first,
                 }
             )
     df = pd.DataFrame(rows, columns=PLAYER_BOX_COLUMNS)
@@ -202,6 +214,7 @@ def build_player_box(deduped: Deduped, games: pd.DataFrame) -> tuple[pd.DataFram
     df["played"] = df["played"].astype("boolean")
     df["starter"] = df["starter"].astype("boolean")
     df["fetched_at"] = utc(df["fetched_at"])
+    df["box_first_fetched_at"] = utc(df["box_first_fetched_at"])
     df = df.sort_values(["game_id", "team_id", "athlete_id"]).reset_index(drop=True)
     return df, dropped
 

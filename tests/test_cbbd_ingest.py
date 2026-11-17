@@ -395,30 +395,48 @@ def test_current_season_from_date():
     assert cbbd.current_season(datetime(2027, 7, 1, tzinfo=UTC)) == 2028
 
 
-def test_current_early_season_fetches_live_games_and_lines_only(tmp_path, monkeypatch):
+def _block(start_day: int) -> tuple[datetime, datetime]:
+    start = datetime(2026, 11, start_day, tzinfo=UTC)
+    return (start, start + timedelta(days=4))
+
+
+def test_current_early_season_fetches_live_games_lines_and_player_blocks(tmp_path, monkeypatch):
     api = FakeApi()
     now = datetime(2026, 11, 11, 10, 7, tzinfo=UTC)
     assert run(tmp_path, monkeypatch, api, mode="current", now=fixed(now)) == 0
     calls = calls_by_path(api)
     live = (datetime(2026, 11, 1, tzinfo=UTC), datetime(2026, 11, 20, tzinfo=UTC))
-    assert calls == {"/teams": [{"season": "2027"}], "/games": [live], "/lines": [live]}
+    # Task 2.0: the player blocks that have started (Nov 1, 5, 9) are fetched although
+    # none is settled yet. The Nov 13 block hasn't started.
+    assert calls == {
+        "/teams": [{"season": "2027"}],
+        "/games": [live],
+        "/lines": [live],
+        "/games/players": [_block(1), _block(5), _block(9)],
+    }
 
     # Same day again: everything is cached.
     api2 = FakeApi()
     run(tmp_path, monkeypatch, api2, mode="current", now=fixed(now))
     assert api2.requests == []
 
-    # Next day: the live window ends a day later, so games and lines are fetched again,
-    # and the first player block (Nov 1 to 5) is now 7 days old, so it settles.
+    # Next day: the live window ends a day later, so games and lines are fetched again.
+    # The Nov 1 block is now 7 days old: it settles, and yesterday's copy (fetched before
+    # it settled) doesn't count, so it is fetched once more. The two live blocks are
+    # fetched again because their copies are from yesterday.
     api3 = FakeApi()
     run(tmp_path, monkeypatch, api3, mode="current", now=fixed(now + timedelta(days=1)))
     later = (datetime(2026, 11, 1, tzinfo=UTC), datetime(2026, 11, 21, tzinfo=UTC))
-    first_block = (datetime(2026, 11, 1, tzinfo=UTC), datetime(2026, 11, 5, tzinfo=UTC))
     assert calls_by_path(api3) == {
         "/games": [later],
         "/lines": [later],
-        "/games/players": [first_block],
+        "/games/players": [_block(1), _block(5), _block(9)],
     }
+
+    # The day after: the settled Nov 1 block is kept for good; only live blocks repeat.
+    api4 = FakeApi()
+    run(tmp_path, monkeypatch, api4, mode="current", now=fixed(now + timedelta(days=2)))
+    assert calls_by_path(api4)["/games/players"] == [_block(5), _block(9), _block(13)]
 
 
 def test_current_settles_old_windows_once_and_keeps_live_after_them(tmp_path, monkeypatch):
@@ -432,11 +450,13 @@ def test_current_settles_old_windows_once_and_keeps_live_after_them(tmp_path, mo
     assert calls["/lines"] == [november, live]
     assert calls["/games/teams"] == [november]  # box stats only once settled
     # Player blocks that ended by Dec 3 (7 days before): Nov 1 to Dec 3, 4 days each.
+    # Then the started, unsettled blocks (task 2.0): Dec 3 to 7 and Dec 7 to 11.
     blocks = calls["/games/players"]
-    assert len(blocks) == 8 and blocks[-1][1] == datetime(2026, 12, 3, tzinfo=UTC)
+    assert len(blocks) == 10 and blocks[7][1] == datetime(2026, 12, 3, tzinfo=UTC)
+    assert blocks[8:] == block_windows(2027)[8:10]
     # The settled windows are the same as backfill's, so backfill would skip them.
     assert november == month_windows(2027)[0]
-    assert blocks == block_windows(2027)[:8]
+    assert blocks[:8] == block_windows(2027)[:8]
 
 
 def test_current_after_season_end_has_no_live_window(tmp_path, monkeypatch):
