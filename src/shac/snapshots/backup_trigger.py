@@ -41,7 +41,6 @@ WORKFLOWS = [
     "polymarket-history.yml",
     "snapshot-watch.yml",
     "cbbd-ingest.yml",
-    "news-collect.yml",
     "news-sidearm.yml",
 ]
 GRACE_MINUTES = 35

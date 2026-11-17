@@ -34,10 +34,11 @@ What it found:
 | Odds snapshot (US books + Pinnacle) | GitHub Actions | 7 a day | `data/status/odds_snapshot_log.csv` |
 | Polymarket snapshot | GitHub Actions | 6 a day | `data/status/polymarket_snapshot_log.csv` |
 | Polymarket history (recent games) | GitHub Actions | Daily, 10:29 UTC | Actions tab, `polymarket-history` |
-| News collection (Google News) | GitHub Actions | Twice a day, 14:53 and 21:53 UTC | `data/status/news_log.csv` |
+| News collection (Google News) | Owen's PC, Windows task (moved 2026-11-17: Google blocks GitHub's runners) | Twice a day, 7:53 AM and 2:53 PM Phoenix (14:53 and 21:53 UTC) | `data/status/news_log.csv`, and `%LOCALAPPDATA%\shac-sb-index
+ews-task.log` |
 | News collection (team sites) | GitHub Actions | Daily, 20:13 UTC | `data/status/news_sidearm_log.csv` |
 | Snapshot watch (alarm) | GitHub Actions | Twice a day | Fails and emails Owen if odds snapshots stop |
-| Scheduler (starts every job at its slot) | Cloudflare Worker `shac-scheduler` (`worker/`, PRs #49, #50) | Every 5 minutes | Cloudflare dashboard, Worker, Observability; open its address to test the token |
+| Scheduler (starts every GitHub job at its slot; not news since 2026-11-17) | Cloudflare Worker `shac-scheduler` (`worker/`, PRs #49, #50) | Every 5 minutes | Cloudflare dashboard, Worker, Observability; open its address to test the token |
 | Schedule backup (starts skipped jobs) | Owen's PC, Windows task | Every 15 minutes | `%LOCALAPPDATA%\shac-sb-index\schedule-backup.log` |
 | Torvik daily snapshot | Owen's PC, Windows task | 5:00 AM Phoenix | `data/status/torvik_snapshot_log.csv`, and `%LOCALAPPDATA%\shac-sb-index\torvik-task.log` |
 

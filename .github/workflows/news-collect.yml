@@ -13,10 +13,9 @@
 name: news-collect
 
 on:
-  schedule:
-    # Times are UTC. Arizona (UTC-7): 7:53a and 2:53p, morning news and the afternoon
-    # before evening tips. Odd minutes avoid the top-of-hour rush on GitHub.
-    - cron: "53 14,21 * * *"
+  # No schedule since 2026-11-17: Google News blocks GitHub's runners (429/503), so the
+  # twice-daily run moved to Owen's PC (scripts/news-local.ps1, 7:53a and 2:53p Arizona).
+  # This workflow stays for manual runs.
   workflow_dispatch:
     inputs:
       max_queries:
