@@ -1,7 +1,7 @@
 # What this does, in plain language:
 # Twice a day it finds the D-I teams with a game in the next 36 hours and runs one Google
 # News search per team for availability news (injuries, questionable, ruled out, ...),
-# at least 5 seconds apart. Headlines and links go to the PRIVATE data repo; this public
+# 20-30 seconds apart. Headlines and links go to the PRIVATE data repo; this public
 # repo only gets a status row per run (counts and a file hash), never headlines.
 # Owen authorized this personal, non-commercial use on 2026-11-11 (docs/DECISIONS.md).
 # If Google refuses (429 or an error page), the run stops and logs "blocked".
@@ -36,7 +36,7 @@ env:
 jobs:
   snapshot:
     runs-on: ubuntu-24.04
-    timeout-minutes: 45
+    timeout-minutes: 120  # 250 searches at 20-30 seconds
     steps:
       # Always the latest main, even when an old run is re-run, so the status log is current.
       - name: Check out this repo

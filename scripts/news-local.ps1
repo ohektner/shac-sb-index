@@ -67,10 +67,16 @@ try {
     Invoke-GitWithRetry $Runner @("pull", "-q", "--ff-only", "origin", "main") | Out-Null
     Invoke-GitWithRetry $DataRepo @("pull", "-q", "--rebase", "origin", "main") | Out-Null
 
+    # Morning run searches teams with even ids, afternoon run odd ids (half the requests per
+    # run; each team still once a day). Requests are 20-30 seconds apart, so a run takes
+    # about 40-60 minutes; the task's time limit is 2 hours.
+    $part = if ((Get-Date).Hour -lt 12) { "even" } else { "odd" }
+    Write-Log "part $part"
+
     Push-Location $Runner
     try {
         $jobOutput = & $Uv run --frozen python -m shac.news.google_news `
-            --data-dir $DataRepo --log data/status/news_log.csv 2>&1
+            --data-dir $DataRepo --log data/status/news_log.csv --part $part 2>&1
         $jobExit = $LASTEXITCODE
     } finally {
         Pop-Location

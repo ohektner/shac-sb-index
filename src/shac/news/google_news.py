@@ -7,7 +7,10 @@ What it does, in order:
 1. Finds the D-I teams with a game in the next LOOKAHEAD_HOURS, from the raw CBBD games
    files in the private repo (the daily `cbbd-ingest` run keeps those current).
 2. For each team, one Google News RSS search: the team's name plus availability words,
-   limited to the last 2 days. Requests are at least GAP_SECONDS apart.
+   limited to the last 2 days. Requests are at least GAP_SECONDS apart. With `--part even`
+   or `--part odd` only the teams with an even or odd team id are searched: the PC task
+   runs even in the morning and odd in the afternoon, so each team is searched once a day
+   at half the request count per run.
 3. Saves every response, raw XML plus the parsed items (title, source, link, publish
    time), in ONE gzipped JSON file in the private repo. Nothing is fetched beyond the
    feed itself: no article pages.
@@ -54,8 +57,11 @@ from shac.tables import raw
 FEED_URL = "https://news.google.com/rss/search"
 USER_AGENT = "shac-sb-index/0.1 (+https://github.com/ohektner/shac-sb-index)"
 LOOKAHEAD_HOURS = 36
-GAP_SECONDS = 5.0
-EXTRA_GAP_SECONDS = 3.0  # plus a random 0 to 3, so requests don't land on a fixed beat
+# 2026-11-17: at 5-8 seconds a home connection got 429 after 63 searches (about 7 minutes),
+# so the pace is now the Torvik backfill's: 20 seconds plus a random 0 to 10.
+GAP_SECONDS = 20.0
+EXTRA_GAP_SECONDS = 10.0  # plus a random 0 to 10, so requests don't land on a fixed beat
+PARTS = ("all", "even", "odd")
 MAX_QUERIES = 250  # safety stop
 NEWS_DIR = Path("news") / "raw" / "google_news"
 # Availability words. Google News search supports OR, quotes and `when:` (recent days).
@@ -118,6 +124,13 @@ def teams_playing_soon(
                 if game.get(key) is not None and int(game[key]) in names:
                     ids.add(int(game[key]))
     return [(tid, names[tid]) for tid in sorted(ids)]
+
+
+def in_part(team_id: int, part: str) -> bool:
+    """Whether a team belongs to this run's part: all, even team ids, or odd team ids."""
+    if part not in PARTS:
+        raise ValueError(f"part must be one of {PARTS}, not {part!r}")
+    return part == "all" or (team_id % 2 == 0) == (part == "even")
 
 
 def parse_items(xml_text: str) -> list[dict]:
@@ -184,13 +197,15 @@ def run(
     log_path: Path,
     *,
     max_queries: int = MAX_QUERIES,
+    part: str = "all",
     now: Clock = utc_now,
     sleep: Callable[[float], None] = time.sleep,
     gap: Callable[[], float] = lambda: GAP_SECONDS + random.uniform(0, EXTRA_GAP_SECONDS),
 ) -> bool:
     """Collect, save one file, log one row. Returns False if the run was blocked."""
     started = now()
-    playing = teams_playing_soon(data_dir, teams, started)[:max_queries]
+    soon = teams_playing_soon(data_dir, teams, started)
+    playing = [(tid, name) for tid, name in soon if in_part(tid, part)][:max_queries]
     seen = recent_guids(data_dir, started)
     results: list[QueryResult] = []
     status, http_status = "ok", 200
@@ -254,12 +269,22 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--log", required=True, type=Path, help="public status log CSV")
     parser.add_argument("--map-dir", type=Path, default=Path("data"))
     parser.add_argument("--max-queries", type=int, default=MAX_QUERIES)
+    parser.add_argument(
+        "--part", choices=PARTS, default="all", help="search only even or odd team ids"
+    )
     args = parser.parse_args(argv)
     teams = pd.read_csv(args.map_dir / "teams.csv")
     with httpx.Client(
         timeout=30, follow_redirects=True, headers={"User-Agent": USER_AGENT}
     ) as client:
-        ok = run(client, args.data_dir, teams, args.log, max_queries=args.max_queries)
+        ok = run(
+            client,
+            args.data_dir,
+            teams,
+            args.log,
+            max_queries=args.max_queries,
+            part=args.part,
+        )
     return 0 if ok else 1
 
 
