@@ -15,7 +15,7 @@ team_id,name,conference,first_season,last_season
 14,Arkansas-Pine Bluff,SWAC,2019,2027
 15,Army,Patriot,2019,2027
 16,Auburn,SEC,2019,2027
-17,Austin Peay,ASUN,2019,2027
+17,Austin Peay,UAC,2019,2027
 18,BYU,Big 12,2019,2027
 19,Ball State,MAC,2019,2027
 20,Baylor,Big 12,2019,2027
@@ -23,7 +23,7 @@ team_id,name,conference,first_season,last_season
 22,Belmont,MVC,2019,2027
 23,Bethune-Cookman,SWAC,2019,2027
 24,Binghamton,Am. East,2019,2027
-25,Boise State,Mountain West,2019,2027
+25,Boise State,Pac-12,2019,2027
 26,Boston College,ACC,2019,2027
 27,Boston University,Patriot,2019,2027
 28,Bowling Green,MAC,2019,2027
@@ -37,11 +37,11 @@ team_id,name,conference,first_season,last_season
 36,Cal State Bakersfield,Big West,2019,2027
 37,Cal State Fullerton,Big West,2019,2027
 38,Cal State Northridge,Big West,2019,2027
-39,California Baptist,UAC,2019,2027
+39,California Baptist,Big West,2019,2027
 40,California,ACC,2019,2027
 41,Campbell,CAA,2019,2027
 42,Canisius,Metro,2019,2027
-43,Central Arkansas,ASUN,2019,2027
+43,Central Arkansas,UAC,2019,2027
 44,Central Connecticut,NEC,2019,2027
 45,Central Michigan,MAC,2019,2027
 46,Charleston,CAA,2019,2027
@@ -55,7 +55,7 @@ team_id,name,conference,first_season,last_season
 54,Coastal Carolina,Sun Belt,2019,2027
 55,Colgate,Patriot,2019,2027
 56,Colorado,Big 12,2019,2027
-57,Colorado State,Mountain West,2019,2027
+57,Colorado State,Pac-12,2019,2027
 58,Columbia,Ivy,2019,2027
 59,Coppin State,MEAC,2019,2027
 60,Cornell,Ivy,2019,2027
@@ -66,7 +66,7 @@ team_id,name,conference,first_season,last_season
 65,DePaul,Big East,2019,2027
 66,Delaware,CUSA,2019,2027
 67,Delaware State,MEAC,2019,2027
-68,Denver,Summit,2019,2027
+68,Denver,WCC,2019,2027
 69,Detroit Mercy,Horizon,2019,2027
 70,Drake,MVC,2019,2027
 71,Drexel,CAA,2019,2027
@@ -76,7 +76,7 @@ team_id,name,conference,first_season,last_season
 75,East Tennessee State,SoCon,2019,2027
 76,East Texas A&M,Southland,2023,2027
 77,Eastern Illinois,OVC,2019,2027
-78,Eastern Kentucky,ASUN,2019,2027
+78,Eastern Kentucky,UAC,2019,2027
 79,Eastern Michigan,MAC,2019,2027
 80,Eastern Washington,Big Sky,2019,2027
 81,Elon,CAA,2019,2027
@@ -90,7 +90,7 @@ team_id,name,conference,first_season,last_season
 89,Florida International,CUSA,2019,2027
 90,Florida State,ACC,2019,2027
 91,Fordham,A-10,2019,2027
-92,Fresno State,Mountain West,2019,2027
+92,Fresno State,Pac-12,2019,2027
 93,Furman,SoCon,2019,2027
 94,Gardner-Webb,Big South,2019,2027
 95,George Mason,A-10,2019,2027
@@ -100,13 +100,13 @@ team_id,name,conference,first_season,last_season
 99,Georgia Southern,Sun Belt,2019,2027
 100,Georgia State,Sun Belt,2019,2027
 101,Georgia Tech,ACC,2019,2027
-102,Gonzaga,WCC,2019,2027
+102,Gonzaga,Pac-12,2019,2027
 103,Grambling,SWAC,2019,2027
 104,Grand Canyon,Mountain West,2019,2027
 105,Green Bay,Horizon,2019,2027
 106,Hampton,CAA,2019,2027
 107,Harvard,Ivy,2019,2027
-108,Hawai'i,Big West,2019,2027
+108,Hawai'i,Mountain West,2019,2027
 109,High Point,Big South,2019,2027
 110,Hofstra,CAA,2019,2027
 111,Holy Cross,Patriot,2019,2027
@@ -142,12 +142,12 @@ team_id,name,conference,first_season,last_season
 141,Lehigh,Patriot,2019,2027
 142,Liberty,CUSA,2019,2027
 143,Lipscomb,ASUN,2019,2027
-144,Little Rock,OVC,2019,2027
+144,Little Rock,UAC,2019,2027
 145,Long Beach State,Big West,2019,2027
 146,Long Island University,NEC,2019,2027
 147,Longwood,Big South,2019,2027
 148,Louisiana,Sun Belt,2019,2027
-149,Louisiana Tech,CUSA,2019,2027
+149,Louisiana Tech,Sun Belt,2019,2027
 150,Louisville,ACC,2019,2027
 151,Loyola Chicago,A-10,2019,2027
 152,Loyola Maryland,Patriot,2019,2027
@@ -195,7 +195,7 @@ team_id,name,conference,first_season,last_season
 194,Niagara,Metro,2019,2027
 195,Nicholls,Southland,2019,2027
 196,Norfolk State,MEAC,2019,2027
-197,North Alabama,ASUN,2019,2027
+197,North Alabama,UAC,2019,2027
 198,North Carolina A&T,CAA,2019,2027
 199,North Carolina Central,MEAC,2019,2027
 200,North Carolina,ACC,2019,2027
@@ -206,7 +206,7 @@ team_id,name,conference,first_season,last_season
 205,Northeastern,CAA,2019,2027
 206,Northern Arizona,Big Sky,2019,2027
 207,Northern Colorado,Big Sky,2019,2027
-208,Northern Illinois,MAC,2019,2027
+208,Northern Illinois,Horizon,2019,2027
 209,Northern Iowa,MVC,2019,2027
 210,Northern Kentucky,Horizon,2019,2027
 211,Northwestern State,Southland,2019,2027
@@ -222,7 +222,7 @@ team_id,name,conference,first_season,last_season
 221,Omaha,Summit,2019,2027
 222,Oral Roberts,Summit,2019,2027
 223,Oregon,Big Ten,2019,2027
-224,Oregon State,WCC,2019,2027
+224,Oregon State,Pac-12,2019,2027
 225,Pacific,WCC,2019,2027
 226,Penn State,Big Ten,2019,2027
 227,Pennsylvania,Ivy,2019,2027
@@ -247,7 +247,7 @@ team_id,name,conference,first_season,last_season
 246,SE Louisiana,Southland,2019,2027
 247,SIU Edwardsville,OVC,2019,2027
 248,SMU,ACC,2019,2027
-249,Sacramento State,Big Sky,2019,2027
+249,Sacramento State,Big West,2019,2027
 250,Sacred Heart,Metro,2019,2027
 251,Saint Joseph's,A-10,2019,2027
 252,Saint Louis,A-10,2019,2027
@@ -255,7 +255,7 @@ team_id,name,conference,first_season,last_season
 254,Saint Peter's,Metro,2019,2027
 255,Sam Houston,CUSA,2019,2027
 256,Samford,SoCon,2019,2027
-257,San Diego State,Mountain West,2019,2027
+257,San Diego State,Pac-12,2019,2027
 258,San Diego,WCC,2019,2027
 259,San Francisco,WCC,2019,2027
 260,San José State,Mountain West,2019,2027
@@ -274,7 +274,7 @@ team_id,name,conference,first_season,last_season
 273,Southern Illinois,MVC,2019,2027
 274,Southern,SWAC,2019,2027
 275,Southern Miss,Sun Belt,2019,2027
-276,Southern Utah,UAC,2019,2027
+276,Southern Utah,Big Sky,2019,2027
 277,St. Bonaventure,A-10,2019,2027
 278,St. Francis (PA),NEC,2019,2026
 279,St. John's,Big East,2019,2027
@@ -289,13 +289,13 @@ team_id,name,conference,first_season,last_season
 288,Tarleton State,UAC,2021,2027
 289,Temple,American,2019,2027
 290,Tennessee State,OVC,2019,2027
-291,Tennessee Tech,OVC,2019,2027
+291,Tennessee Tech,SoCon,2019,2027
 292,Tennessee,SEC,2019,2027
 293,Texas A&M,SEC,2019,2027
 294,Texas A&M-Corpus Christi,Southland,2019,2027
 295,Texas,SEC,2019,2027
 296,Texas Southern,SWAC,2019,2027
-297,Texas State,Sun Belt,2019,2027
+297,Texas State,Pac-12,2019,2027
 298,Texas Tech,Big 12,2019,2027
 299,The Citadel,SoCon,2019,2027
 300,Toledo,MAC,2019,2027
@@ -305,7 +305,7 @@ team_id,name,conference,first_season,last_season
 304,Tulsa,American,2019,2027
 305,UAB,American,2019,2027
 306,UAlbany,Am. East,2019,2027
-307,UC Davis,Big West,2019,2027
+307,UC Davis,Mountain West,2019,2027
 308,UC Irvine,Big West,2019,2027
 309,UC Riverside,Big West,2019,2027
 310,UC San Diego,Big West,2021,2027
@@ -325,12 +325,12 @@ team_id,name,conference,first_season,last_season
 324,UT Arlington,UAC,2019,2027
 325,UT Martin,OVC,2019,2027
 326,UT Rio Grande Valley,Southland,2019,2027
-327,UTEP,CUSA,2019,2027
+327,UTEP,Mountain West,2019,2027
 328,UTSA,American,2019,2027
-329,Utah State,Mountain West,2019,2027
-330,Utah Tech,UAC,2021,2027
+329,Utah State,Pac-12,2019,2027
+330,Utah Tech,Big Sky,2021,2027
 331,Utah,Big 12,2019,2027
-332,Utah Valley,UAC,2019,2027
+332,Utah Valley,Big West,2019,2027
 333,VCU,A-10,2019,2027
 334,VMI,SoCon,2019,2027
 335,Valparaiso,MVC,2019,2027
@@ -342,9 +342,9 @@ team_id,name,conference,first_season,last_season
 341,Wagner,NEC,2019,2027
 342,Wake Forest,ACC,2019,2027
 343,Washington,Big Ten,2019,2027
-344,Washington State,WCC,2019,2027
+344,Washington State,Pac-12,2019,2027
 345,Weber State,Big Sky,2019,2027
-346,West Georgia,ASUN,2025,2027
+346,West Georgia,UAC,2025,2027
 347,West Virginia,Big 12,2019,2027
 348,Western Carolina,SoCon,2019,2027
 349,Western Illinois,OVC,2019,2027
