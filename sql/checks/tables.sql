@@ -75,10 +75,17 @@ WHERE c.close_snapshot_at IS NOT NULL
             AND s.snapshot_at = c.close_snapshot_at
             AND s.snapshot_at >= s.commence_at
       )
+      -- The feed's latest commence time for the game. (odds_event_matches.commence_at is
+      -- the time when the event was matched; a game moved later would trip a false alarm.)
       OR EXISTS (
           SELECT 1
-          FROM odds_event_matches m
-          WHERE m.game_id = c.game_id AND c.close_snapshot_at >= m.commence_at
+          FROM (
+              SELECT game_id, arg_max(commence_at, snapshot_at) AS latest_commence_at
+              FROM odds_snapshots
+              WHERE game_id IS NOT NULL
+              GROUP BY game_id
+          ) t
+          WHERE t.game_id = c.game_id AND c.close_snapshot_at >= t.latest_commence_at
       )
       OR (g.tip_tbd = false AND c.close_snapshot_at >= g.tip_at)
   );

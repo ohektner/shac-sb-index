@@ -4,12 +4,13 @@
 
 -- check: tested
 CREATE OR REPLACE TEMP VIEW tested AS
--- Tip = the earliest of: the feed's latest commence time, any commence time the feed listed,
--- and CBBD's tip when it isn't a placeholder (the same rule as check k in tables.sql).
+-- Tip = the feed's latest commence time, or CBBD's scheduled tip if earlier and not a
+-- placeholder (the same rule as sql/tables/closing_lines.sql).
 WITH tip AS (
   SELECT s.game_id,
-         least(arg_max(s.commence_at, s.snapshot_at), min(s.commence_at),
-               coalesce(any_value(CASE WHEN NOT g.tip_tbd THEN g.tip_at END), min(s.commence_at))) AS tip_at
+         least(arg_max(s.commence_at, s.snapshot_at),
+               coalesce(any_value(CASE WHEN NOT g.tip_tbd THEN g.tip_at END),
+                        arg_max(s.commence_at, s.snapshot_at))) AS tip_at
   FROM odds_snapshots s JOIN games g USING (game_id)
   WHERE s.game_id IS NOT NULL
   GROUP BY s.game_id
