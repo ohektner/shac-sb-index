@@ -161,3 +161,26 @@ def test_max_queries_limits_the_run(tmp_path):
     calls = []
     run(tmp_path, lambda r: calls.append(1) or httpx.Response(200, text=feed(1)), max_queries=1)
     assert len(calls) == 1
+
+
+def test_even_and_odd_parts_split_the_teams(tmp_path):
+    def searched(part):
+        data_dir = tmp_path / part
+        write_games(data_dir, [game(1, 1, 2, 3), game(2, 3, 4, 5)])
+        queries = []
+
+        def handler(request):
+            queries.append(parse_qs(urlparse(str(request.url)).query)["q"][0])
+            return httpx.Response(200, text=feed(1))
+
+        run(data_dir, handler, part=part)
+        (row,) = read_log_rows(data_dir / "log.csv")
+        assert row["n_teams"] == "2"
+        return [q.split('"')[1] for q in queries]
+
+    assert searched("even") == ["Bravo", "Delta"]
+    assert searched("odd") == ["Alpha State", "Charlie Tech"]
+
+
+def test_default_gap_is_twenty_to_thirty_seconds():
+    assert gn.GAP_SECONDS == 20.0 and gn.EXTRA_GAP_SECONDS == 10.0

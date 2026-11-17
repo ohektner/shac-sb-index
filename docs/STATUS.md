@@ -34,7 +34,7 @@ What it found:
 | Odds snapshot (US books + Pinnacle) | GitHub Actions | 7 a day | `data/status/odds_snapshot_log.csv` |
 | Polymarket snapshot | GitHub Actions | 6 a day | `data/status/polymarket_snapshot_log.csv` |
 | Polymarket history (recent games) | GitHub Actions | Daily, 10:29 UTC | Actions tab, `polymarket-history` |
-| News collection (Google News) | Owen's PC, Windows task (moved 2026-11-17: Google blocks GitHub's runners) | Twice a day, 7:53 AM and 2:53 PM Phoenix (14:53 and 21:53 UTC) | `data/status/news_log.csv`, and `%LOCALAPPDATA%\shac-sb-index
+| News collection (Google News) | Owen's PC, Windows task (moved 2026-11-17: Google blocks GitHub's runners) | Twice a day, 7:53 AM (even team ids) and 2:53 PM (odd team ids) Phoenix (14:53 and 21:53 UTC), searches 20-30 s apart | `data/status/news_log.csv`, and `%LOCALAPPDATA%\shac-sb-index
 ews-task.log` |
 | News collection (team sites) | GitHub Actions | Daily, 20:13 UTC | `data/status/news_sidearm_log.csv` |
 | Snapshot watch (alarm) | GitHub Actions | Twice a day | Fails and emails Owen if odds snapshots stop |
