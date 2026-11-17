@@ -83,11 +83,28 @@ def query_df(con: duckdb.DuckDBPyConnection, sql: str) -> pd.DataFrame:
         return con.execute(sql).df()
 
 
+EMPTY_GAMES_TIPS = pd.DataFrame(
+    {
+        "game_id": pd.Series([], dtype="Int64"),
+        "tip_at": pd.Series([], dtype="datetime64[ns, UTC]"),
+        "tip_tbd": pd.Series([], dtype=bool),
+    }
+)
+
+
 def build_closing_lines(
-    odds_snapshots: pd.DataFrame, snapshot_times: pd.Series, cbbd_lines: pd.DataFrame
+    odds_snapshots: pd.DataFrame,
+    snapshot_times: pd.Series,
+    cbbd_lines: pd.DataFrame,
+    games: pd.DataFrame | None = None,
 ) -> pd.DataFrame:
-    """Run sql/tables/closing_lines.sql over the in-memory tables."""
+    """Run sql/tables/closing_lines.sql over the in-memory tables.
+
+    `games` (CBBD) caps each event's tip at CBBD's scheduled time when that time is real.
+    """
     con = duckdb.connect()
+    tips = EMPTY_GAMES_TIPS if games is None else games[["game_id", "tip_at", "tip_tbd"]]
+    con.register("games", tips)
     con.register("odds_snapshots", odds_snapshots)
     con.register("snapshot_files", pd.DataFrame({"snapshot_at": snapshot_times}))
     con.register("us_books", pd.DataFrame({"book": US_BOOKS}))
@@ -125,7 +142,7 @@ def build_all(data_dir: Path, map_dir: Path) -> tuple[dict[str, pd.DataFrame], d
     report["odds_files"] = len(odds_files)
 
     snapshot_times = cbbd.utc(pd.Series([w["fetched_at"] for _n, w in odds_files], dtype=str))
-    closing = build_closing_lines(odds_snapshots, snapshot_times, cbbd_lines)
+    closing = build_closing_lines(odds_snapshots, snapshot_times, cbbd_lines, games)
 
     ratings_daily, ratings_counts = torvik.build_ratings_daily(
         torvik.load_time_machine(data_dir), torvik.load_daily(data_dir), aliases

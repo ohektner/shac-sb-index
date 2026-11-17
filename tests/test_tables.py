@@ -259,6 +259,39 @@ def test_own_snapshot_close_is_median_of_us_books_strictly_before_tip():
     assert own["basis"] == "median_us_books"
 
 
+def _cbbd_tip(games: pd.DataFrame, tip: str, tbd: bool) -> pd.DataFrame:
+    out = games[["game_id"]].copy()
+    out["tip_at"] = pd.Timestamp(tip)
+    out["tip_tbd"] = tbd
+    return out
+
+
+def test_close_is_capped_at_cbbd_scheduled_tip():
+    # The feed says 00:00, but CBBD scheduled the game for 23:00: snapshot 2 (23:17) is
+    # after the real tip, so the close falls back to snapshot 1.
+    snaps, times, games, *_ = odds_fixture()
+    tips = _cbbd_tip(games, "2026-11-11T23:00:00Z", tbd=False)
+    close = build_closing_lines(snaps, times, EMPTY_CBBD_LINES, tips)
+    own = close[close["source"] == "own_snapshots"].iloc[0]
+    assert own["close_snapshot_at"] == pd.Timestamp("2026-11-11T13:17:00Z")
+    assert own["close_home_spread"] == -3.25
+    assert own["minutes_before_tip"] == 583
+    # Pinnacle first appears at 23:17, after the real tip: no Pinnacle close.
+    assert "pinnacle" not in set(close["source"])
+
+
+def test_placeholder_or_later_cbbd_tip_leaves_feed_tip():
+    snaps, times, games, *_ = odds_fixture()
+    for tips in (
+        _cbbd_tip(games, "2026-11-11T23:00:00Z", tbd=True),  # placeholder: ignored
+        _cbbd_tip(games, "2026-11-12T02:00:00Z", tbd=False),  # later than the feed: feed wins
+    ):
+        close = build_closing_lines(snaps, times, EMPTY_CBBD_LINES, tips)
+        own = close[close["source"] == "own_snapshots"].iloc[0]
+        assert own["close_snapshot_at"] == pd.Timestamp("2026-11-11T23:17:00Z")
+        assert own["minutes_before_tip"] == 43
+
+
 def test_pinnacle_row_only_when_pinnacle_present():
     snaps, times, *_ = odds_fixture()
     close = build_closing_lines(snaps, times, EMPTY_CBBD_LINES)
