@@ -6,10 +6,12 @@
 --   snapshot_files(snapshot_at)   every snapshot file's fetch time, even an empty one
 --   us_books(book)                the US bookmaker keys (docs/VERIFIED.md)
 --   cbbd_lines(game_id, provider, home_spread, home_spread_open, ...)
+--   games(game_id, tip_at, tip_tbd)   CBBD's scheduled tip
 --
 -- Sources:
 --   own_snapshots  median home spread across US books in our LAST snapshot taken strictly
---                  before tip (snapshot_at < commence_at). A snapshot exactly at tip is
+--                  before tip. Tip = the feed's latest commence_at, or CBBD's scheduled
+--                  tip if earlier (and not a placeholder). A snapshot exactly at tip is
 --                  excluded.
 --   pinnacle       Pinnacle's home spread in the last pre-tip snapshot that has Pinnacle
 --                  for the game.
@@ -26,13 +28,23 @@
 -- Odds events that did not match a CBBD game (game_id empty) are left out.
 
 WITH
--- Tip time per odds event: commence_at from the most recent snapshot of that event.
-events AS (
+-- Tip time per odds event: commence_at from the most recent snapshot of that event,
+-- capped at CBBD's scheduled tip when CBBD's time is not a placeholder. The feed can move
+-- commence_at to the actual start (a few minutes late), which would let a snapshot taken
+-- after the scheduled tip count as pre-tip.
+feed_events AS (
     SELECT odds_event_id,
-           arg_max(commence_at, snapshot_at) AS tip_at,
+           arg_max(commence_at, snapshot_at) AS feed_tip_at,
            max(game_id) AS game_id
     FROM odds_snapshots
     GROUP BY odds_event_id
+),
+events AS (
+    SELECT f.odds_event_id, f.game_id,
+           CASE WHEN g.tip_tbd = false AND g.tip_at < f.feed_tip_at THEN g.tip_at
+                ELSE f.feed_tip_at END AS tip_at
+    FROM feed_events f
+    LEFT JOIN games g ON g.game_id = f.game_id
 ),
 closed_events AS (
     SELECT e.*
