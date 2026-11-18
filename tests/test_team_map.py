@@ -236,6 +236,11 @@ def test_shipped_manual_table_has_no_conflicts():
         assert prev == m.team_id, f"{m.alias} maps to two teams"
 
 
+def test_shipped_manual_table_maps_csu_fullerton():
+    manual = {(m.source, m.alias): m.team_id for m in load_manual_aliases(MANUAL_ALIASES_PATH)}
+    assert manual[("odds_api", "CSU Fullerton Titans")] == 37  # Cal State Fullerton
+
+
 def test_sql_file_has_all_checks():
     sql = (Path(__file__).parents[1] / "sql" / "checks" / "team_map.sql").read_text("utf-8")
     names = [name for name, _ in split_checks(sql)]
