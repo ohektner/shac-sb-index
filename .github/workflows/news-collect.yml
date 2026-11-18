@@ -14,7 +14,7 @@ name: news-collect
 
 on:
   # No schedule since 2026-11-17: Google News blocks GitHub's runners (429/503), so the
-  # twice-daily run moved to Owen's PC (scripts/news-local.ps1, 7:53a and 2:53p Arizona).
+  # daily run moved to Owen's PC (scripts/news-local.ps1, 2:53p Arizona).
   # This workflow stays for manual runs.
   workflow_dispatch:
     inputs:
