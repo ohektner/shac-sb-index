@@ -405,6 +405,7 @@ odds_api,Bucknell Bison,2027,,32
 odds_api,Buffalo Bulls,2027,,33
 odds_api,Butler Bulldogs,2027,,34
 odds_api,CSU Bakersfield Roadrunners,2027,,36
+odds_api,CSU Fullerton Titans,2027,,37
 odds_api,CSU Northridge Matadors,2027,,38
 odds_api,Cal Baptist Lancers,2027,,39
 odds_api,Cal Poly Mustangs,2027,,35
@@ -447,6 +448,7 @@ odds_api,East Tennessee St Buccaneers,2027,,75
 odds_api,East Texas A&M Lions,2027,,76
 odds_api,Eastern Illinois Panthers,2027,,77
 odds_api,Eastern Kentucky Colonels,2027,,78
+odds_api,Eastern Michigan Eagles,2027,,79
 odds_api,Eastern Washington Eagles,2027,,80
 odds_api,Elon Phoenix,2027,,81
 odds_api,Evansville Purple Aces,2027,,82
@@ -476,6 +478,7 @@ odds_api,Grand Canyon Antelopes,2027,,104
 odds_api,Green Bay Phoenix,2027,,105
 odds_api,Hampton Pirates,2027,,106
 odds_api,Harvard Crimson,2027,,107
+odds_api,Hawai'i Rainbow Warriors,2027,,108
 odds_api,High Point Panthers,2027,,109
 odds_api,Hofstra Pride,2027,,110
 odds_api,Holy Cross Crusaders,2027,,111
@@ -514,6 +517,7 @@ odds_api,Lindenwood Lions,2027,,366
 odds_api,Lipscomb Bisons,2027,,143
 odds_api,Long Beach St 49ers,2027,,145
 odds_api,Longwood Lancers,2027,,147
+odds_api,Louisiana Ragin' Cajuns,2027,,148
 odds_api,Louisiana Tech Bulldogs,2027,,149
 odds_api,Louisville Cardinals,2027,,150
 odds_api,Loyola (Chi) Ramblers,2027,,151
@@ -559,6 +563,7 @@ odds_api,New Hampshire Wildcats,2027,,190
 odds_api,New Haven Chargers,2027,,1507
 odds_api,New Mexico Lobos,2027,,191
 odds_api,New Mexico St Aggies,2027,,192
+odds_api,New Orleans Privateers,2027,,193
 odds_api,Niagara Purple Eagles,2027,,194
 odds_api,Nicholls St Colonels,2027,,195
 odds_api,Norfolk St Spartans,2027,,196
@@ -603,6 +608,7 @@ odds_api,Providence Friars,2027,,235
 odds_api,Purdue Boilermakers,2027,,236
 odds_api,Queens University Royals,2027,,362
 odds_api,Quinnipiac Bobcats,2027,,238
+odds_api,Radford Highlanders,2027,,239
 odds_api,Rhode Island Rams,2027,,240
 odds_api,Rice Owls,2027,,241
 odds_api,Richmond Spiders,2027,,242
@@ -700,6 +706,7 @@ odds_api,VCU Rams,2027,,333
 odds_api,VMI Keydets,2027,,334
 odds_api,Valparaiso Beacons,2027,,335
 odds_api,Vanderbilt Commodores,2027,,336
+odds_api,Vermont Catamounts,2027,,337
 odds_api,Villanova Wildcats,2027,,338
 odds_api,Virginia Cavaliers,2027,,339
 odds_api,Virginia Tech Hokies,2027,,340
