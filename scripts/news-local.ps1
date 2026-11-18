@@ -1,4 +1,4 @@
-# Google News collection (twice a day), run from Owen's PC by a Windows scheduled task.
+# Google News collection (once a day, best-effort), run from Owen's PC by a Windows scheduled task.
 #
 # Why here and not GitHub Actions: from 2026-11-16 Google News answered GitHub's runners
 # with 429/503 on every run, retries included, but served a home connection fine. Owen moved
@@ -67,10 +67,11 @@ try {
     Invoke-GitWithRetry $Runner @("pull", "-q", "--ff-only", "origin", "main") | Out-Null
     Invoke-GitWithRetry $DataRepo @("pull", "-q", "--rebase", "origin", "main") | Out-Null
 
-    # Morning run searches teams with even ids, afternoon run odd ids (half the requests per
-    # run; each team still once a day). Requests are 20-30 seconds apart, so a run takes
-    # about 40-60 minutes; the task's time limit is 2 hours.
-    $part = if ((Get-Date).Hour -lt 12) { "even" } else { "odd" }
+    # One run a day since 2026-11-18 (2:53 PM; Google News limits this connection too, so it
+    # is best-effort and the team-site feeds are the main news source). Even team ids on
+    # even days of the year, odd ids on odd days, so both halves get searched. Requests are
+    # 20-30 seconds apart; the task's time limit is 2 hours.
+    $part = if ((Get-Date).DayOfYear % 2 -eq 0) { "even" } else { "odd" }
     Write-Log "part $part"
 
     Push-Location $Runner
