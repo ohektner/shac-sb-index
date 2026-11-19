@@ -418,6 +418,31 @@ def test_home_away_disagreement_is_reported_not_flipped():
     assert snaps.iloc[0]["home_spread"] == -3
 
 
+def test_snapshots_reversed_from_the_latest_get_no_game_id():
+    # The feed listed Bravo at home before tip, then flipped to Alpha at home (matching
+    # CBBD). The match uses the latest snapshot; the reversed earlier rows must not
+    # carry the game's id, or their home spread would have the wrong sign.
+    games = cbbd.build_games(
+        _deduped(cbbd_game(700, 1, 2, startDate="2026-11-12T00:00:00.000Z", season=2027)), TEAMS
+    )
+    files = [
+        (
+            "odds_1",
+            wrap(
+                "2026-11-11T13:17:00Z",
+                [odds_event("ev7", {"draftkings": 6.5}, home="Bravo Bees", away="Alpha Ants")],
+            ),
+        ),
+        ("odds_2", wrap("2026-11-12T01:17:00Z", [odds_event("ev7", {"draftkings": -4.5})])),
+    ]
+    flat, _ = odds.flatten_snapshots(files)
+    matches = odds.match_events(flat, games, ALIASES)
+    assert matches.iloc[0]["match_type"] == "matched"
+    snaps = odds.attach_game_ids(flat, matches).set_index("home_team")
+    assert pd.isna(snaps.loc["Bravo Bees", "game_id"])
+    assert snaps.loc["Alpha Ants", "game_id"] == 700
+
+
 def test_match_types_unmapped_and_no_game():
     games = cbbd.build_games(_deduped(cbbd_game(1, 1, 2)), TEAMS)  # far from the odds date
     files = [
