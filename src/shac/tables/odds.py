@@ -9,6 +9,11 @@ one day apart. If the only game found has the teams the other way round, that is
 home/away disagreement between the two sources. It is reported (match_type `swapped`)
 and the event's `game_id` is left empty: the book's home spread would have the wrong
 sign for that game, so it must not be used without a person looking at it.
+
+The feed can also reverse home and away for one event between snapshots (seen on
+neutral-site games around tip). The match uses the event's latest snapshot, so any
+snapshot row whose home and away are the other way round from that one gets no
+`game_id`: by the same rule, its home spread has the wrong sign for the game.
 """
 
 from __future__ import annotations
@@ -162,8 +167,19 @@ def match_events(
 
 
 def attach_game_ids(snapshots: pd.DataFrame, matches: pd.DataFrame) -> pd.DataFrame:
-    """Add `game_id` to every snapshot row from the event's match (empty if not matched)."""
+    """Add `game_id` to every snapshot row from the event's match (empty if not matched).
+
+    A row whose home and away are reversed from the event's latest snapshot (the one the
+    match used) gets no `game_id`: its home spread is for the other team.
+    """
+    latest = (
+        snapshots.sort_values("snapshot_at")
+        .drop_duplicates("odds_event_id", keep="last")[["odds_event_id", "home_team", "away_team"]]
+        .rename(columns={"home_team": "latest_home", "away_team": "latest_away"})
+    )
     out = snapshots.merge(matches[["odds_event_id", "game_id"]], on="odds_event_id", how="left")
-    out["game_id"] = out["game_id"].astype("Int64")
+    out = out.merge(latest, on="odds_event_id", how="left")
+    reversed_ = (out["home_team"] == out["latest_away"]) & (out["away_team"] == out["latest_home"])
+    out["game_id"] = out["game_id"].astype("Int64").mask(reversed_)
     out = out[SNAPSHOT_COLUMNS]
     return out.sort_values(["snapshot_at", "odds_event_id", "book"]).reset_index(drop=True)
