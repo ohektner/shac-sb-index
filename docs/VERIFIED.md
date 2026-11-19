@@ -124,3 +124,28 @@ Sources: https://theacc.com/sports/2025/12/29/availability-reporting-mbb.aspx ·
 6. **Odds budget:** the free tier allows about 16 calls a day. Pinnacle would halve that.
 7. **Torvik from Actions:** blocked by a browser check (tested 2026-11-10). The daily snapshot runs from Owen's machine, and the Actions workflow is switched off.
 8. **Availability:** official reports cover conference games in a handful of leagues, through one vendor app with no public feed. ESPN and RotoWire are out.
+
+## Task 1.2 results: are CBBD's lines true closes? (run 2026-11-19)
+
+Run with `uv run python -m shac.tables.backtest_close`, exactly as written in `docs/BACKTEST_CLOSE.md`. Counts and shares only. Our snapshots cover 2026-27 only.
+
+| Test | Draft Kings | Bovada | Pass bar |
+| --- | --- | --- | --- |
+| Tested games | 169 (ok, needs 150) | 157 (ok) | at least 150 |
+| Movers | 124 (ok, needs 40) | 93 (ok) | at least 40 |
+| T1 sign, same sign when abs(close) >= 2 (n) | 99.3% (151) **pass** | 99.3% (147, below 150: WAIT) | at least 99% |
+| T2 near close / near open | 92.7% / 5.6% **CLOSE** | 60.2% / 28.0% **MIXED** | CLOSE: 80% / 10% |
+| T3 within half a point of close | 89.3% **pass** | 76.4% **fail** | at least 80% |
+| T4(a) 3 or more points from close | 1.8% **fail** | 2.5% **fail** | at most 1% |
+| T4(b) changed after final (games) | 0.0% of 716 pass | 0.0% of 607 pass | at most 1% |
+| T5 opens within 1 point of our open (n) | 95.2% (168) pass | 94.8% (155) pass | at least 70% |
+
+| Link | Result | Pass bar |
+| --- | --- | --- |
+| L1 Draft Kings 2026 | mean d +0.094, t = 2.63, n = 2853 | t at least 2.0 |
+| L1 Bovada 2026 | mean d +0.102, t = 2.80, n = 2428 | t at least 2.0 |
+| L2 ESPN BET vs Draft Kings | n = 10 (cannot reach 40); 30.0% near spread, 70.0% near open | at least 40 games, 80% / 10% |
+| L3 ESPN BET 2025 | mean d +0.098, t = 2.15, n = 1092 (needs L2, which cannot pass) | t at least 2.0 |
+| L4 2023 ESPN BET vs teamrankings | 85.5% within half a point, n = 5648 (needs L3) | at least 85% |
+
+**Reading off the rules (not a decision):** Draft Kings is CLOSE on T2 and passes T1 and T3, but fails T4(a) (1.8%, about 3 of 169 games, against a 1% bar). Per the tree, a T4 failure is branch D, and for Draft Kings branch D goes to branch C. L2 can't reach its sample, so branch A is out either way. Call counter for the four held-out seasons: 3,638 calls (36,380 credits) against the 1,900-call cap of one $30 month; 2026 + 2025 alone is 1,876 calls. Choosing the branch, the DECISIONS.md entry and the paid month are Owen's call.
