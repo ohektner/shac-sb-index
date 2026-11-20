@@ -179,7 +179,7 @@ Player names and statuses are short facts, not source text, so this table is pub
 
 ### Private repo
 
-**`odds_snapshots`** (`odds/raw/YYYY/MM/DD/odds_<stamp>.json.gz`). Writer: `shac.snapshots.odds`, 12 times a day. One file per fetch: the full response data as JSON, wrapped with `fetched_at`, the request parameters and the credit counts. Files are never overwritten. A flattened view is built on read:
+**`odds_snapshots`** (`odds/raw/YYYY/MM/DD/odds_<stamp>.json.gz`). Writer: `shac.snapshots.odds`, 7 times a day. One file per fetch: the full response data as JSON, wrapped with `fetched_at`, the request parameters and the credit counts. Files are never overwritten. A flattened view is built on read:
 
 | Column | Type | Notes |
 | --- | --- | --- |
@@ -329,7 +329,7 @@ Workflows never print secrets or raw data, and never run with shell tracing on. 
 
 | Job | Schedule (UTC) | Reads | Writes |
 | --- | --- | --- | --- |
-| Odds snapshot | 7 a day at :17 (13, 16, 19, 21, 23, 1, 3), US books plus Pinnacle | The Odds API | `odds_snapshots`, public status log |
+| Odds snapshot | 7 a day, slots at :17 (13, 16, 19, 21, 23, 1, 3), US books plus Pinnacle. The Worker starts each slot on its next 5-minute tick, so fetch stamps read about :21 | The Odds API | `odds_snapshots`, public status log |
 | Torvik daily snapshot | 11:43 | Barttorvik CSV files | Raw Torvik files, public status log |
 | Snapshot watch | 23:47 and 05:47 | Public status log | Nothing. Fails, and GitHub emails Owen, if the newest scheduled odds slot that is over 3 hours old has no good snapshot |
 | CBBD ingestion (G1) | Nightly | CBBD | `games`, `results`, `player_box` |
