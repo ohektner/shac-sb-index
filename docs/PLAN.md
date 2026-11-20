@@ -8,7 +8,7 @@ Each task lists who owns it, which model that agent runs on, what it depends on 
 
 | Gate | Exit criteria |
 | --- | --- |
-| **G0, urgent** | The odds snapshot job runs on schedule, several times a day, 3 days in a row, writing to the private data repo. |
+| **G0, closed 2026-11-20** | The odds snapshot job runs on schedule, several times a day, 3 days in a row, writing to the private data repo. |
 | **G1, Foundation** | History for 2018-19 through 2025-26 is joined. The team-name map matches 100% of games with no duplicates. The Torvik baseline scorecard runs. The margin model matches or beats the Torvik baseline on held-out seasons, or Torvik's number ships as the model and the README says so. Calibration is fit on training seasons only. Tier cutoffs were committed to PREREGISTRATION.md before the per-tier backtest ran, and the per-tier backtest is reported even if no tier beats 52.4%. The board and ledger update 7 nights unattended, with a morning and a late run. News collection is running. |
 | **G2, AI availability layer** | Reading accuracy 95%+ on about 200 hand-labeled items. Precision 95% on rotation players, checked against box scores. Recall reported. The effect on error vs. the close is measured on games with flagged absences. The accuracy report is drafted. |
 | **G3, Market study** | The line-movement model is tested on held-out games. If Kalshi gives permission, the Kalshi vs. sportsbook-close study is complete (by conference tier, time before tip and volume). If not, G3 is the line-movement model alone, and the README says why. |
