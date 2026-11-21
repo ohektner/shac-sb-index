@@ -2,7 +2,9 @@
 
 How the Torvik baseline and the model are measured on past seasons. The rules are fixed in [PREREGISTRATION.md](PREREGISTRATION.md); this page says where each one lives in the code. Built in task 1.7.
 
-**Status: not yet run on real data.** Task 1.2 is decided (DECISIONS.md, 2026-11-21): branch C, no paid month. The backtest is scored against CBBD's line, which is not a verified close, so:
+**Status: first real-data run 2026-11-21** (results in `scorecard/backtest/`). Pooled distance to the close on the held-out seasons: margin model 2.014, Torvik baseline 2.030, so the model passes metric 2, which is the G1 test (task 1.8's exit check). Metrics 5a, 5b and 6 are empty until task 1.9 fills `cover_prob`.
+
+Task 1.2 is decided (DECISIONS.md, 2026-11-21): branch C, no paid month. The backtest is scored against CBBD's line, which is not a verified close, so:
 
 - Every run writes `lines_note.md` next to the CSVs: the note on the lines, with the current Draft Kings check numbers (`lines_note` in `shac.tables.backtest_close`). It goes on the scorecard page as written.
 - Backtest CLV is not written (`BACKTEST_CLV_REPORTED = False`): no `metric_1_clv.csv`, and no CLV columns in `metric_6_tiers.csv`. CLV comes from live games only.
