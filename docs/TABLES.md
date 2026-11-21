@@ -53,7 +53,7 @@ All timestamps are `TIMESTAMP WITH TIME ZONE` (UTC). Keys are marked **PK**.
 | --- | --- | --- | --- |
 | `own_snapshots` | Median `home_spread` across US books in the last snapshot taken strictly before tip (`snapshot_at < commence_at`; a snapshot exactly at tip is excluded) | Same median in the first snapshot that had the game | `median_us_books` |
 | `pinnacle` | Pinnacle's spread in the last pre-tip snapshot that has Pinnacle for the game (`n_books` = 1) | Pinnacle's first appearance | `pinnacle` |
-| `cbbd` | Draft Kings' `spread` when present, else the median across the other CBBD providers with a spread, **excluding `consensus`** (see Findings); a game whose only line is `consensus` gets no `cbbd` row | Same provider's `spreadOpen` (or the median of the providers' `spreadOpen`) | `draftkings` or `median_cbbd_providers` |
+| `cbbd` | Draft Kings' `spread` when present, else the median across the other CBBD providers with a spread, **excluding `consensus`** (see Findings) and `Bovada` (failed task 1.2, DECISIONS.md 2026-11-21); a game whose only line is `consensus` gets no `cbbd` row | Same provider's `spreadOpen` (or the median of the providers' `spreadOpen`) | `draftkings` or `median_cbbd_providers` |
 
 - US books are the keys listed in `docs/VERIFIED.md` (`US_BOOKS` in `build.py`). Other `eu` books stay in `odds_snapshots` but never enter a close.
 - The tip used is the feed's `commence_at` from the event's most recent snapshot, capped at CBBD's scheduled `tip_at` when that is earlier and not a placeholder (`tip_tbd` false). The feed sometimes moves `commence_at` to the actual start a few minutes late, which would otherwise let a snapshot taken after the scheduled tip count as the close (1 game in the first week, 2026-11-17).

@@ -1,5 +1,7 @@
 # The backtest close: test and decision tree (task 1.2)
 
+**Decided 2026-11-21: branch C, no paid month** (DECISIONS.md; results in VERIFIED.md).
+
 Written 2026-11-12 by the lead, **before task 1.2 has any result.** It fixes the test task 1.2 runs, the thresholds, and what follows from each outcome, so the yardstick can't be chosen after seeing how anything scores against it. The DECISIONS.md entry of 2026-11-12 makes this page part of the record.
 
 **For whoever runs 1.2:** run the tests below exactly, fill in the results table, and read the branch off the rules. Nothing here uses a model or Torvik prediction, and 1.2 must not compute one. If a result fits no rule, stop and ask Owen.

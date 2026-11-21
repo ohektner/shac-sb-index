@@ -17,7 +17,8 @@
 --                  for the game.
 --   cbbd           CBBD's line: Draft Kings when it has one, else the median across the
 --                  other providers, leaving out `consensus` (an aggregate of the other
---                  books, with a few hundred sign-flipped rows; see docs/TABLES.md). A game
+--                  books, with a few hundred sign-flipped rows; see docs/TABLES.md) and
+--                  `Bovada` (failed the task 1.2 tests, DECISIONS.md 2026-11-21). A game
 --                  whose only line is `consensus` gets no cbbd row. CBBD lines carry no timestamp, so close_snapshot_at,
 --                  open_snapshot_at and minutes_before_tip are empty for this source.
 -- Open values come from the FIRST snapshot that had the game (same book rules).
@@ -107,6 +108,7 @@ cbbd_median AS (
     FROM cbbd_lines
     WHERE home_spread IS NOT NULL
       AND provider <> 'consensus'  -- an aggregate of the others; has sign-flipped rows
+      AND provider <> 'Bovada'     -- fails task 1.2 (T3, T4(a); MIXED on T2), DECISIONS.md 2026-11-21
     GROUP BY game_id
 ),
 cbbd_rows AS (
