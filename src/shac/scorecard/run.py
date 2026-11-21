@@ -30,6 +30,7 @@ import duckdb
 import pandas as pd
 
 from shac.model.margin import walk_forward
+from shac.tables.backtest_close import current_lines_note
 from shac.tables.build import REPO_ROOT, query_df, write_parquet
 
 SQL_DIR = REPO_ROOT / "sql" / "scorecard"
@@ -46,8 +47,14 @@ PREDICTION_COLUMNS = ["predictor", "game_id", "pred_margin", "cover_prob"]
 
 # Task 1.2 decides what the backtest closing line is. Until that is written in
 # DECISIONS.md, the command-line run refuses to touch real data, so no result can be seen
-# before the yardstick is fixed. Flip this in the same PR as that DECISIONS.md entry.
-BACKTEST_CLOSE_DECIDED = False
+# before the yardstick is fixed. Decided 2026-11-21: branch C, no purchase (DECISIONS.md).
+BACKTEST_CLOSE_DECIDED = True
+
+# Branch C without a purchase: CBBD's line is not a verified close, so backtest CLV (open
+# to close) is not reported. CLV comes from live games only. The metric still runs (the
+# tests use it); it is left out of what the command-line run writes.
+BACKTEST_CLV_REPORTED = False
+CLV_COLUMNS = ("mean_clv", "n_clv_games", "n_clv_left_out_side_differs")
 
 # Which game_history columns are "the close" and "the open". Backtest seasons only have
 # CBBD's lines. Whether CBBD's line is a true close is task 1.2; until then, backtest
@@ -131,6 +138,17 @@ def score(
     return out
 
 
+def published(outputs: dict[str, pd.DataFrame]) -> dict[str, pd.DataFrame]:
+    """What the command-line run writes: everything, minus backtest CLV when not reported."""
+    if BACKTEST_CLV_REPORTED:
+        return outputs
+    out = {name: df for name, df in outputs.items() if name != "metric_1_clv"}
+    if "metric_6_tiers" in out:
+        tiers = out["metric_6_tiers"]
+        out["metric_6_tiers"] = tiers.drop(columns=[c for c in CLV_COLUMNS if c in tiers])
+    return out
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--data-dir", type=Path, required=True, help="private data repo")
@@ -163,8 +181,13 @@ def main(argv: list[str] | None = None) -> int:
 
     outputs = {"baseline_fit": baseline_fit(game_history, baseline)}
     outputs.update(score(game_history, predictions, args.close_source))
+    outputs = published(outputs)
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
+    note = current_lines_note(args.data_dir)
+    if note is not None:
+        (args.out_dir / "lines_note.md").write_text(note + "\n", encoding="utf-8")
+        print(note)
     for name, df in outputs.items():
         df.to_csv(args.out_dir / f"{name}.csv", index=False, float_format="%.4f")
         print(f"\n{name}")

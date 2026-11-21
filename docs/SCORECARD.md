@@ -2,7 +2,11 @@
 
 How the Torvik baseline and the model are measured on past seasons. The rules are fixed in [PREREGISTRATION.md](PREREGISTRATION.md); this page says where each one lives in the code. Built in task 1.7.
 
-**Status: not yet run on real data.** The first run waits for task 1.2, which decides what the backtest closing line is (see DECISIONS.md, 2026-11-11). Until then the command below prints "Not run" and stops. To switch it on, record the decision in DECISIONS.md and set `BACKTEST_CLOSE_DECIDED = True` in `src/shac/scorecard/run.py` in the same PR.
+**Status: not yet run on real data.** Task 1.2 is decided (DECISIONS.md, 2026-11-21): branch C, no paid month. The backtest is scored against CBBD's line, which is not a verified close, so:
+
+- Every run writes `lines_note.md` next to the CSVs: the note on the lines, with the current Draft Kings check numbers (`lines_note` in `shac.tables.backtest_close`). It goes on the scorecard page as written.
+- Backtest CLV is not written (`BACKTEST_CLV_REPORTED = False`): no `metric_1_clv.csv`, and no CLV columns in `metric_6_tiers.csv`. CLV comes from live games only.
+- Metric 2 still decides G1: both predictors face the same line.
 
 ## Run it
 

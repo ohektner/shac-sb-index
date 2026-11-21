@@ -402,13 +402,29 @@ def test_a_game_predicted_twice_by_one_predictor_is_refused():
         score(history(METRIC_ROWS), twice)
 
 
-def test_the_command_line_run_refuses_until_the_backtest_close_is_decided(tmp_path, capsys):
-    # Task 1.2 decides the closing line. Until then no real number may be produced.
-    # When 1.2 is settled and the flag is flipped, delete this test in the same PR.
-    assert run.BACKTEST_CLOSE_DECIDED is False
-    assert run.main(["--data-dir", str(tmp_path), "--out-dir", str(tmp_path / "out")]) == 1
-    assert "Not run" in capsys.readouterr().out
-    assert not (tmp_path / "out").exists()
+def test_branch_c_without_a_purchase_leaves_backtest_clv_out_of_what_is_written():
+    # DECISIONS.md 2026-11-21: CBBD's line is not a verified close, so open-to-close CLV
+    # is not reported for backtests. Every other metric is written unchanged.
+    assert run.BACKTEST_CLOSE_DECIDED is True
+    assert run.BACKTEST_CLV_REPORTED is False
+    tiers = pd.DataFrame(
+        {
+            "tier": ["pick"],
+            "n_games": [3],
+            "mean_clv": [0.5],
+            "n_clv_games": [2],
+            "n_clv_left_out_side_differs": [1],
+        }
+    )
+    outputs = {
+        "metric_1_clv": pd.DataFrame({"a": [1]}),
+        "metric_6_tiers": tiers,
+        "metric_4_ats": pd.DataFrame({"b": [2]}),
+    }
+    out = run.published(outputs)
+    assert set(out) == {"metric_6_tiers", "metric_4_ats"}
+    assert list(out["metric_6_tiers"].columns) == ["tier", "n_games"]
+    assert out["metric_4_ats"].equals(outputs["metric_4_ats"])
 
 
 # Calibration and tiers. Every game: prediction 5, close -3 (implied home margin 3), so

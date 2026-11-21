@@ -335,10 +335,10 @@ def test_no_close_until_a_snapshot_at_or_after_tip_exists():
     assert close.empty
 
 
-def test_cbbd_close_prefers_draft_kings_else_median_without_consensus():
+def test_cbbd_close_prefers_draft_kings_else_median_without_consensus_or_bovada():
     lines = pd.DataFrame(
         {
-            "game_id": pd.array([1, 1, 1, 2, 2, 2, 2, 3], dtype="Int64"),
+            "game_id": pd.array([1, 1, 1, 2, 2, 2, 2, 3, 4], dtype="Int64"),
             "provider": [
                 "Draft Kings",
                 "Bovada",
@@ -348,10 +348,13 @@ def test_cbbd_close_prefers_draft_kings_else_median_without_consensus():
                 "teamrankings",
                 "consensus",  # sign-flipped on purpose: must not enter the median
                 "consensus",  # the only line for game 3: no cbbd close at all
+                "Bovada",  # failed task 1.2 (DECISIONS.md 2026-11-21): game 4 gets no close
             ],
-            "home_spread": pd.array([-2.0, -7.0, -8.0, 3.0, 4.0, 8.0, -4.0, 5.0], dtype="Float64"),
+            "home_spread": pd.array(
+                [-2.0, -7.0, -8.0, 3.0, 4.0, 8.0, -4.0, 5.0, 1.0], dtype="Float64"
+            ),
             "home_spread_open": pd.array(
-                [-1.0, None, None, 2.0, None, 6.0, -9.0, None], dtype="Float64"
+                [-1.0, None, None, 2.0, None, 6.0, -9.0, None, 1.0], dtype="Float64"
             ),
         }
     )
@@ -362,10 +365,11 @@ def test_cbbd_close_prefers_draft_kings_else_median_without_consensus():
     assert by_game.loc[1, "close_home_spread"] == -2.0
     assert by_game.loc[1, "open_home_spread"] == -1.0
     assert by_game.loc[2, "basis"] == "median_cbbd_providers"
-    assert by_game.loc[2, "close_home_spread"] == 4.0
-    assert by_game.loc[2, "n_books"] == 3
-    assert by_game.loc[2, "open_home_spread"] == 4.0
+    assert by_game.loc[2, "close_home_spread"] == 6.0  # median of ESPN BET 4, teamrankings 8
+    assert by_game.loc[2, "n_books"] == 2
+    assert by_game.loc[2, "open_home_spread"] == 6.0
     assert 3 not in by_game.index
+    assert 4 not in by_game.index
     assert by_game["close_snapshot_at"].isna().all()
 
 

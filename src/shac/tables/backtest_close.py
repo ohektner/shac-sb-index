@@ -7,8 +7,9 @@ T1-T3, T4(a), T5 and the links L1-L4 are SQL (sql/checks/backtest_close.sql) ove
 tables, so run `shac.tables.build` first. T4(b) reads the raw CBBD `lines` files, because the
 tables keep only the latest copy of each line.
 
-Prints counts and shares only. It reads no branch off the results and decides nothing: the
-rules in docs/BACKTEST_CLOSE.md do that, and the DECISIONS.md entry needs Owen's sign-off.
+Prints counts and shares only. The branch was decided once, on 2026-11-21 (DECISIONS.md:
+branch C, no purchase). These tests keep running only to refresh the numbers in the
+scorecard's note on its lines (`lines_note`); they do not reopen the branch.
 """
 
 from __future__ import annotations
@@ -105,6 +106,39 @@ def sample_status(tests: pd.DataFrame) -> list[str]:
     return lines
 
 
+def lines_note(tests: pd.DataFrame, provider: str = "Draft Kings") -> str:
+    """The scorecard's note on its lines, with the current check numbers filled in.
+
+    Branch C without a purchase (DECISIONS.md, 2026-11-21): the backtest is scored against
+    CBBD's line, which is not a verified close. The note says how close it was where we
+    could check. Re-run on every scorecard run, so the numbers follow the data whichever
+    way they move; the branch itself stays fixed.
+    """
+    row = tests.set_index("provider").loc[provider]
+    n, movers = int(row["tested_games"]), int(row["movers"])
+    t3_n = round(n * float(row["t3_exact_pct"]) / 100)
+    return (
+        "**About the lines.** Lines come from CBBD and are not verified closing lines. "
+        f"Where we could check them against our own pre-tip snapshots ({provider}, "
+        f"2026-27, {n} games), CBBD's line was within half a point of "
+        f"the close in {row['t3_exact_pct']:.0f}% of games ({t3_n} of {n}), "
+        f"and nearer the close than the open in {row['t2_near_close_pct']:.0f}% of the "
+        f"{movers} games where the line moved. Earlier seasons can't be checked "
+        "directly. Results are scored against CBBD's line, which may be slightly earlier "
+        "than a close. Both the model and Torvik face the same line."
+    )
+
+
+def current_lines_note(data_dir: Path) -> str | None:
+    """lines_note from the built tables, or None if they are missing."""
+    con, missing = open_tables(data_dir / "tables")
+    if missing:
+        return None
+    results = run_sql(con, SQL_PATH.read_text(encoding="utf-8"))
+    con.close()
+    return lines_note(results["tests_by_provider"])
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--data-dir", type=Path, required=True, help="private data repo")
@@ -128,6 +162,9 @@ def main(argv: list[str] | None = None) -> int:
     print("## sample size (docs/BACKTEST_CLOSE.md)")
     for line in sample_status(results["tests_by_provider"]):
         print(line)
+    print()
+    print("## scorecard lines note (current numbers)")
+    print(lines_note(results["tests_by_provider"]))
     return 0
 
 

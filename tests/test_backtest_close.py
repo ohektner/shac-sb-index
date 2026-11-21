@@ -5,6 +5,7 @@ from __future__ import annotations
 import duckdb
 import pandas as pd
 
+from shac.tables import backtest_close as bc
 from shac.tables.backtest_close import SQL_PATH, run_sql, sample_status, t4b
 
 
@@ -99,3 +100,22 @@ def test_sql_blocks_run_and_score_a_made_up_game():
     assert sample_status(out["tests_by_provider"]) == [
         "Draft Kings: tested games 1/150 (WAIT), movers 1/40 (WAIT)"
     ]
+
+
+def test_lines_note_fills_in_the_current_draft_kings_numbers():
+    # The scorecard's note on its lines (DECISIONS.md 2026-11-21) is rebuilt from the
+    # current check numbers on every run, whichever way they move.
+    tests = pd.DataFrame(
+        {
+            "provider": ["Bovada", "Draft Kings"],
+            "tested_games": [192, 209],
+            "movers": [109, 155],
+            "t2_near_close_pct": [61.5, 91.0],
+            "t3_exact_pct": [78.1, 88.5],
+        }
+    )
+    note = bc.lines_note(tests)
+    assert "Draft Kings, 2026-27, 209 games" in note
+    assert "within half a point of the close in 88% of games (185 of 209)" in note
+    assert "nearer the close than the open in 91% of the 155 games" in note
+    assert "not verified closing lines" in note
