@@ -149,3 +149,30 @@ Run with `uv run python -m shac.tables.backtest_close`, exactly as written in `d
 | L4 2023 ESPN BET vs teamrankings | 85.5% within half a point, n = 5648 (needs L3) | at least 85% |
 
 **Reading off the rules (not a decision):** Draft Kings is CLOSE on T2 and passes T1 and T3, but fails T4(a) (1.8%, about 3 of 169 games, against a 1% bar). Per the tree, a T4 failure is branch D, and for Draft Kings branch D goes to branch C. L2 can't reach its sample, so branch A is out either way. Call counter for the four held-out seasons: 3,638 calls (36,380 credits) against the 1,900-call cap of one $30 month; 2026 + 2025 alone is 1,876 calls. Choosing the branch, the DECISIONS.md entry and the paid month are Owen's call.
+
+## Task 1.2 results at 200 tested games: the one fixed read (run 2026-11-21)
+
+Owen's decision of 2026-11-19 (issue #65): read once, when Draft Kings first reaches 200 tested games. Draft Kings has 209. Same command and tests as above, exactly as written in `docs/BACKTEST_CLOSE.md`. Counts and shares only. This is the only read; it is not repeated.
+
+| Test | Draft Kings | Bovada | Pass bar |
+| --- | --- | --- | --- |
+| Tested games | 209 (ok) | 192 (ok) | at least 150 |
+| Movers | 155 (ok) | 109 (ok) | at least 40 |
+| T1 sign, same sign when abs(close) >= 2 (n) | 99.4% (181; 1 miss) **pass** | 100.0% (177) **pass** | at least 99% |
+| T2 near close / near open | 91.0% / 7.7% **CLOSE** | 61.5% / 28.4% **MIXED** | CLOSE: 80% / 10% |
+| T3 within half a point of close | 88.5% (185 of 209) **pass** | 78.1% (150 of 192) **fail** | at least 80% |
+| T4(a) 3 or more points from close | 1.9% (4 of 209) **fail** | 1.6% (3 of 192) **fail** | at most 1% |
+| T4(b) changed after final (games) | 0.0% of 805 pass | 0.0% of 688 pass | at most 1% |
+| T5 opens within 1 point of our open (n) | 96.1% (207) pass | 95.3% (190) pass | at least 70% |
+
+| Link | Result | Pass bar |
+| --- | --- | --- |
+| L1 Draft Kings 2026 | mean d +0.094, t = 2.63, n = 2853 | t at least 2.0 |
+| L1 Bovada 2026 | mean d +0.102, t = 2.80, n = 2428 | t at least 2.0 |
+| L2 ESPN BET vs Draft Kings | n = 10 (cannot reach 40); 30.0% near spread, 70.0% near open | at least 40 games, 80% / 10% |
+| L3 ESPN BET 2025 | mean d +0.098, t = 2.15, n = 1092 (needs L2, which cannot pass) | t at least 2.0 |
+| L4 2023 ESPN BET vs teamrankings | 85.5% within half a point, n = 5648 (needs L3) | at least 85% |
+
+Draft Kings' 4 games 3 or more points from our close: 372790 (+1.5 vs our -1.5, a pick'em bouncing across zero), 375150 (+1.5 vs -1.5, the same pattern), 377998 (-44.5 vs -47.5, a ~45-point game), 375160 (CBBD +6.5 vs our -6.5; CBBD's own opening line was -5.5, so CBBD's number has the opposite sign here, and it is also the one T1 miss).
+
+**Reading off the rules (not a decision):** Draft Kings passes T1 and T3, is CLOSE on T2, passes T4(b), but fails T4(a) (1.9%, 4 of 209; the bar allows 2). The doc says a T4 failure is branch D, and for Draft Kings branch D goes to **branch C**. Branch A is out either way (L2 cannot reach 40 games). Bovada fails T3 and T4(a) and is MIXED on T2. Call counter for the four held-out seasons (2023 to 2026): 3,638 calls (36,380 credits) against the 1,900-call cap of one $30 month; 2026 + 2025 alone is 1,876 calls. Choosing the branch, the DECISIONS.md entry and any paid month are Owen's call.
