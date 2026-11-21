@@ -14,6 +14,11 @@ All the logic is DuckDB SQL in sql/scorecard/. This module only wires the querie
 2. scored_games.sql lines every prediction up with its result and its lines.
 3. Each metric_*.sql file summarizes that per season and pooled.
 
+Task 1.9 adds calibration (shac.model.calibration, docs/CALIBRATION.md): before scoring,
+each predictor's `cover_prob` is filled from a slope fit on earlier seasons only, and
+three more files are written: calibration_fit, calibration_check and
+calibration_carryover.
+
 The metric queries read a generic `predictions` table (predictor, game_id, pred_margin,
 cover_prob), so the margin model (task 1.8) is scored by the same SQL as the baseline.
 
@@ -29,7 +34,8 @@ from pathlib import Path
 import duckdb
 import pandas as pd
 
-from shac.model.margin import walk_forward
+from shac.model.calibration import FIT_COLUMNS, apply_cover_prob, calibrate_all, isotonic_check
+from shac.model.margin import build_features, season_roles, walk_forward
 from shac.tables.backtest_close import current_lines_note
 from shac.tables.build import REPO_ROOT, query_df, write_parquet
 
@@ -62,6 +68,15 @@ CLV_COLUMNS = ("mean_clv", "n_clv_games", "n_clv_left_out_side_differs")
 CLOSE_SOURCES = {
     "cbbd": ("cbbd_close_home_spread", "cbbd_open_home_spread"),
 }
+
+# The live season. Its slope is fit too (on every earlier eligible season) and frozen in
+# the model parameters file (docs/LEDGER.md); no backtest game is scored with it.
+LIVE_SEASON = 2027
+
+# BACKTEST_CLOSE.md test T5: CBBD opens are within 1 point of our own open in 96% of tested
+# games (VERIFIED.md, 2026-11-21; bar 70%), so they are usable. That switches on the
+# backtest half of the carry-over check (docs/CALIBRATION.md, section 6).
+CBBD_OPENS_USABLE = True
 
 # Output name -> SQL file. The names are the CSV file names.
 METRICS = {
@@ -121,6 +136,18 @@ def score(
             f"{int(repeated.sum())} repeated (predictor, game_id) rows in predictions; "
             "a game must be scored once per predictor"
         )
+    con = scored_connection(game_history, predictions, close_source)
+    out = {name: query_df(con, read_sql(sql_file)) for name, sql_file in METRICS.items()}
+    con.close()
+    for df in out.values():
+        df.insert(0, "close_source", close_source)
+    return out
+
+
+def scored_connection(
+    game_history: pd.DataFrame, predictions: pd.DataFrame, close_source: str = "cbbd"
+) -> duckdb.DuckDBPyConnection:
+    """A DuckDB connection with the graded_all and scored views built."""
     close_col, open_col = CLOSE_SOURCES[close_source]
     con = duckdb.connect()
     con.register("game_history", game_history)
@@ -131,10 +158,73 @@ def score(
         f"{open_col} AS open_home_spread FROM game_history"
     )
     con.execute(read_sql("scored_games.sql"))
-    out = {name: query_df(con, read_sql(sql_file)) for name, sql_file in METRICS.items()}
+    return con
+
+
+def calibrated_seasons() -> list[int]:
+    """Every scored season (held out and 2020-21), then the live season."""
+    roles = season_roles()
+    scored = roles.loc[roles["role"].isin(["held_out", "excluded"]), "season"]
+    return [*(int(s) for s in scored), LIVE_SEASON]
+
+
+def calibrate_predictions(
+    game_history: pd.DataFrame, predictions: pd.DataFrame, close_source: str = "cbbd"
+) -> tuple[pd.DataFrame, pd.DataFrame, dict]:
+    """Fit each predictor's slope per season and fill `cover_prob` (CALIBRATION.md 2-4).
+
+    Returns the predictions with cover_prob filled, the calibration_fit table, and each
+    fit's games (for the isotonic check).
+    """
+    close_col, _ = CLOSE_SOURCES[close_source]
+    features = build_features(game_history)
+    lines = game_history[["game_id", close_col]].rename(columns={close_col: "close_home_spread"})
+    fits, games_by_fit = calibrate_all(features, lines, calibrated_seasons())
+    slopes = {
+        (r.predictor, int(r.scored_season)): (None if pd.isna(r.slope_b) else float(r.slope_b))
+        for r in fits.itertuples()
+    }
+    season_of = game_history.set_index("game_id")["season"]
+    return apply_cover_prob(predictions, lines, season_of, slopes), fits, games_by_fit
+
+
+def calibration_check(
+    game_history: pd.DataFrame,
+    predictions: pd.DataFrame,
+    games_by_fit: dict,
+    close_source: str = "cbbd",
+) -> pd.DataFrame:
+    """calibration_check.csv: logistic vs isotonic Brier on the decided scored games."""
+    con = scored_connection(game_history, predictions, close_source)
+    rows = query_df(
+        con,
+        "SELECT predictor, scope, season, abs(pred_margin - close_margin) AS x, "
+        "CASE WHEN ats_result = 'win' THEN 1 ELSE 0 END AS covered, cover_prob "
+        "FROM scored WHERE cover_prob IS NOT NULL AND ats_result IN ('win', 'loss')",
+    )
     con.close()
-    for df in out.values():
-        df.insert(0, "close_source", close_source)
+    return isotonic_check(rows, games_by_fit)
+
+
+def calibration_carryover(
+    game_history: pd.DataFrame,
+    predictions: pd.DataFrame,
+    fits: pd.DataFrame,
+    close_source: str = "cbbd",
+) -> pd.DataFrame:
+    """calibration_carryover.csv: the reliability table on edges against CBBD's open.
+
+    Only when T5 passed (CBBD_OPENS_USABLE); otherwise the file has its columns, no rows.
+    """
+    con = scored_connection(game_history, predictions, close_source)
+    slopes = fits.loc[fits["status"] == "fit", ["predictor", "scored_season", "slope_b"]]
+    con.register("slopes", slopes.rename(columns={"scored_season": "season"}))
+    con.execute(read_sql("carryover_open.sql"))
+    sql = read_sql("metric_5b_reliability.sql")
+    if not CBBD_OPENS_USABLE:
+        sql = sql.replace("FROM scored", "FROM (SELECT * FROM scored WHERE FALSE)")
+    out = query_df(con, sql)
+    con.close()
     return out
 
 
@@ -170,17 +260,32 @@ def main(argv: list[str] | None = None) -> int:
     con.close()
 
     baseline = baseline_predictions(game_history)
-    write_parquet(baseline, args.data_dir / "tables" / "baseline_predictions.parquet")
-
     # The margin model (task 1.8), walk-forward, scored by the same SQL on the same games.
     model, _ = walk_forward(game_history)
-    write_parquet(model, args.data_dir / "tables" / "model_predictions.parquet")
     predictions = pd.concat(
         [baseline[PREDICTION_COLUMNS], model[PREDICTION_COLUMNS]], ignore_index=True
     )
 
+    # Calibration (task 1.9): fill cover_prob before scoring.
+    predictions, fits, games_by_fit = calibrate_predictions(
+        game_history, predictions, args.close_source
+    )
+    filled = predictions.set_index(["predictor", "game_id"])["cover_prob"]
+    for frame in (baseline, model):
+        keys = pd.MultiIndex.from_arrays([frame["predictor"], frame["game_id"]])
+        frame["cover_prob"] = filled.reindex(keys).to_numpy()
+    write_parquet(baseline, args.data_dir / "tables" / "baseline_predictions.parquet")
+    write_parquet(model, args.data_dir / "tables" / "model_predictions.parquet")
+
     outputs = {"baseline_fit": baseline_fit(game_history, baseline)}
     outputs.update(score(game_history, predictions, args.close_source))
+    outputs["calibration_fit"] = fits[FIT_COLUMNS]
+    outputs["calibration_check"] = calibration_check(
+        game_history, predictions, games_by_fit, args.close_source
+    )
+    outputs["calibration_carryover"] = calibration_carryover(
+        game_history, predictions, fits, args.close_source
+    )
     outputs = published(outputs)
 
     args.out_dir.mkdir(parents=True, exist_ok=True)

@@ -60,3 +60,15 @@ Every metric has a row per season (`scope` = the season) and a `pooled` row for 
 ## The model's rows (task 1.8)
 
 The run fits the margin model walk-forward ([MODEL.md](MODEL.md)) and hands `score` its rows next to the baseline's (`predictor`, `game_id`, `pred_margin`, `cover_prob`). The same SQL scores both, on the games both predict. One row per predictor per game; a repeat is refused.
+
+## Calibration and tiers (task 1.9)
+
+Built from [CALIBRATION.md](CALIBRATION.md); the code is `src/shac/model/calibration.py`. Before scoring, each predictor's `cover_prob` is filled as `1 / (1 + exp(-b × |edge|))`, with `edge` = prediction minus the close's implied margin. There is one slope `b` per predictor per scored season, fit only on earlier seasons (never 2020-21), using leave-one-season-out margins. That fills metrics 5a, 5b and 6. Three more files:
+
+- `calibration_fit.csv`: one row per predictor per season (2021, 2023 to 2026, and the live 2027 slope). It gives the slope, the edges where Lean (53%) and Pick (56%) start, the counts left out (no close, no side, push) and `sigma`. `not_fit` means fewer than 2 fit seasons or 5,000 games.
+- `calibration_check.csv`: Brier score of the logistic curve against an isotonic curve and a coin flip, plus how many games would change tier. Shown only; the logistic curve is the one used.
+- `calibration_carryover.csv`: the reliability table on edges against CBBD's **open**, for held-out games that have one. It's on because test T5 passed (`CBBD_OPENS_USABLE`). It changes no tier.
+
+The reliability table (`metric_5b_reliability`) now has `n_wins`, a 95% Wilson interval and `thin`. A group with fewer than 100 decided games keeps its counts and interval, but its `actual_cover_rate` is left empty.
+
+**Branch C note:** the slopes are fit on edges against CBBD's line, which is an earlier line, not a close, in every season (BACKTEST_CLOSE.md). The calibration carry-over caveat in CALIBRATION.md applies to the fit too. The scorecard page says so.
