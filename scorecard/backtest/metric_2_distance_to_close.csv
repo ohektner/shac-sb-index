@@ -1,0 +1,13 @@
+close_source,predictor,scope,n_games,mean_abs_distance_to_close,n_left_out_no_close
+cbbd,margin_model,2021,3924,2.2931,20
+cbbd,margin_model,2023,5715,1.8895,0
+cbbd,margin_model,2024,5304,1.9599,422
+cbbd,margin_model,2025,5437,1.9208,327
+cbbd,margin_model,2026,5735,2.2766,16
+cbbd,margin_model,pooled,22191,2.0140,765
+cbbd,torvik_baseline,2021,3924,2.2907,20
+cbbd,torvik_baseline,2023,5715,1.8902,0
+cbbd,torvik_baseline,2024,5304,1.9609,422
+cbbd,torvik_baseline,2025,5437,1.9442,327
+cbbd,torvik_baseline,2026,5735,2.3146,16
+cbbd,torvik_baseline,pooled,22191,2.0300,765
