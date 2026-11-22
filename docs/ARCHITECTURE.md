@@ -119,7 +119,7 @@ Test: every team name in every source for every season resolves to exactly one `
 | `close_home_spread` | float | Median across books in the last snapshot before tip |
 | `close_snapshot_at` | timestamp, nullable | Fetch time of that snapshot; null for `cbbd`, which has no timestamps |
 | `minutes_before_tip` | int, nullable | How stale our "close" is; null for `cbbd` |
-| `basis` | text | How the close was formed: `median_us_books`, `pinnacle`, `draftkings` or `median_cbbd_providers` |
+| `basis` | text | How the close was formed: `median_us_books`, `pinnacle`, `draftkings` or `median_cbbd_providers`; `dropped_books_disagree` when a `cbbd` line was dropped (close and open empty; TABLES.md, "Line checks") |
 | `n_books` | int | Books in the median |
 | `open_home_spread` | float, nullable | Median in the first snapshot that had the game |
 | `open_snapshot_at` | timestamp, nullable | |
@@ -239,7 +239,7 @@ Each run also appends one row to `data/status/odds_snapshot_log.csv` in the publ
 | `ratings_source`, `rating_date`, `ratings_as_of`, `file_n_teams`, `file_mean_tempo` | Feature | The ratings file used: the latest of the game's season with `as_of < tip_at`. `file_mean_tempo` is the mean `adj_tempo` of every team in that file |
 | `home_adj_o`, `home_adj_d`, `home_adj_tempo`, `home_barthag`, `home_rank`, and the same for `away_` | Feature | Both teams from that one file (same source, date and `as_of`, so two pulls on one date never mix). A team missing from it gets empty ratings, never an older file |
 | `status`, `home_points`, `away_points`, `home_margin`, `overtimes` | Label | From `games` (status is only final after the game) and `results` |
-| `cbbd_close_home_spread`, `cbbd_open_home_spread`, `cbbd_close_basis`, `own_close_home_spread`, `pinnacle_close_home_spread` | Benchmark | From `closing_lines`. Never a feature (rule 5) |
+| `cbbd_close_home_spread`, `cbbd_open_home_spread`, `cbbd_close_basis`, `own_close_home_spread`, `pinnacle_close_home_spread` | Benchmark | From `closing_lines`. Never a feature (rule 5). The CBBD close and open are emptied, with `cbbd_close_basis` = `dropped_wrong_team`, when the line looks to be on the wrong team; that check reads the features but never the result (TABLES.md, "Line checks") |
 
 The column groups are listed in `src/shac/tables/history.py`; only feature columns may feed a prediction.
 

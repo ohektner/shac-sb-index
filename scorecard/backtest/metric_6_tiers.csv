@@ -1,1 +1,5 @@
 close_source,predictor,scope,tier,n_calls,wins,losses,pushes,win_pct,wilson95_low,wilson95_high,gap_to_break_even,n_left_out_no_close_or_side
+cbbd,margin_model,2024,lean,1,1,0,0,1.0000,0.2065,1.0000,0.4760,0
+cbbd,margin_model,pooled,lean,1,1,0,0,1.0000,0.2065,1.0000,0.4760,0
+cbbd,torvik_baseline,2024,lean,1,1,0,0,1.0000,0.2065,1.0000,0.4760,0
+cbbd,torvik_baseline,pooled,lean,1,1,0,0,1.0000,0.2065,1.0000,0.4760,0

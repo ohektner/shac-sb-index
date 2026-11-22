@@ -101,4 +101,9 @@ def history_counts(history: pd.DataFrame) -> dict[str, int]:
         "file_two_plus_days_old": int((age >= 2).sum()),
         "with_result": int(history["home_margin"].notna().sum()),
         "with_cbbd_close": int(history["cbbd_close_home_spread"].notna().sum()),
+        # Line checks (DECISIONS.md 2026-11-22): CBBD lines dropped as unusable.
+        "cbbd_dropped_books_disagree": int(
+            (history["cbbd_close_basis"] == "dropped_books_disagree").sum()
+        ),
+        "cbbd_dropped_wrong_team": int((history["cbbd_close_basis"] == "dropped_wrong_team").sum()),
     }
