@@ -8,7 +8,12 @@
 -- A 'below 50%' group appears only if something falls under 50%, which shouldn't happen
 -- (cover_prob is for the predictor's own side) and must not be hidden.
 --
--- A predictor with no cover_prob yet (the baseline, until task 1.9) returns no rows.
+-- Task 1.9 adds (docs/CALIBRATION.md, section 6): n_wins and a 95% Wilson interval on the
+-- actual rate (z = 1.96, the same formula as metric_6_tiers.sql; empty with no decided
+-- games), and `thin`: a group with fewer than 100 decided games keeps its row, counts,
+-- interval and predicted rate, but its actual_cover_rate is left empty.
+--
+-- A predictor with no cover_prob returns no rows.
 --
 -- Reads: scored (sql/scorecard/scored_games.sql).
 
@@ -40,10 +45,29 @@ summary AS (
         scope,
         group_order,
         count(*) AS n_games,
+        count(*) FILTER (WHERE ats_result = 'win') AS n_wins,
         avg(cover_prob) AS predicted_cover_rate,
         avg(CASE WHEN ats_result = 'win' THEN 1.0 ELSE 0.0 END) AS actual_cover_rate
     FROM grouped
     GROUP BY predictor, scope, group_order
+),
+rates AS (
+    SELECT *, actual_cover_rate AS p, CAST(n_games AS DOUBLE) AS n, 1.96 AS z FROM summary
+),
+intervals AS (
+    SELECT
+        predictor,
+        scope,
+        group_order,
+        n_games,
+        n_wins,
+        predicted_cover_rate,
+        actual_cover_rate,
+        (p + z * z / (2 * n) - z * sqrt(p * (1 - p) / n + z * z / (4 * n * n)))
+            / (1 + z * z / n) AS wilson95_low,
+        (p + z * z / (2 * n) + z * sqrt(p * (1 - p) / n + z * z / (4 * n * n)))
+            / (1 + z * z / n) AS wilson95_high
+    FROM rates
 ),
 wanted AS (
     -- Every predictor x scope that has any calibrated game, times the fixed groups.
@@ -57,9 +81,13 @@ SELECT
     w.group_order,
     w.cover_prob_group,
     coalesce(s.n_games, 0) AS n_games,
+    coalesce(s.n_wins, 0) AS n_wins,
     s.predicted_cover_rate,
-    s.actual_cover_rate
+    CASE WHEN coalesce(s.n_games, 0) >= 100 THEN s.actual_cover_rate END AS actual_cover_rate,
+    s.wilson95_low,
+    s.wilson95_high,
+    coalesce(s.n_games, 0) < 100 AS thin
 FROM wanted AS w
-LEFT JOIN summary AS s USING (predictor, scope, group_order)
+LEFT JOIN intervals AS s USING (predictor, scope, group_order)
 WHERE w.group_order > 0 OR s.n_games IS NOT NULL
 ORDER BY w.predictor, w.scope, w.group_order;

@@ -481,13 +481,19 @@ def test_reliability_table(cal_metrics):
     groups = ["below 50%", "50-52%", "52-54%", "54-56%", "56-58%", "58-60%", "60%+"]
     assert list(m.index) == groups
     assert m["n_games"].tolist() == [1, 2, 2, 1, 3, 0, 1]
-    assert pd.isna(m.loc["58-60%", "actual_cover_rate"])
+    assert m["n_wins"].tolist() == [0, 1, 2, 0, 2, 0, 1]
     assert m.loc["50-52%", "predicted_cover_rate"] == pytest.approx(0.51)
-    assert m.loc["50-52%", "actual_cover_rate"] == pytest.approx(0.5)
     assert m.loc["52-54%", "predicted_cover_rate"] == pytest.approx(0.525)
-    assert m.loc["52-54%", "actual_cover_rate"] == pytest.approx(1.0)
     assert m.loc["56-58%", "predicted_cover_rate"] == pytest.approx((0.56 + 0.57 + 0.57) / 3)
-    assert m.loc["56-58%", "actual_cover_rate"] == pytest.approx(2 / 3)
+    # Every group here has under 100 decided games: thin, so the actual rate is left
+    # empty (CALIBRATION.md, section 6) while the counts and interval stay.
+    assert m["thin"].all()
+    assert m["actual_cover_rate"].isna().all()
+    low, high = wilson(2, 3)
+    assert m.loc["56-58%", "wilson95_low"] == pytest.approx(low)
+    assert m.loc["56-58%", "wilson95_high"] == pytest.approx(high)
+    # An empty group has no interval.
+    assert pd.isna(m.loc["58-60%", "wilson95_low"])
 
 
 def wilson(wins: int, n: int, z: float = 1.96) -> tuple[float, float]:

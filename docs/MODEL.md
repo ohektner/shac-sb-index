@@ -76,3 +76,7 @@ Two caveats. The standard errors treat games as independent, but a season's pred
 - The feature query reads no score and no line. A test blanks them all and checks that no input moves.
 - A season's predictions don't change when its own or any later results are rewritten, or when every line is rewritten. Tests check both, and that earlier results do move the fit.
 - Rest days read the status of games that tipped earlier, and nothing else from the label columns. A game's own status, a later game's, or a game at the same tip time can't change it (tested). Live, a just-cancelled earlier game may still read as scheduled, so the rest input would need a point-in-time status before it could ship. It is not in the model.
+
+## Calibration (task 1.9)
+
+The margin model's predicted margin becomes a cover probability in `shac.model.calibration` (spec: [CALIBRATION.md](CALIBRATION.md)). The model itself is unchanged: calibration only reads its predictions. For a scored season S, the fit seasons are `training_seasons(S)`. Each fit season's margins come from `leave_one_season_out` on the other fit seasons, so the slope never sees a margin made with that game's own season. The Torvik baseline gets the same treatment through `baseline_leave_one_season_out`. If the two predictors' fit counts ever differ, the run stops (`calibrate_all`). The live 2027 slope is fit on every eligible season through 2026 and is frozen for the season (task 1.10 stores it).
