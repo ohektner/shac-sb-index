@@ -32,10 +32,10 @@ Every metric is reported for the model and for the Torvik baseline, per season a
 
 **Which closing line.** The primary close is the median of the US books in our last snapshot before tip, because that's what the backtest seasons have. For live 2026-27 games, CLV and distance to the close are also reported against Pinnacle's close, as a second row. The primary close doesn't change. (Added 2026-11-10, before any live results existed.)
 
-1. **CLV in points.** For each priced game, take the side the model implied at pricing. CLV is how far the line moved toward that side between pricing and the close: `side × (close_implied_margin − priced_implied_margin)`, where side is +1 for home and −1 for away, and an implied margin is `−home_spread`. Positive is good. Reported as the mean with a 95% confidence interval and the share of games with positive CLV. Backtest seasons use open-to-close. A backtest game with no opening line is left out of CLV only, and the number left out is reported.
+1. **CLV in points.** For each priced game, take the side the model implied at pricing. CLV is how far the line moved toward that side between pricing and the close: `side × (close_implied_margin − priced_implied_margin)`, where side is +1 for home and −1 for away, and an implied margin is `−home_spread`. Positive is good. Reported as the mean with a 95% confidence interval and the share of games with positive CLV. Backtest seasons use open-to-close. A backtest game with no opening line is left out of CLV only, and the number left out is reported. (Changed 2026-11-22, [EARLY_LINE.md](EARLY_LINE.md): live, "at pricing" means the game's first priced row, and its mean CLV is the headline.)
 2. **Distance to the close.** Mean absolute difference between the predicted margin and the closing line's implied margin. This is the primary accuracy measure, and the one used for "matches or beats Torvik" at G1: the model passes if its pooled distance on the held-out seasons is no larger than the baseline's.
 3. **Error vs. results.** Mean absolute error of the predicted margin against the final margin, shown next to the closing line's own error. Reported, but game results are noisy enough that small differences mean little.
-4. **ATS at −110.** Record and win % of the model's side against the line at pricing. Pushes are counted separately and left out of the win %. Reported, not trusted.
+4. **ATS at −110.** Record and win % of the model's side against the line at pricing (live: the first priced row; EARLY_LINE.md). Pushes are counted separately and left out of the win %. Reported, not trusted.
 5. **Calibration.** Brier score of `cover_prob`, and a reliability table: games grouped by predicted cover probability (50-52%, 52-54%, 54-56%, 56-58%, 58-60%, 60%+), with the predicted and actual cover rate and the count in each group.
 6. **Per-tier record.** For Pick and for Lean: number of calls, win %, a 95% Wilson confidence interval, the gap to the 52.4% break-even and mean CLV. The interval is always shown, so a small sample reads as small.
 
@@ -45,6 +45,7 @@ If no tier beats 52.4% in the backtest, the scorecard says so plainly. Picks are
 
 - **Cover probability is calibrated,** not the raw Φ(edge / σ), which overstates confidence.
 - **Method:** logistic regression of "the model's side covered" on the size of the edge in points, with no intercept shift by season. It is fit on out-of-sample predictions from the training seasons only. For test season S, the training seasons are the eligible seasons before S. Each training season's edges come from a margin model fit on the other training seasons (leave one season out), so no game's edge comes from a model that saw that game, and nothing from season S or later is used. The margin model that prices season S itself is fit on all the training seasons.
+- **Which line the edge is measured against** (changed 2026-11-22, [EARLY_LINE.md](EARLY_LINE.md)): the early line. In backtests that's CBBD's open, with ratings known the evening before; live, it's the ledger row's own line.
 - Isotonic regression is reported next to it as a check. The logistic curve is the one used for tiers unless a DECISIONS.md entry changes that before the per-tier results are seen.
 - Pushes are left out of the fit.
 - **σ:** starts at 10.3 points (the spread of final margins around the closing line in a published 83,000-game study). It is re-fit on training seasons only. σ is used for the Kalshi conversion and for reporting, not for tiers.
@@ -59,7 +60,7 @@ If no tier beats 52.4% in the backtest, the scorecard says so plainly. Picks are
 
 - **Kalshi check:** a Pick must also beat the Kalshi price plus fees when a matching Kalshi line exists. Kalshi data is on hold pending written permission, so this check is inactive until a DECISIONS.md entry turns it on. Backtests don't apply it.
 - **Questionable-player cap:** a game with a rotation player (top 8 by minutes) listed as questionable is capped at Lean. This starts when the availability layer goes live in G2. Backtests don't apply it.
-- **Which run is scored:** the last ledger row for the game with `priced_at` before tip-off. Earlier rows stay on record.
+- **Which run is scored** (changed 2026-11-22, [EARLY_LINE.md](EARLY_LINE.md)): a game's call is its **first** ledger row that reaches a tier, with `priced_at` before tip-off. Later rows never change it. Every other per-game metric uses the game's first priced row. *(Was: the last ledger row before tip-off.)*
 - The line a call is scored against is the line recorded in that ledger row.
 
 ## AI availability layer bars

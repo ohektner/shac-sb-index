@@ -57,19 +57,20 @@ Formats are unchanged from the 2026-11-11 entry: UTC `YYYY-MM-DDTHH:MM:SSZ`, flo
 - A new model or curve is a new file (`v2.json`) with a dated DECISIONS.md entry, used only for games priced after it. A test fails if a parameters file named in any ledger row no longer hashes to that row's `model_version`.
 - The live pricing job cannot run for real until this file exists. Build and test with a made-up file.
 
-## 3. The two runs
+## 3. The runs
 
 | Run | Starts (UTC) | Odds snapshot it uses |
 | --- | --- | --- |
 | `morning` | 14:37 | The latest one fetched before the run (normally 13:17) |
 | `late` | 21:47 | The latest one fetched before the run (normally 21:17) |
+| `evening` | 03:47 | The latest one fetched before the run (normally 03:21). Added 2026-11-22 ([EARLY_LINE.md](EARLY_LINE.md)) so a line posted the evening before is priced that night |
 
-Both go in the PC backup trigger. The job makes no odds request of its own (the free credits are spent). Re-check the times when US clocks change in March.
+All three go in the PC backup trigger. The job makes no odds request of its own (the free credits are spent). Re-check the times when US clocks change in March.
 
 **The slate.** A run prices every game that passes all of these, and nothing else:
 
 1. The event is in the snapshot used, and `odds_event_matches` logic gives it `match_type = matched`.
-2. `tip_at` (the feed's) is more than 10 minutes after `priced_at` and before the next 06:00 US Eastern.
+2. `tip_at` (the feed's) is more than 10 minutes after `priced_at` and before the **second** 06:00 US Eastern after `priced_at`, so today's and tomorrow's games (changed 2026-11-22, EARLY_LINE.md; was "the next 06:00").
 3. At least one US book (`US_BOOKS`) has a spread for it in that snapshot.
 4. The latest CBBD record for the game (section 4) has a `neutral_site` value and a status that is not cancelled or postponed.
 5. Both teams are in the ratings file used.
@@ -90,7 +91,7 @@ Nothing in the ledger is ever edited or removed. Each case below is handled by a
 
 | What happened | What is done |
 | --- | --- |
-| The line moved | Nothing special. The late run's row has the new line; the last row priced before tip is the one scored |
+| The line moved | Nothing special. A later run's row has the new line. The call stays the first row that reached a tier, and per-game metrics use the first priced row (section 5) |
 | A row was wrong and the game hasn't tipped | Start the run again by hand. It writes new rows (later `priced_at`, flag `manual_run`), which replace the old ones for scoring |
 | A row was wrong and the game has tipped | The row stays and counts. Add a line to `ledger/season=YYYY/annotations.csv` (append-only; `game_id`, `run`, `priced_at`, `noted_at`, `kind`, `note`). The record is published two ways: all calls (the headline), and all calls minus annotated ones |
 | Postponed or cancelled after pricing | No ledger change. Graded `no_action` (section 5) |
@@ -113,14 +114,18 @@ Results never touch the ledger. A nightly job (after the CBBD ingest) rebuilds `
 For each game in the ledger:
 
 1. `actual_tip` = `games.tip_at` as of grading.
-2. The **scored row** is the last ledger row with `priced_at < actual_tip` and `line_snapshot_at < actual_tip`. Later rows are counted as `priced_after_actual_tip`.
-3. If the scored row's `tip_at` is more than 24 hours from `actual_tip`, or the game is cancelled or postponed, or it has no result 7 days after `tip_at`: `outcome = no_action` with a `reason`.
+2. Only rows with `priced_at < actual_tip` and `line_snapshot_at < actual_tip` count; later rows are counted as `priced_after_actual_tip`. Among the rows that count (changed 2026-11-22, [EARLY_LINE.md](EARLY_LINE.md); was "the last row"):
+   - the **first priced row** is the earliest one. It is graded for every per-game metric (CLV, ATS, calibration);
+   - the **call row** is the earliest one whose tier is Lean or Pick, if any. It is graded for the tier record. It is often the same row.
+
+   Steps 3 to 5 below apply to each of these rows. `is_scored_row` becomes two columns, `is_first_priced_row` and `is_call_row`.
+3. If the row's `tip_at` is more than 24 hours from `actual_tip`, or the game is cancelled or postponed, or it has no result 7 days after `tip_at`: `outcome = no_action` with a `reason`.
 4. Otherwise `ats_margin = home_margin + line` (the row's own line) and `outcome` is `win`, `loss` or `push` for the row's `side`. Rows flagged `no_side` get `no_side`.
 5. `clv_points = side × ((−close) − (−line))`, with the close from `closing_lines` source `own_snapshots`, **only if `close_snapshot_at` is later than the row's `line_snapshot_at`.** When the row was priced off the closing snapshot itself, CLV would be 0 by construction; it is left out and counted (`n_clv_left_out_same_snapshot`). `pinnacle_clv_points` the same way with the `pinnacle` close.
 
-Columns: `game_id`, `run`, `priced_at`, `is_scored_row`, `outcome`, `reason`, `close_line`, `close_snapshot_at`, `minutes_before_tip`, `clv_points`, `pinnacle_clv_points`, `annotated`. `close_line` is our own median (a derived number). No scores are published in this file.
+Columns: `game_id`, `run`, `priced_at`, `is_first_priced_row`, `is_call_row`, `outcome`, `reason`, `close_line`, `close_snapshot_at`, `minutes_before_tip`, `clv_points`, `pinnacle_clv_points`, `annotated`. `close_line` is our own median (a derived number). No scores are published in this file.
 
-Live metrics are the pre-registered ones, computed from scored rows, and never mixed with backtest rows.
+Live metrics are the pre-registered ones, computed from first priced rows (per-game metrics) and call rows (tier record), and never mixed with backtest rows.
 
 ## 6. Is the append-only test enough? No
 
@@ -153,7 +158,7 @@ What `test_ledger_matches_main_plus_appends` does today: it compares the checkou
 - a game tipping 9 minutes after `priced_at` gets no row, and one at 11 minutes does;
 - the late run adds rows and leaves morning rows byte-identical;
 - each writer check in gap 6 refuses its bad row and writes nothing;
-- grading: the scored row is the last one before the real tip; a postponed game is `no_action`; a call priced off the closing snapshot has no CLV; rebuilding the graded file twice gives identical bytes;
+- grading: the first priced row and the call row are the earliest rows before the real tip (the call row, the earliest in a tier); a later Pick never replaces an earlier Lean; a postponed game is `no_action`; a call priced off the closing snapshot has no CLV; rebuilding the graded file twice gives identical bytes;
 - `model_version` matches the parameters file's hash.
 
 Then, on a branch, Owen checks that a pull request editing one ledger row turns CI red (the PLAN.md exit check). The G1 gate after that: morning and late rows on 7 straight days with no manual commits.

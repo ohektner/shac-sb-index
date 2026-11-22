@@ -86,7 +86,7 @@ Then `absence_adj = −v × (S_home − S_away)`. No cap and no rounding. If `ab
 | Several players out on one team | Their terms add. No cap; `edge_over_10` already marks extreme edges |
 | Status `probable` or `available` | `p = 0` |
 | Two flags disagree | `status_for` decides (latest wins; a tie is `questionable`) |
-| A flag arrives after the row is priced | The next run's row has it (the late run re-prices every game). The last row before tip is the one scored |
+| A flag arrives after the row is priced | The next run's row has it (every run re-prices every game on its slate). If that row is the first to reach a tier, it is the call (EARLY_LINE.md, 2026-11-22; was "the last row before tip is scored") |
 | Team's first game, or no box in hand | `S_team = 0`; `absence_skipped` only in the no-box case |
 | Neutral site, postseason | No special treatment |
 
@@ -123,7 +123,7 @@ This compares with closing lines, so it runs only after the first real scorecard
 | `gain` | mean of `d`, where `d = abs(base − close_margin) − abs(adjusted − close_margin)`. Positive = the adjustment moved us toward the close |
 | `gain_se` | Clustered by US Eastern game date: with `n` games, `G` dates, `D_g` = the sum of `d` on date `g` and `n_g` its game count, `gain_se = sqrt( G / (G − 1) × sum over dates of (D_g − n_g × gain)² ) / n` |
 | `err_base`, `err_adjusted` | mean of `abs(base − home_margin)` and `abs(adjusted − home_margin)`, final games. Noisy; shown, not judged |
-| `share_flagged` | flagged games / all games with a scored row |
+| `share_flagged` | flagged games / all games with a first priced row |
 | `n_returns_ignored`, `n_skipped_no_box` | From section 4 |
 
 Files: `scorecard/availability/impact.csv`. The G2 gate needs this measured and reported, whatever it shows.

@@ -2,6 +2,11 @@
 
 Written 2026-11-12 by the lead, before any number against a line was computed. It fills the gaps PREREGISTRATION.md leaves for task 1.9. It changes nothing already committed there. The DECISIONS.md entry of 2026-11-12 makes this page part of the record.
 
+**Changed 2026-11-22 ([EARLY_LINE.md](EARLY_LINE.md), section 2):**
+- **The edge is measured against the early line.** In backtests that's CBBD's open, with ratings known at 18:00 Eastern the evening before. Live, it's the ledger row's line.
+- **Unchanged:** everything else on this page, including the curve and the stop checks.
+- **The close-based run (task 1.9 as built) stays** as the backtest scorecard's second view.
+
 **For the builder:** every choice is made here. If something is not covered, stop and ask Owen. Do not pick.
 
 **Do not run any of this on real data until** task 1.2 is closed, the backtest close is recorded in DECISIONS.md ([BACKTEST_CLOSE.md](BACKTEST_CLOSE.md)) and Owen has said go. Build and test on made-up games first, as tasks 1.7 and 1.8 did.
@@ -97,7 +102,7 @@ New files in `scorecard/backtest/`, written by `shac.scorecard.run`:
 
 **Reliability table (`metric_5b_reliability.sql`), three added columns:** `n_wins`, `wilson95_low`, `wilson95_high` (z = 1.96, same formula as `metric_6_tiers.sql`). **Thin groups:** a group with fewer than 100 decided games keeps its row, `n_games`, `n_wins`, the interval and `predicted_cover_rate`, and adds `thin = true`; its `actual_cover_rate` is left empty, and the site shows "fewer than 100 games" in its place. 100 because the interval at 100 games is already about ±10 points, five times a group's width.
 
-**Per-tier record (`metric_6_tiers.sql`), unchanged.** One call per predictor per game: the predictor's `side` against the scored line, graded against that same line. Backtest: the close. Live: the line in the scored ledger row (the last row priced before tip). Win % = wins / (wins + losses). Wilson interval on that, z = 1.96; with no decided calls the interval is empty. A tier with few calls is always shown with its interval. Rows: each scored season, `pooled` (2023 to 2026), and 2020-21 alone. Read the `pooled` row.
+**Per-tier record (`metric_6_tiers.sql`), unchanged.** One call per predictor per game: the predictor's `side` against the scored line, graded against that same line. Backtest: the close. Live: the line in the call row (the first row before tip that reaches a tier; EARLY_LINE.md, 2026-11-22). Win % = wins / (wins + losses). Wilson interval on that, z = 1.96; with no decided calls the interval is empty. A tier with few calls is always shown with its interval. Rows: each scored season, `pooled` (2023 to 2026), and 2020-21 alone. Read the `pooled` row.
 
 **Carry-over check (`calibration_carryover.csv`).** The curve is fit on edges against the close but used live on edges against an earlier line (open question in DECISIONS.md, 2026-11-11). Decision: live uses the same curve, and the carry-over is measured, not assumed.
 - Backtest half, only if BACKTEST_CLOSE.md test T5 says CBBD opens are usable: for held-out games with an open, `x_open = abs(pred_margin + open_home_spread)`, `cover_prob_open = 1 / (1 + exp(−b_S × x_open))`, side and result graded against the open. Output: the six reliability groups with `n_games`, `n_wins`, predicted and actual rate, the interval and `thin`, per predictor, per season and pooled. If T5 fails, write the file with no rows and say why in SCORECARD.md.
