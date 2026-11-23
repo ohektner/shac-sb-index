@@ -6,7 +6,7 @@ Where the project stands right now. Update this at the end of every working sess
 
 ## Current focus
 
-**Databricks phase, D0 (setup)** (`docs/DATABRICKS.md`, approved 2026-11-23). Task 1.10 (ledger), G2 and G3 are on hold.
+**Databricks phase, D1 (pipeline); D0 closed 2026-11-23** (`docs/DATABRICKS.md`, approved 2026-11-23). Task 1.10 (ledger), G2 and G3 are on hold.
 
 ## Current gate
 

@@ -23,7 +23,7 @@ Owen approved 2026-11-23: live, scope = test 1 plus the 2026-27 season. This pha
    - **Freshness check:** fails if no new games or ratings have arrived in 2 days. Job failure emails Owen.
 4. The workflow reads the gold scorecard and commits `site/season.json`.
 
-**What gets uploaded:** decided in D0 (see "Open").
+**What gets uploaded:** see "Upload rule" below.
 
 ## Phases
 
@@ -48,6 +48,6 @@ Owen approved 2026-11-23: live, scope = test 1 plus the 2026-27 season. This pha
 - Outbound internet is limited to trusted domains, so collection stays outside Databricks.
 - Non-commercial use only. The terms say "Databricks reserves the right to train on your data," with no scope or opt-out stated.
 
-## Open
+## Upload rule (Owen, 2026-11-23)
 
-- **What gets uploaded (Owen):** recommended, per-game features and results only (rating gaps and components as differences, game scores, CBBD lines). Torvik's ratings and all raw files stay out of Databricks, given the training clause and Torvik's robots.txt stance on AI bots. This keeps the earlier rule "raw files stay out."
+Raw Torvik and CBBD files go to the landing volume as-is, so the point-in-time join (ratings published before tip) and the line checks run inside the pipeline. Odds API data stays out (scope). Only derived numbers are ever public. The Free Edition training clause and Torvik's robots.txt stance on AI bots were weighed: the ratings are already public, they stay in a private workspace, and nothing is republished.
