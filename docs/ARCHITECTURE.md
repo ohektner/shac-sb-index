@@ -153,7 +153,7 @@ Integrity rules:
 - Rows are only ever added. `tests/test_ledger_append_only.py` compares the ledger with the version on `main` and fails if any existing row is changed, reordered or missing. It runs in CI on every PR and at the start of every pricing job. CI fetches `main` for it, and in CI a missing `main` fails the test rather than skipping it. Rows are written only through `shac.ledger.writer.append_rows`, which checks every row first and writes nothing if one fails, opens the file in append mode, refuses a game that tipped before the write, and refuses a duplicate (`game_id`, `run`, `priced_at`).
 - A row is written only if `priced_at < tip_at`. The job refuses to price a game that has started.
 - The commit that adds a row is the public timestamp. Commits go straight to `main`.
-- If the morning and late runs disagree, the last row with `priced_at < tip_at` is the one scored. Both stay on record.
+- If runs disagree, all rows stay on record. A game's call is its first row before tip that reaches a tier; per-game metrics use its first priced row (changed 2026-11-22, EARLY_LINE.md; was "the last row before tip").
 - Results are never written into the ledger. The scorecard joins results at query time.
 
 **`availability_flags`** (Phase 2; `data/availability_flags.parquet`). Writer: the extraction job.

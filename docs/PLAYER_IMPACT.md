@@ -86,7 +86,7 @@ Then `absence_adj = −v × (S_home − S_away)`. No cap and no rounding. If `ab
 | Several players out on one team | Their terms add. No cap; `edge_over_10` already marks extreme edges |
 | Status `probable` or `available` | `p = 0` |
 | Two flags disagree | `status_for` decides (latest wins; a tie is `questionable`) |
-| A flag arrives after the row is priced | The next run's row has it (the late run re-prices every game). The last row before tip is the one scored |
+| A flag arrives after the row is priced | The next run's row has it (every run re-prices every game on its slate). If that row is the first to reach a tier, it is the call (EARLY_LINE.md, 2026-11-22; was "the last row before tip is scored") |
 | Team's first game, or no box in hand | `S_team = 0`; `absence_skipped` only in the no-box case |
 | Neutral site, postseason | No special treatment |
 
@@ -123,7 +123,7 @@ This compares with closing lines, so it runs only after the first real scorecard
 | `gain` | mean of `d`, where `d = abs(base − close_margin) − abs(adjusted − close_margin)`. Positive = the adjustment moved us toward the close |
 | `gain_se` | Clustered by US Eastern game date: with `n` games, `G` dates, `D_g` = the sum of `d` on date `g` and `n_g` its game count, `gain_se = sqrt( G / (G − 1) × sum over dates of (D_g − n_g × gain)² ) / n` |
 | `err_base`, `err_adjusted` | mean of `abs(base − home_margin)` and `abs(adjusted − home_margin)`, final games. Noisy; shown, not judged |
-| `share_flagged` | flagged games / all games with a scored row |
+| `share_flagged` | flagged games / all games with a first priced row |
 | `n_returns_ignored`, `n_skipped_no_box` | From section 4 |
 
 Files: `scorecard/availability/impact.csv`. The G2 gate needs this measured and reported, whatever it shows.
@@ -157,3 +157,37 @@ Files: `scorecard/availability/impact.csv`. The G2 gate needs this measured and 
 11. **Replay equals live.** For a made-up game, section 6's replayed `absence_adj` equals the value the pricing code wrote.
 
 The `auditor` reviews the PR. It is model logic, so Owen signs off before merge.
+
+## 9. Ceiling test: perfect knowledge of new absences (2026-11-23)
+
+Owen asked for this after the archive backtest found that v1 does not beat the night-before line (DECISIONS.md 2026-11-23). **It is written before it is run.** It uses the archive (EARLY_LINE.md section 4) and sections 1 and 2 of this page, unchanged.
+
+**The question.** Suppose that at the night-before line we had known exactly which rotation players would sit as new absences (section 1 candidates with `played = false`). Would the adjusted model beat that line? This uses hindsight on purpose, because it is a ceiling. Live G2 only knows the flagged absences, and later and less surely, so it can only do worse.
+
+### The adjustment
+
+- **Per team-game:** `S_true` as in section 2; `D = S_true_home − S_true_away`.
+- **The value `v_S` for archive season S** is section 2's fit on `training_seasons(S)`, walk-forward, so `v` never sees the season it adjusts.
+  - Section 2's stop conditions apply to each fit: stop and report if `v` is outside 0 to 12, or fewer than 2,000 games have `D ≠ 0`.
+  - The keep rule is printed but not applied, because this is a ceiling.
+- **The perfect-knowledge margin:** `oracle_margin = base − v_S × D`, where `base` is v1's margin from the archive backtest (ratings known at the call time). The Torvik baseline gets the same adjustment and is reported second.
+
+### Games
+
+The same as the archive backtest (EARLY_LINE.md section 4, with Owen's 2026-11-23 calls): final games from 2022-23 to 2025-26 with a night-before call line and both predictions.
+- A game also needs a box score for both teams. Otherwise it is left out and counted.
+- A team's first game of the season has `S = 0` (section 1).
+
+### Measures
+
+Per season and pooled, on all games, on **absence games** (`D ≠ 0`), and on **big-absence games** (`|v_S × D| ≥ 2` points):
+- **CLV** from the night-before line to the close, with the side taken from the perfect-knowledge margin: the mean, its 95% interval, and the share positive. The same for the base model on the same games.
+- **Paired difference:** perfect-knowledge CLV minus base CLV, with its 95% interval.
+- **ATS** at the night-before line, for the perfect-knowledge and base models, and ATS at the close for the perfect-knowledge model (that is, whether the close fully prices the absences).
+- **How many games** the perfect-knowledge side differs from the base side.
+
+### Reading it (fixed now), on absence games pooled
+
+- **"News can beat the night-before line":** the perfect-knowledge CLV interval is above 0 **and** the paired interval (perfect knowledge minus base) is above 0. Then G2 is worth building, and the paired gain is the size of the prize.
+- **"The line already prices it":** either interval includes 0 or is below it. Then G2 as specified (adjusting for new absences) can't beat the night-before line and should not be built as specified.
+- **ATS at the close** is shown but not judged. If the perfect-knowledge model beats the close, the market misprices absences even at tip, which is worth noting, but the number is noisy.
