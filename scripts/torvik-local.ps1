@@ -8,6 +8,7 @@
 #    local copy of the private data repo.
 # 2. Runs the same snapshot job the Actions workflow would run.
 # 3. Pushes the raw files to the private repo and the status rows to this repo's main.
+# 4. Uploads new Torvik files to the Databricks landing volume (starts the nightly job).
 #
 # A log of each run is appended to %LOCALAPPDATA%\shac-sb-index\torvik-task.log.
 
@@ -86,6 +87,19 @@ try {
         Push-WithRetry $DataRepo
         Write-Log "data repo pushed"
     }
+
+    # New Torvik files to the Databricks landing volume (docs/DATABRICKS.md, D3). A new
+    # file starts the nightly Databricks job. Uses this PC's Databricks CLI login.
+    Push-Location $Runner
+    try {
+        $syncOutput = & $Uv run --frozen python databricks/scripts/sync_raw.py `
+            --data-dir $DataRepo --what torvik 2>&1
+        $syncExit = $LASTEXITCODE
+    } finally {
+        Pop-Location
+    }
+    Write-Log "databricks sync exit $syncExit; $($syncOutput -join ' | ')"
+    if ($syncExit -ne 0) { $exitCode = 1 }
 
     # Status rows to the public repo.
     Invoke-Git $Runner @("add", "data/status/torvik_snapshot_log.csv") | Out-Null
