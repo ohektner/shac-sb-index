@@ -4,6 +4,10 @@ Where the project stands right now. Update this at the end of every working sess
 
 **Last updated:** 2026-11-23
 
+## Current focus
+
+**Databricks phase, D0 (setup)** (`docs/DATABRICKS.md`, approved 2026-11-23). Task 1.10 (ledger), G2 and G3 are on hold.
+
 ## Current gate
 
 **G0 closed 2026-11-20 (Owen, #67).** The odds bar was met: 7 of 7 `ok` rows on each of 2026-11-17, 11-18 and 11-19 (UTC), with no `error` or `blocked` rows. Next for G0: the auditor review (task 0.5 re-check), which waited on this. Current gate is **G1, Foundation**.
@@ -31,17 +35,11 @@ What it found:
 
 ## Running unattended
 
+**Stopped 2026-11-23** (paused, not deleted; DECISIONS.md): odds snapshot, snapshot watch, Polymarket snapshot and history, both news jobs, the PC schedule backup, the daily audit routine. The Cloudflare Worker `shac-scheduler` cron is for Owen to turn off.
+
 | Job | Where | Schedule | Check it |
 | --- | --- | --- | --- |
-| Odds snapshot (US books + Pinnacle) | GitHub Actions | 7 a day | `data/status/odds_snapshot_log.csv` |
-| Polymarket snapshot | GitHub Actions | 6 a day | `data/status/polymarket_snapshot_log.csv` |
-| Polymarket history (recent games) | GitHub Actions | Daily, 10:29 UTC | Actions tab, `polymarket-history` |
-| News collection (Google News) | Owen's PC, Windows task (moved 2026-11-17: Google blocks GitHub's runners) | Once a day, 2:53 PM Phoenix (21:53 UTC), even team ids on even days of the year, odd on odd days, searches 20-30 s apart. Best-effort since 2026-11-18 (Google limits the PC too); team-site feeds are the main news source | `data/status/news_log.csv`, and `%LOCALAPPDATA%\shac-sb-index
-ews-task.log` |
-| News collection (team sites) | GitHub Actions | Daily, 20:13 UTC | `data/status/news_sidearm_log.csv` |
-| Snapshot watch (alarm) | GitHub Actions | Twice a day | Fails and emails Owen if odds snapshots stop |
-| Scheduler (starts every GitHub job at its slot; not news since 2026-11-17) | Cloudflare Worker `shac-scheduler` (`worker/`, PRs #49, #50) | Every 5 minutes | Cloudflare dashboard, Worker, Observability; open its address to test the token |
-| Schedule backup (starts skipped jobs) | Owen's PC, Windows task | Every 15 minutes | `%LOCALAPPDATA%\shac-sb-index\schedule-backup.log` |
+| CBBD games, box scores and lines | GitHub Actions (`cbbd-ingest`) | Daily, 10:07 UTC | Actions tab, `cbbd-ingest` |
 | Torvik daily snapshot | Owen's PC, Windows task | 5:00 AM Phoenix | `data/status/torvik_snapshot_log.csv`, and `%LOCALAPPDATA%\shac-sb-index\torvik-task.log` |
 
 ## Done

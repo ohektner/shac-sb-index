@@ -69,14 +69,9 @@ G2 is specified in [EXTRACTION.md](EXTRACTION.md) (tasks 2.0 to 2.4) and [PLAYER
 - **G3:** a line-movement model on our own snapshots (does the open-to-close move predict anything, and does our number predict the move), tested on held-out games. The Kalshi study is added only with Kalshi's written permission.
 - **G4:** the season case study: the problem, the system diagram, results including what failed, and what Owen would change.
 
-## Optional: Databricks Free Edition mirror (portfolio, not scheduled)
+## Databricks phase (D0–D4)
 
-Added 2026-11-12 as an idea, not a gate task. Do it only after task 1.2 and the first real scorecard run, and only if there are results worth showing. It is a read-only mirror; the repos stay canonical, and if a Databricks number and the repo disagree, the repo wins.
-
-- **What:** load the derived clean tables into Delta tables in Unity Catalog (bronze, silver, gold naming over the existing raw, clean and scorecard layers); port `sql/scorecard/*.sql` to Databricks SQL and show it as a dashboard (baseline vs. model, calibration, CLV); log each model version as an MLflow run (parameters, leave-one-season-out metrics). About one or two sessions.
-- **What not:** the collection jobs stay on GitHub Actions and Owen's PC (Free Edition limits outbound internet). Raw files stay out (volume).
-- **Before uploading anything:** check the Torvik, Polymarket and Odds API terms and permissions. A public dashboard shows only our own derived numbers (edges, scorecard metrics), not their ratings or prices.
-- **Exit check:** the dashboard's scorecard numbers match `shac.scorecard.run` output exactly.
+Approved 2026-11-23 (live; scope = test 1 plus the 2026-27 season). Full plan: `docs/DATABRICKS.md`. It replaces the 2026-11-12 "optional mirror" idea.
 
 ## What Owen does
 
