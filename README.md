@@ -4,7 +4,16 @@
 
 Shac SB Index prices every D-I men's basketball game against the point spread and keeps a public, append-only record of every call it makes, wins and losses. It's a portfolio project in data and AI. Research, not betting advice.
 
-**Status:** setting up. The first job, which saves the day's lines several times a day, is being switched on. The model, the board and the public record come next.
+**Status (November 2026):** data collection, model v1 and the backtest are done. The live record and board are not built.
+
+## Findings so far
+
+v1 (Torvik's ratings, rebuilt point-in-time with fitted weights) does not beat the market:
+- **Against the closing line:** 50.3% against the spread, with almost no calls.
+- **Against the night-before line, over four seasons of timed odds:** the line moved toward v1 by +0.015 points, about what a coin flip gets.
+- **With perfect hindsight about which players would sit:** the planned availability adjustment adds +0.014 points, which is not measurable.
+
+Each test's method and reading was committed before it ran. Details and limits: [docs/FINDINGS.md](docs/FINDINGS.md).
 
 ## How it works
 
@@ -16,6 +25,7 @@ Shac SB Index prices every D-I men's basketball game against the point spread an
 
 ## Docs
 
+- [Findings](docs/FINDINGS.md): what v1 showed against the market, and how it was tested
 - [Architecture](docs/ARCHITECTURE.md): the data flow diagram, table schemas and the no-leakage rule
 - [Status](docs/STATUS.md): where things stand right now
 - [Plan](docs/PLAN.md): gates and tasks

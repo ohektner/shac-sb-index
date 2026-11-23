@@ -1,0 +1,16 @@
+split,value,rule,n,clv_mean,ci_low,ci_high
+period,Jan-Apr,torvik_baseline,12220,0.0034,-0.0144,0.0212
+period,Jan-Apr,margin_model,12220,0.0084,-0.0094,0.0262
+period,Jan-Apr,always_underdog,12009,-0.0133,-0.0310,0.0045
+period,Nov-Dec,torvik_baseline,6079,0.0112,-0.0239,0.0464
+period,Nov-Dec,margin_model,6079,0.0275,-0.0076,0.0626
+period,Nov-Dec,always_underdog,6024,-0.1504,-0.1855,-0.1154
+books,1-2,torvik_baseline,666,0.0807,-0.0302,0.1916
+books,1-2,margin_model,666,0.1017,-0.0091,0.2126
+books,1-2,always_underdog,658,-0.1311,-0.2421,-0.0200
+books,3-5,torvik_baseline,3476,-0.0361,-0.0822,0.0100
+books,3-5,margin_model,3476,-0.0019,-0.0480,0.0443
+books,3-5,always_underdog,3417,-0.1972,-0.2430,-0.1513
+books,6+,torvik_baseline,14157,0.0128,-0.0048,0.0304
+books,6+,margin_model,14157,0.0147,-0.0028,0.0323
+books,6+,always_underdog,13958,-0.0219,-0.0394,-0.0044

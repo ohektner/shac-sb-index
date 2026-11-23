@@ -1,0 +1,9 @@
+line,predictor,tier,n_calls,wins,losses,pushes,win_pct,mean_clv
+primary: first-seen line,torvik_baseline,pick,26,16,10,0,0.6154,1.5577
+primary: first-seen line,torvik_baseline,lean,67,38,29,0,0.5672,0.9552
+primary: first-seen line,margin_model,pick,20,11,9,0,0.5500,1.6250
+primary: first-seen line,margin_model,lean,68,41,27,0,0.6029,0.9853
+secondary: morning-run line,torvik_baseline,pick,27,14,13,0,0.5185,1.6250
+secondary: morning-run line,torvik_baseline,lean,71,42,28,1,0.6000,0.8955
+secondary: morning-run line,margin_model,pick,23,12,11,0,0.5217,1.8182
+secondary: morning-run line,margin_model,lean,65,40,24,1,0.6250,0.9139

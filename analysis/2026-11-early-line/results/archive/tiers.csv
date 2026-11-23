@@ -1,0 +1,13 @@
+scope,predictor,tier,calls,wins,losses,pushes,win_pct,wilson_low,wilson_high,gap_to_52_4,mean_clv
+2025,torvik_baseline,pick,0,0,0,0,,,,,
+2025,torvik_baseline,lean,0,0,0,0,,,,,
+2026,torvik_baseline,pick,0,0,0,0,,,,,
+2026,torvik_baseline,lean,0,0,0,0,,,,,
+pooled,torvik_baseline,pick,0,0,0,0,,,,,
+pooled,torvik_baseline,lean,0,0,0,0,,,,,
+2025,margin_model,pick,0,0,0,0,,,,,
+2025,margin_model,lean,0,0,0,0,,,,,
+2026,margin_model,pick,0,0,0,0,,,,,
+2026,margin_model,lean,0,0,0,0,,,,,
+pooled,margin_model,pick,0,0,0,0,,,,,
+pooled,margin_model,lean,0,0,0,0,,,,,
