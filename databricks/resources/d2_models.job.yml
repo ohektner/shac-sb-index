@@ -1,0 +1,45 @@
+# D2: refresh the pipeline, train and log the models (MLflow), run the scorecard, then
+# check everything against the local Python output (docs/DATABRICKS.md, D2).
+resources:
+  jobs:
+    d2_models:
+      name: shac d2 models
+      max_concurrent_runs: 1
+      tasks:
+        - task_key: refresh
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.shac_pipeline.id}
+        - task_key: train
+          depends_on:
+            - task_key: refresh
+          spark_python_task:
+            python_file: ../src/train.py
+            parameters:
+              - ${var.catalog}
+              - ${resources.schemas.shac.name}
+          environment_key: ml
+        - task_key: scorecard
+          depends_on:
+            - task_key: train
+          spark_python_task:
+            python_file: ../src/scorecard.py
+            parameters:
+              - ${var.catalog}
+              - ${resources.schemas.shac.name}
+          environment_key: ml
+        - task_key: parity
+          depends_on:
+            - task_key: scorecard
+          spark_python_task:
+            python_file: ../src/parity.py
+            parameters:
+              - ${var.catalog}
+              - ${resources.schemas.shac.name}
+              - d2
+          environment_key: ml
+      environments:
+        - environment_key: ml
+          spec:
+            environment_version: "5"
+            dependencies:
+              - mlflow>=3.1,<4

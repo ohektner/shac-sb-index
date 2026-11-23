@@ -25,6 +25,8 @@ Owen approved 2026-11-23: live, scope = test 1 plus the 2026-27 season. This pha
 
 **What gets uploaded:** see "Upload rule" below.
 
+**Built (D2):** `src/pipeline/model.sql` (season roles, `gold_model_features`, `gold_baseline_predictions`); `src/train.py` (input selection and walk-forward fits, MLflow experiment `shac-margin-model`, champion registration); `src/scorecard.py` (coverage and metrics 2–4 as `gold_scorecard_*`). Calibration (metrics 5–6) stays in Python.
+
 **Built (D1):** `databricks/src/pipeline/` holds bronze (`bronze.py`: Auto Loader on the landing volume, plus the team-map CSVs), silver (`silver.sql`: games, results, CBBD lines, Torvik ratings) and gold (`gold.sql`: CBBD closes, `gold_game_history`). The `d1_parity` job refreshes the pipeline, then `src/parity.py` compares each table with the local build's parquet in `landing/parity/`.
 
 ## Phases
@@ -33,7 +35,7 @@ Owen approved 2026-11-23: live, scope = test 1 plus the 2026-27 season. This pha
 | --- | --- | --- |
 | D0, Setup | Owen: Free Edition account, token, GitHub secrets. Claude: CLI, a hello-world bundle, a volume upload, a job started from Actions, the data-upload rule. | A job starts from a GitHub Action. The upload rule is in DECISIONS.md. |
 | D1, Pipeline | Bronze, silver and gold for 2018-19 to now, with expectations. | Gold matches `shac.tables.build` exactly (counts and keys). The line checks drop the same games as the local build. **Met 2026-11-23:** `d1_parity` matched all 5 tables on every column (46,040 games, 433,122 rating rows). Expectation counts: 65 wrong-team, 68 books-disagree, 0 leakage, 0 unmapped names, 2 preseason rows. |
-| D2, Models | v1 and the four rejected inputs in MLflow. `champion` registered. | Parity with the published scorecard: 1.989 vs. 2.006, 50.3% ATS, 22,132 games. **Owen signs off** (scorecard logic). |
+| D2, Models | v1 and the four rejected inputs in MLflow. `champion` registered. | Parity with the published scorecard: 1.989 vs. 2.006, 50.3% ATS, 22,132 games. **Owen signs off** (scorecard logic). **Met 2026-11-23, awaiting sign-off:** `d2_models` matched features, both predictors' per-game predictions, all 90 walk-forward weights, the input comparison and metrics 2–4 (pooled: 1.9894 vs. 2.0058, 50.30% vs. 50.30%, 22,132 games). `workspace.shac.margin_model` v1 = `champion` (2027 fit: 1.0441 × rating_margin + 3.3443 × home). |
 | D3, Nightly | The sync workflow, the job schedule, the freshness alarm and `season.json`. | 7 straight nights with no manual commits. One forced failure emails Owen. |
 | D4, Show it | Dashboard, Genie space, the /shac/ live chart, a README section with a diagram, screenshots. | Owen approves the page. |
 
