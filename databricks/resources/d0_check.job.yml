@@ -1,0 +1,19 @@
+# D0 exit check: a serverless job that reads a file uploaded to the landing volume and
+# appends one row to a Delta table. Started from GitHub Actions (databricks-d0.yml).
+resources:
+  jobs:
+    d0_check:
+      name: shac d0 check
+      max_concurrent_runs: 1
+      tasks:
+        - task_key: check
+          spark_python_task:
+            python_file: ../src/d0_check.py
+            parameters:
+              - ${var.catalog}
+              - ${resources.schemas.shac.name}
+          environment_key: default
+      environments:
+        - environment_key: default
+          spec:
+            environment_version: "5"

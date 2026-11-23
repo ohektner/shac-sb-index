@@ -1,0 +1,16 @@
+# The schema and the landing volume. The nightly sync uploads files to the volume;
+# the pipeline (D1) reads them with Auto Loader.
+resources:
+  schemas:
+    shac:
+      catalog_name: ${var.catalog}
+      name: ${var.schema}
+      comment: Shac SB Index, a college basketball forecasting model (docs/DATABRICKS.md)
+
+  volumes:
+    landing:
+      catalog_name: ${var.catalog}
+      schema_name: ${resources.schemas.shac.name}
+      name: landing
+      volume_type: MANAGED
+      comment: Files uploaded by the databricks-sync workflow

@@ -1,0 +1,24 @@
+# Shac SB Index, a college basketball forecasting model: Databricks bundle.
+# Plan: docs/DATABRICKS.md. Deploy: `databricks bundle deploy -t prod` from this folder.
+# The workspace host comes from DATABRICKS_HOST (GitHub secret) or the local CLI profile,
+# so no account details live in this public repo.
+bundle:
+  name: shac-sb-index
+
+include:
+  - resources/*.yml
+
+variables:
+  catalog:
+    description: Unity Catalog catalog (Free Edition has one, `workspace`).
+    default: workspace
+  schema:
+    description: Schema for every Shac table and volume.
+    default: shac
+
+targets:
+  prod:
+    mode: production
+    default: true
+    workspace:
+      root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}
