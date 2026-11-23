@@ -1,1 +1,13 @@
 close_source,predictor,scope,n_games,brier_score
+cbbd,margin_model,2021,3888,0.2500
+cbbd,margin_model,2023,5653,0.2500
+cbbd,margin_model,2024,5304,0.2500
+cbbd,margin_model,2025,5437,0.2500
+cbbd,margin_model,2026,5715,0.2499
+cbbd,margin_model,pooled,22109,0.2500
+cbbd,torvik_baseline,2021,3888,0.2500
+cbbd,torvik_baseline,2023,5653,0.2500
+cbbd,torvik_baseline,2024,5304,0.2500
+cbbd,torvik_baseline,2025,5437,0.2500
+cbbd,torvik_baseline,2026,5715,0.2499
+cbbd,torvik_baseline,pooled,22109,0.2500

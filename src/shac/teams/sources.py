@@ -110,9 +110,17 @@ def load_torvik_names(data_dir: Path) -> pd.DataFrame:
 
 
 def load_odds_names(data_dir: Path) -> pd.DataFrame:
-    """Distinct (season, team name) pairs from every Odds API snapshot."""
+    """Distinct (season, team name) pairs from every Odds API snapshot.
+
+    Reads the live snapshots (odds/raw) and the historical archive (odds/history, wrapped
+    the same way), so archive seasons get their own alias ranges.
+    """
     seen: set[tuple[int, str]] = set()
-    for path in sorted((data_dir / "odds" / "raw").rglob("*.json.gz")):
+    paths = [
+        *sorted((data_dir / "odds" / "raw").rglob("*.json.gz")),
+        *sorted((data_dir / "odds" / "history").rglob("*.json.gz")),
+    ]
+    for path in paths:
         for game in _read_wrapped_json(path).get("data") or []:
             when = datetime.fromisoformat(game["commence_time"].replace("Z", "+00:00"))
             season = season_of(when)

@@ -45,6 +45,7 @@ All timestamps are `TIMESTAMP WITH TIME ZONE` (UTC). Keys are marked **PK**.
 | `closing_lines` | game per source (**PK** `game_id, source`) | Contract columns plus `basis`. See below. |
 | `game_history` | game (**PK** `game_id`) | Every game in `games` with point-in-time ratings for both teams, the result and the closes. Column groups in ARCHITECTURE.md. Leakage tests: `tests/test_no_leakage.py`. |
 | `rotation_players` | game x team x player (**PK** `game_id, team_id, athlete_id`) | Rotation membership before the game (top 8 by minutes per game played, earlier games only) and whether the player played. Contract in ARCHITECTURE.md. |
+| `odds_history`, `odds_history_matches`, `odds_history_requests` | Like `odds_snapshots` and `odds_event_matches`, from the bought historical archive (EARLY_LINE.md section 4), plus one request row per file (`kind`: `evening`, `afternoon` or `late`; `season`, `game_day`, `requested_at`, `snapshot_at`) | Built by their own runner, `uv run python -m shac.tables.odds_history --data-dir <private repo>`, after `shac.ingest.odds_history` has pulled. Kept apart from the live tables, so live closes never mix with archive lines. `snapshot_at` is the archive's snapshot time. It prints check 1 (call-line coverage per season) and any team names that didn't map. `shac.teams.build` reads archive names too, so re-run it (then `shac.teams.check`) to give older seasons their aliases. |
 | `ratings_daily` | rating date x team x source (**PK** `rating_date, team_id, source`) | Contract columns: `season`, `adj_o`, `adj_d`, `adj_tempo`, `barthag`, `rank`, `wins`, `losses`, `as_of`, `fetched_at`. `torvik_time_machine` rows: `as_of` = 06:00 US Eastern the day after `rating_date`. `torvik_daily` rows: our own pulls, `as_of` = fetch time, first pull per Eastern date. See `docs/TORVIK.md`. |
 
 ### Closing lines
@@ -53,12 +54,27 @@ All timestamps are `TIMESTAMP WITH TIME ZONE` (UTC). Keys are marked **PK**.
 | --- | --- | --- | --- |
 | `own_snapshots` | Median `home_spread` across US books in the last snapshot taken strictly before tip (`snapshot_at < commence_at`; a snapshot exactly at tip is excluded) | Same median in the first snapshot that had the game | `median_us_books` |
 | `pinnacle` | Pinnacle's spread in the last pre-tip snapshot that has Pinnacle for the game (`n_books` = 1) | Pinnacle's first appearance | `pinnacle` |
-| `cbbd` | Draft Kings' `spread` when present, else the median across the other CBBD providers with a spread, **excluding `consensus`** (see Findings) and `Bovada` (failed task 1.2, DECISIONS.md 2026-11-21); a game whose only line is `consensus` gets no `cbbd` row | Same provider's `spreadOpen` (or the median of the providers' `spreadOpen`) | `draftkings` or `median_cbbd_providers` |
+| `cbbd` | Draft Kings' `spread` when present, else the median across the other CBBD providers with a spread, **excluding `consensus`** (see Findings) and `Bovada` (failed task 1.2, DECISIONS.md 2026-11-21); a game whose only line is `consensus` gets no `cbbd` row. Dropped (close and open empty) when the books disagree on the favorite; see "Line checks" below | Same provider's `spreadOpen` (or the median of the providers' `spreadOpen`) | `draftkings`, `median_cbbd_providers` or `dropped_books_disagree` |
 
 - US books are the keys listed in `docs/VERIFIED.md` (`US_BOOKS` in `build.py`). Other `eu` books stay in `odds_snapshots` but never enter a close.
 - The tip used is the feed's `commence_at` from the event's most recent snapshot, capped at CBBD's scheduled `tip_at` when that is earlier and not a placeholder (`tip_tbd` false). The feed sometimes moves `commence_at` to the actual start a few minutes late, which would otherwise let a snapshot taken after the scheduled tip count as the close (1 game in the first week, 2026-11-17).
 - A game gets an `own_snapshots` or `pinnacle` row only once it is closed: some snapshot file was fetched at or after its tip, so no later pre-tip snapshot can still arrive. Only events matched to a CBBD game are included (the table is keyed by `game_id`).
 - CBBD lines carry no timestamp, so `close_snapshot_at`, `open_snapshot_at` and `minutes_before_tip` are empty for `cbbd` rows. Whether CBBD's `spread` is a true close is still untested (VERIFIED.md).
+
+### Line checks (DECISIONS.md 2026-11-22)
+
+Some CBBD lines have the right number on the wrong team: Duke −8.5 over Texas Tech (Dec 20, 2025) is stored as Texas Tech −8.5. Nearly all are neutral-site games, where the book's "home" team can differ from CBBD's. A wrong-team line makes a fake edge of twice the spread, and the game nearly always "covers" for any predictor that has the right favorite. Two checks drop such lines. They never turn a line around and never read the result.
+
+| Check | Where | Rule | `basis` / `cbbd_close_basis` |
+| --- | --- | --- | --- |
+| Books disagree | `sql/tables/closing_lines.sql` | Two of the providers that form the close (Draft Kings included; `consensus` and Bovada already out) favor different teams by 3 or more points each, for example −27.5 and +27.5. One is on the wrong team and we can't tell which. | `dropped_books_disagree` |
+| Wrong team | `sql/tables/game_history.sql` | The close is 10+ points from a plain Torvik number for the game (`rating_margin` as in `features.sql`, plus 3.4 at a true home game) and its mirror image is at least 3 times closer. It needs the point-in-time ratings, so it runs where they meet the lines. | `dropped_wrong_team` |
+
+A dropped game keeps its row with the close and open empty, so the scorecard counts it as "no close." Build of 2026-11-22: 68 books-disagree drops (2019: 27, 2020: 1, 2021: 1, 2023: 39) and 65 wrong-team drops (2019: 11, 2020: 14, 2021: 3, 2022: 16, 2026: 20, 2027: 1); 60 of the 65 are neutral-site games, 62 in November or December.
+
+Checks: 5 of 6 wrong-team games looked up by hand in public line listings were on the wrong team, and 1 likely (sources split). The one 2026-27 drop matches our own snapshot and Pinnacle closes, which are matched by team name.
+
+**What the checks can't catch.** A small wrong-team line stays in. With Torvik near pick'em, −4.5 stored as +4.5 is only a few points off, and nothing in past seasons can show it's wrong. This season, CBBD's Draft Kings line is the exact mirror of our own close in 6 of 521 games (all neutral sites), and the wrong-team check caught 1 of them. Both predictors face the same lines, so these leftovers can't tilt the model-vs-Torvik comparison.
 
 ## Row counts (build of 2026-11-10)
 

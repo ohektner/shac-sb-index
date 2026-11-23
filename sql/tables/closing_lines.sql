@@ -21,6 +21,13 @@
 --                  `Bovada` (failed the task 1.2 tests, DECISIONS.md 2026-11-21). A game
 --                  whose only line is `consensus` gets no cbbd row. CBBD lines carry no timestamp, so close_snapshot_at,
 --                  open_snapshot_at and minutes_before_tip are empty for this source.
+--                  Books that disagree on the favorite: when two of those providers put
+--                  the favorite on different teams, each by 3 or more points (say -27.5
+--                  and +27.5), one has the line on the wrong team and we can't tell which.
+--                  The game keeps its cbbd row with no close or open, and basis
+--                  'dropped_books_disagree' (DECISIONS.md 2026-11-22). The other line
+--                  check (line on the wrong team for both books) needs ratings, so it is
+--                  in sql/tables/game_history.sql.
 -- Open values come from the FIRST snapshot that had the game (same book rules).
 -- `basis` records how each close was formed.
 --
@@ -111,20 +118,36 @@ cbbd_median AS (
       AND provider <> 'Bovada'     -- fails task 1.2 (T3, T4(a); MIXED on T2), DECISIONS.md 2026-11-21
     GROUP BY game_id
 ),
+-- Same providers as the median (Draft Kings included): do two of them favor different
+-- teams by 3+ points each? A small split like -1 and +1.5 is ordinary line movement.
+cbbd_books_disagree AS (
+    SELECT game_id
+    FROM cbbd_lines
+    WHERE home_spread IS NOT NULL
+      AND provider NOT IN ('consensus', 'Bovada')
+    GROUP BY game_id
+    HAVING min(home_spread) <= -3 AND max(home_spread) >= 3
+),
 cbbd_rows AS (
     SELECT m.game_id,
            'cbbd' AS source,
-           coalesce(d.close_home_spread, m.close_home_spread) AS close_home_spread,
+           CASE WHEN x.game_id IS NULL THEN coalesce(d.close_home_spread, m.close_home_spread)
+           END AS close_home_spread,
            CAST(NULL AS TIMESTAMPTZ) AS close_snapshot_at,
            CAST(NULL AS INTEGER) AS minutes_before_tip,
            CASE WHEN d.game_id IS NOT NULL THEN 1 ELSE m.n_books END AS n_books,
-           CASE WHEN d.game_id IS NOT NULL THEN d.open_home_spread ELSE m.open_home_spread END
+           CASE WHEN x.game_id IS NOT NULL THEN NULL
+                WHEN d.game_id IS NOT NULL THEN d.open_home_spread
+                ELSE m.open_home_spread END
                AS open_home_spread,
            CAST(NULL AS TIMESTAMPTZ) AS open_snapshot_at,
-           CASE WHEN d.game_id IS NOT NULL THEN 'draftkings' ELSE 'median_cbbd_providers' END
+           CASE WHEN x.game_id IS NOT NULL THEN 'dropped_books_disagree'
+                WHEN d.game_id IS NOT NULL THEN 'draftkings'
+                ELSE 'median_cbbd_providers' END
                AS basis
     FROM cbbd_median m
     LEFT JOIN cbbd_dk d USING (game_id)
+    LEFT JOIN cbbd_books_disagree x USING (game_id)
 )
 SELECT game_id, source,
        CAST(close_home_spread AS DOUBLE) AS close_home_spread,
