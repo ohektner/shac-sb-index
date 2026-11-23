@@ -1,0 +1,23 @@
+# D1 exit check: refresh the pipeline, then compare its tables with the local build.
+resources:
+  jobs:
+    d1_parity:
+      name: shac d1 parity
+      max_concurrent_runs: 1
+      tasks:
+        - task_key: refresh
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.shac_pipeline.id}
+        - task_key: parity
+          depends_on:
+            - task_key: refresh
+          spark_python_task:
+            python_file: ../src/parity.py
+            parameters:
+              - ${var.catalog}
+              - ${resources.schemas.shac.name}
+          environment_key: default
+      environments:
+        - environment_key: default
+          spec:
+            environment_version: "5"

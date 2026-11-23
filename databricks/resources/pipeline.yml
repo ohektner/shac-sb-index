@@ -1,0 +1,16 @@
+# The Lakeflow pipeline: bronze (Auto Loader) -> silver -> gold, with expectations.
+# Plan: docs/DATABRICKS.md, phase D1.
+resources:
+  pipelines:
+    shac_pipeline:
+      name: shac pipeline
+      catalog: ${var.catalog}
+      schema: ${resources.schemas.shac.name}
+      serverless: true
+      root_path: ../src/pipeline
+      configuration:
+        landing_root: /Volumes/${var.catalog}/${var.schema}/landing
+        spark.sql.session.timeZone: UTC
+      libraries:
+        - glob:
+            include: ../src/pipeline/**
