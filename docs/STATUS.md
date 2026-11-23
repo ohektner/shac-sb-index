@@ -6,7 +6,7 @@ Where the project stands right now. Update this at the end of every working sess
 
 ## Current focus
 
-**Databricks phase, D3 (nightly): built 2026-11-23, 7-night count from 2026-11-24.** D0, D1 and D2 closed 2026-11-23 (D2 signed off by Owen, #85). (`docs/DATABRICKS.md`, approved 2026-11-23). Task 1.10 (ledger), G2 and G3 are on hold.
+**Databricks phase, D3 (nightly): built 2026-11-23 on Free Edition (moved off a trial workspace the same day), plus a watchdog; 7-night count from 2026-11-24.** D0, D1 and D2 closed 2026-11-23 (D2 signed off by Owen, #85). (`docs/DATABRICKS.md`, approved 2026-11-23). Task 1.10 (ledger), G2 and G3 are on hold.
 
 ## Current gate
 
@@ -45,6 +45,7 @@ What it found:
 | Databricks upload (Torvik) | Owen's PC, inside the Torvik task | After each Torvik pull | `torvik-task.log` ("databricks sync") |
 | Nightly job `shac nightly` | Databricks (file-arrival trigger) | When new raw files land | Databricks Jobs; failures email Owen |
 | `site/season.json` export | GitHub Actions (`season-export`) | 21:40 and 03:40 UTC | `site/season.json` on main |
+| Watchdog `shac watchdog` | Databricks (own schedule) | 03:00 UTC (8 PM Phoenix) | Emails Owen if no nightly success in 30 h or data is older than 48 h |
 
 ## Done
 
