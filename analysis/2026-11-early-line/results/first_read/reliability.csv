@@ -1,0 +1,25 @@
+line,predictor,group,n_games,n_wins,predicted,actual
+primary: first-seen line,torvik_baseline,50-52%,229,126,0.5092,0.5502
+primary: first-seen line,torvik_baseline,52-54%,82,46,0.5270,0.5610
+primary: first-seen line,torvik_baseline,54-56%,48,28,0.5482,0.5833
+primary: first-seen line,torvik_baseline,56-58%,15,9,0.5681,0.6000
+primary: first-seen line,torvik_baseline,58-60%,8,5,0.5894,0.6250
+primary: first-seen line,torvik_baseline,60%+,3,2,0.6111,0.6667
+primary: first-seen line,margin_model,50-52%,234,131,0.5090,0.5598
+primary: first-seen line,margin_model,52-54%,92,49,0.5277,0.5326
+primary: first-seen line,margin_model,54-56%,39,26,0.5488,0.6667
+primary: first-seen line,margin_model,56-58%,13,7,0.5688,0.5385
+primary: first-seen line,margin_model,58-60%,6,3,0.5897,0.5000
+primary: first-seen line,margin_model,60%+,1,1,0.6328,1.0000
+secondary: morning-run line,torvik_baseline,50-52%,224,127,0.5094,0.5670
+secondary: morning-run line,torvik_baseline,52-54%,92,48,0.5282,0.5217
+secondary: morning-run line,torvik_baseline,54-56%,38,26,0.5486,0.6842
+secondary: morning-run line,torvik_baseline,56-58%,17,8,0.5693,0.4706
+secondary: morning-run line,torvik_baseline,58-60%,9,5,0.5897,0.5556
+secondary: morning-run line,torvik_baseline,60%+,1,1,0.6054,1.0000
+secondary: morning-run line,margin_model,50-52%,228,125,0.5090,0.5482
+secondary: morning-run line,margin_model,52-54%,100,55,0.5283,0.5500
+secondary: morning-run line,margin_model,54-56%,30,20,0.5483,0.6667
+secondary: morning-run line,margin_model,56-58%,16,8,0.5674,0.5000
+secondary: morning-run line,margin_model,58-60%,7,4,0.5872,0.5714
+secondary: morning-run line,margin_model,60%+,0,0,,
