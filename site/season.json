@@ -1,0 +1,68 @@
+{
+  "name": "Shac SB Index",
+  "subtitle": "a college basketball forecasting model",
+  "season": "2026-27",
+  "generated_at": "2026-11-23T21:08:10Z",
+  "break_even_win_pct": 0.524,
+  "model": {
+    "name": "v1 (champion)",
+    "weights": {
+      "rating_margin": 1.0441,
+      "home": 3.3443
+    }
+  },
+  "scopes": {
+    "season": {
+      "games": 939,
+      "updated_through": "2026-11-22",
+      "mean_abs_distance_to_close": 2.9474,
+      "wins": 476,
+      "losses": 463,
+      "pushes": 0,
+      "win_pct": 0.5069,
+      "mae_model": 10.0441,
+      "mae_close": 9.5639
+    }
+  },
+  "weekly": {
+    "season": [
+      {
+        "week_start": "2026-10-26",
+        "games": 2,
+        "wins": 2,
+        "losses": 0,
+        "win_pct": 1.0,
+        "mean_abs_distance_to_close": 0.8519
+      },
+      {
+        "week_start": "2026-11-02",
+        "games": 329,
+        "wins": 172,
+        "losses": 157,
+        "win_pct": 0.5228,
+        "mean_abs_distance_to_close": 3.1541
+      },
+      {
+        "week_start": "2026-11-09",
+        "games": 635,
+        "wins": 331,
+        "losses": 304,
+        "win_pct": 0.5213,
+        "mean_abs_distance_to_close": 3.0865
+      },
+      {
+        "week_start": "2026-11-16",
+        "games": 939,
+        "wins": 476,
+        "losses": 463,
+        "win_pct": 0.5069,
+        "mean_abs_distance_to_close": 2.9474
+      }
+    ]
+  },
+  "notes": [
+    "season: every 2026-27 game, rebuilt nightly with ratings published before tip.",
+    "live: only games the nightly job priced before tip (its last pre-tip number).",
+    "Graded against CBBD's line (Draft Kings, else the median); research, not betting advice."
+  ]
+}
