@@ -29,6 +29,7 @@ GitHub's schedule runs late (the CBBD ingest's own cron fired 7–10 hours late 
    - Any failure emails the job owner.
 4. **Public file:** `season-export` (GitHub, twice a day) commits `site/season.json`, which holds derived numbers only. If GitHub runs it late, the page shows an older "updated through" date.
 5. **Deploys:** `databricks-deploy` deploys the bundle whenever `databricks/` changes on main.
+6. **Watchdog (`shac watchdog`):** runs on Databricks' own schedule at 03:00 UTC (8 PM Phoenix), so it doesn't depend on any upload. It fails, and emails the owner, if `shac nightly` hasn't succeeded in 30 hours or if CBBD or Torvik data is more than 48 hours old. That catches silence (no uploads, so no run and no failure email), which the nightly job alone can't.
 
 **What gets uploaded:** see "Upload rule" below.
 
@@ -58,6 +59,10 @@ GitHub's schedule runs late (the CBBD ingest's own cron fired 7–10 hours late 
 - One SQL warehouse (2X-Small), at most 5 concurrent job tasks, and one active pipeline per type.
 - Outbound internet is limited to trusted domains, so collection stays outside Databricks.
 - Non-commercial use only. The terms say "Databricks reserves the right to train on your data," with no scope or opt-out stated.
+
+## Workspace
+
+The workspace is Databricks Free Edition, moved on 2026-11-23. The first signup turned out to be a time-limited free trial ($40 of credits). Everything was rebuilt from the repo with `bundle deploy`, the history was re-uploaded with `sync_raw.py`, and D1 and D2 parity both passed again. The local CLI profile `free` is the default.
 
 ## Upload rule (Owen, 2026-11-23)
 

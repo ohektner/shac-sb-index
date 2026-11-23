@@ -1,0 +1,29 @@
+# Watchdog: runs on Databricks' own schedule (not GitHub's), every evening at 8 PM Phoenix
+# (03:00 UTC). Fails, and emails the owner, if shac nightly hasn't succeeded in 30 hours or
+# the data is more than 48 hours old. Catches the case where nothing runs at all.
+# Pause it with the nightly job when the season ends.
+resources:
+  jobs:
+    watchdog:
+      name: shac watchdog
+      max_concurrent_runs: 1
+      schedule:
+        quartz_cron_expression: "0 0 3 * * ?"
+        timezone_id: UTC
+        pause_status: UNPAUSED
+      email_notifications:
+        on_failure:
+          - ${workspace.current_user.userName}
+      tasks:
+        - task_key: check
+          spark_python_task:
+            python_file: ../src/watchdog.py
+            parameters:
+              - ${var.catalog}
+              - ${resources.schemas.shac.name}
+              - ${resources.jobs.nightly.id}
+          environment_key: default
+      environments:
+        - environment_key: default
+          spec:
+            environment_version: "5"
