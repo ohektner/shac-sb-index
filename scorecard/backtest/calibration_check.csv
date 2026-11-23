@@ -1,0 +1,13 @@
+predictor,scope,n_games,brier_logistic,brier_isotonic,brier_coin_flip,n_tier_differs
+margin_model,2021,3888,0.2500,0.2504,0.2500,181
+margin_model,2023,5653,0.2500,0.2501,0.2500,41
+margin_model,2024,5304,0.2500,0.2504,0.2500,70
+margin_model,2025,5437,0.2500,0.2502,0.2500,37
+margin_model,2026,5715,0.2499,0.2498,0.2500,101
+margin_model,pooled,22109,0.2500,0.2501,0.2500,249
+torvik_baseline,2021,3888,0.2500,0.2504,0.2500,84
+torvik_baseline,2023,5653,0.2500,0.2502,0.2500,45
+torvik_baseline,2024,5304,0.2500,0.2504,0.2500,46
+torvik_baseline,2025,5437,0.2500,0.2501,0.2500,54
+torvik_baseline,2026,5715,0.2499,0.2499,0.2500,149
+torvik_baseline,pooled,22109,0.2500,0.2502,0.2500,294

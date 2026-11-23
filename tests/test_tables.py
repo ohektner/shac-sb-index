@@ -373,6 +373,41 @@ def test_cbbd_close_prefers_draft_kings_else_median_without_consensus_or_bovada(
     assert by_game["close_snapshot_at"].isna().all()
 
 
+def test_cbbd_close_dropped_when_books_disagree_on_the_favorite():
+    """DECISIONS.md 2026-11-22: two books favoring different teams by 3+ each -> no close."""
+    lines = pd.DataFrame(
+        {
+            "game_id": pd.array([5, 5, 6, 6, 7, 7, 8, 8], dtype="Int64"),
+            "provider": [
+                "ESPN BET",
+                "teamrankings",  # -27.5 vs +27.5: one is on the wrong team
+                "ESPN BET",
+                "teamrankings",  # -1 vs +1.5: ordinary movement around pick'em, kept
+                "Draft Kings",
+                "ESPN BET",  # Draft Kings is checked too: -8.5 vs +4 -> dropped
+                "Bovada",
+                "ESPN BET",  # Bovada is not used, so its +5 can't cause a drop
+            ],
+            "home_spread": pd.array(
+                [-27.5, 27.5, -1.0, 1.5, -8.5, 4.0, 5.0, -5.0], dtype="Float64"
+            ),
+            "home_spread_open": pd.array(
+                [-26.5, 26.5, -1.0, 1.0, -7.5, None, 4.0, -4.5], dtype="Float64"
+            ),
+        }
+    )
+    snaps, times, *_ = odds_fixture()
+    by_game = build_closing_lines(snaps.iloc[0:0], times, lines).set_index("game_id")
+    for gid in (5, 7):
+        assert by_game.loc[gid, "basis"] == "dropped_books_disagree"
+        assert pd.isna(by_game.loc[gid, "close_home_spread"])
+        assert pd.isna(by_game.loc[gid, "open_home_spread"])
+    assert by_game.loc[6, "basis"] == "median_cbbd_providers"
+    assert by_game.loc[6, "close_home_spread"] == 0.25
+    assert by_game.loc[8, "basis"] == "median_cbbd_providers"
+    assert by_game.loc[8, "close_home_spread"] == -5.0
+
+
 def test_suspect_sign_flags_spread_and_moneyline_disagreement():
     assert cbbd.suspect_sign(-6.5, -250, 200) is False  # home favored both ways
     assert cbbd.suspect_sign(6.5, -250, 200) is True  # spread says away, moneyline home
