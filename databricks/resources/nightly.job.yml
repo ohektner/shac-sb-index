@@ -1,0 +1,56 @@
+# D3: the nightly job. Starts on its own when new raw files land in the volume (uploaded
+# by databricks-sync after each CBBD ingest, and by Owen's PC after each Torvik pull).
+# Refresh the pipeline, price the live season with the champion model, update the
+# season record, then check that data is still arriving. Any failure emails the owner.
+# Pause it when the season ends (docs/DATABRICKS.md, "Upkeep and end").
+resources:
+  jobs:
+    nightly:
+      name: shac nightly
+      max_concurrent_runs: 1
+      trigger:
+        pause_status: UNPAUSED
+        file_arrival:
+          url: /Volumes/${var.catalog}/${var.schema}/landing/raw/
+          min_time_between_triggers_seconds: 900
+          wait_after_last_change_seconds: 180
+      email_notifications:
+        on_failure:
+          - ${workspace.current_user.userName}
+      tasks:
+        - task_key: refresh
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.shac_pipeline.id}
+        - task_key: score
+          depends_on:
+            - task_key: refresh
+          spark_python_task:
+            python_file: ../src/score.py
+            parameters:
+              - ${var.catalog}
+              - ${resources.schemas.shac.name}
+          environment_key: ml
+        - task_key: season
+          depends_on:
+            - task_key: score
+          spark_python_task:
+            python_file: ../src/season.py
+            parameters:
+              - ${var.catalog}
+              - ${resources.schemas.shac.name}
+          environment_key: ml
+        - task_key: freshness
+          depends_on:
+            - task_key: season
+          spark_python_task:
+            python_file: ../src/freshness.py
+            parameters:
+              - ${var.catalog}
+              - ${resources.schemas.shac.name}
+          environment_key: ml
+      environments:
+        - environment_key: ml
+          spec:
+            environment_version: "5"
+            dependencies:
+              - mlflow>=3.1,<4

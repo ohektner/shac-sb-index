@@ -1,0 +1,43 @@
+# What this does, in plain language:
+# After each CBBD ingest finishes (whenever GitHub runs it), uploads the new raw CBBD files
+# and the team map to the Databricks landing volume. New files start the nightly
+# Databricks job on their own (file-arrival trigger). Torvik files are uploaded by Owen's
+# PC task. Plan: docs/DATABRICKS.md, D3.
+name: databricks-sync
+
+on:
+  workflow_run:
+    workflows: [cbbd-ingest]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: databricks-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          ref: main
+          persist-credentials: false
+      - name: Check out the private data repo
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          repository: ohektner/shac-sb-index-data
+          token: ${{ secrets.DATA_REPO_TOKEN }}
+          path: data-repo
+          persist-credentials: false
+      - uses: databricks/setup-cli@12452ad4003a2dd61d5a7cee30bc068f750a2e00 # v1.27.0
+      - name: Upload new CBBD files and the team map
+        run: python3 databricks/scripts/sync_raw.py --data-dir data-repo --what cbbd reference

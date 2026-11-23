@@ -1,0 +1,35 @@
+# What this does, in plain language:
+# When a change to the Databricks bundle (databricks/) reaches main, deploys it to the
+# workspace, so the pipeline and jobs always run the code on main. Plan: docs/DATABRICKS.md.
+name: databricks-deploy
+
+on:
+  push:
+    branches: [main]
+    paths: ["databricks/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: databricks
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+    defaults:
+      run:
+        working-directory: databricks
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: databricks/setup-cli@12452ad4003a2dd61d5a7cee30bc068f750a2e00 # v1.27.0
+      - run: databricks bundle validate -t prod
+      - run: databricks bundle deploy -t prod
