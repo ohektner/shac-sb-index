@@ -127,6 +127,8 @@ Owen is buying one month of The Odds API's $30 tier (DECISIONS.md 2026-11-23). E
 Stop and report if either check fails.
 
 1. **Coverage:** in each season, at least 90% of final D-I games have a matched call line. If not, fix team-name aliases (a mechanical fix, listed in the PR) and check again. If it is still below 90%, report it.
+   - *Outcome, 2026-11-23:* it failed in 2022-23 (82.0%) and 2024-25 (89.7%) because of lines posted only on game day, not name matching.
+   - Owen's calls (DECISIONS.md 2026-11-23): proceed as written, and use the archive curve live as if the check had passed.
 2. **Agreement with CBBD:** for games with both lines, compare the archive close with CBBD's line (after the line checks). The median absolute difference must be 0.5 point or less, and opposite favorites (both lines 3+ points) must be 1% of games or fewer.
 
 ### Reading it (fixed now)
