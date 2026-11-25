@@ -2,7 +2,7 @@
   "name": "Shac SB Index",
   "subtitle": "a college basketball forecasting model",
   "season": "2026-27",
-  "generated_at": "2026-11-23T21:08:10Z",
+  "generated_at": "2026-11-25T04:32:47Z",
   "break_even_win_pct": 0.524,
   "model": {
     "name": "v1 (champion)",
@@ -12,19 +12,40 @@
     }
   },
   "scopes": {
-    "season": {
-      "games": 939,
-      "updated_through": "2026-11-22",
-      "mean_abs_distance_to_close": 2.9474,
-      "wins": 476,
-      "losses": 463,
+    "live": {
+      "games": 22,
+      "updated_through": "2026-11-24",
+      "mean_abs_distance_to_close": 1.6,
+      "wins": 9,
+      "losses": 13,
       "pushes": 0,
-      "win_pct": 0.5069,
-      "mae_model": 10.0441,
-      "mae_close": 9.5639
+      "win_pct": 0.4091,
+      "mae_model": 9.9989,
+      "mae_close": 9.3636
+    },
+    "season": {
+      "games": 976,
+      "updated_through": "2026-11-24",
+      "mean_abs_distance_to_close": 2.9082,
+      "wins": 493,
+      "losses": 483,
+      "pushes": 0,
+      "win_pct": 0.5051,
+      "mae_model": 9.978,
+      "mae_close": 9.502
     }
   },
   "weekly": {
+    "live": [
+      {
+        "week_start": "2026-11-23",
+        "games": 22,
+        "wins": 9,
+        "losses": 13,
+        "win_pct": 0.4091,
+        "mean_abs_distance_to_close": 1.6
+      }
+    ],
     "season": [
       {
         "week_start": "2026-10-26",
@@ -57,6 +78,14 @@
         "losses": 463,
         "win_pct": 0.5069,
         "mean_abs_distance_to_close": 2.9474
+      },
+      {
+        "week_start": "2026-11-23",
+        "games": 976,
+        "wins": 493,
+        "losses": 483,
+        "win_pct": 0.5051,
+        "mean_abs_distance_to_close": 2.9082
       }
     ]
   },
