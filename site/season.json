@@ -2,7 +2,7 @@
   "name": "Shac SB Index",
   "subtitle": "a college basketball forecasting model",
   "season": "2026-27",
-  "generated_at": "2026-11-26T03:45:19Z",
+  "generated_at": "2026-11-27T03:45:52Z",
   "break_even_win_pct": 0.524,
   "model": {
     "name": "v1 (champion)",
@@ -13,37 +13,37 @@
   },
   "scopes": {
     "live": {
-      "games": 98,
-      "updated_through": "2026-11-25",
-      "mean_abs_distance_to_close": 2.166,
-      "wins": 46,
-      "losses": 52,
+      "games": 152,
+      "updated_through": "2026-11-26",
+      "mean_abs_distance_to_close": 2.1824,
+      "wins": 73,
+      "losses": 79,
       "pushes": 0,
-      "win_pct": 0.4694,
-      "mae_model": 10.4068,
-      "mae_close": 9.9286
+      "win_pct": 0.4803,
+      "mae_model": 10.0599,
+      "mae_close": 9.6974
     },
     "season": {
-      "games": 1054,
-      "updated_through": "2026-11-25",
-      "mean_abs_distance_to_close": 2.8652,
-      "wins": 530,
-      "losses": 524,
+      "games": 1110,
+      "updated_through": "2026-11-26",
+      "mean_abs_distance_to_close": 2.8372,
+      "wins": 557,
+      "losses": 553,
       "pushes": 0,
-      "win_pct": 0.5028,
-      "mae_model": 10.0158,
-      "mae_close": 9.5398
+      "win_pct": 0.5018,
+      "mae_model": 9.9715,
+      "mae_close": 9.5153
     }
   },
   "weekly": {
     "live": [
       {
         "week_start": "2026-11-23",
-        "games": 98,
-        "wins": 46,
-        "losses": 52,
-        "win_pct": 0.4694,
-        "mean_abs_distance_to_close": 2.166
+        "games": 152,
+        "wins": 73,
+        "losses": 79,
+        "win_pct": 0.4803,
+        "mean_abs_distance_to_close": 2.1824
       }
     ],
     "season": [
@@ -81,11 +81,11 @@
       },
       {
         "week_start": "2026-11-23",
-        "games": 1054,
-        "wins": 530,
-        "losses": 524,
-        "win_pct": 0.5028,
-        "mean_abs_distance_to_close": 2.8652
+        "games": 1110,
+        "wins": 557,
+        "losses": 553,
+        "win_pct": 0.5018,
+        "mean_abs_distance_to_close": 2.8372
       }
     ]
   },
